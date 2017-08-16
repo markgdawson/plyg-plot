@@ -5,7 +5,7 @@ from MPLWidget import MPLWidget, MyNavigationToolbar
 
 
 class PlotWindow(QtGui.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, plotter_factory, parent=None):
         super(PlotWindow, self).__init__(parent, QtCore.Qt.WindowMaximizeButtonHint)
         splitter = QtGui.QSplitter()
         splitter.setStyleSheet("QSplitter::handle:horizontal { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc); border: 1px solid #777; width: 13px; margin-top: 2px; margin-bottom: 2px; border-radius: 4px; }")
@@ -17,7 +17,8 @@ class PlotWindow(QtGui.QDialog):
         splitter.addWidget(self.widget)
 
         # create plot line model
-        plot_line_model = PlotLineModel()
+        plot_line_model = plotter_factory.model()
+        self.plot_line_view = plotter_factory.view(self)
 
         # create Matplotlib widget
         self.mplWidget = MPLWidget(plot_line_model, self)
@@ -33,8 +34,7 @@ class PlotWindow(QtGui.QDialog):
         widget_layout.addWidget(line_combo_box)
 
         # add plot line view
-        plot_line_view = PlotLineView(self)
-        widget_layout.addWidget(plot_line_view)
+        widget_layout.addWidget(self.plot_line_view)
 
         # add stretch
         widget_layout.addStretch()
@@ -52,7 +52,7 @@ class PlotWindow(QtGui.QDialog):
         self.connect(plot_line_model, plot_line_model.rowsInserted, self.mplWidget.plot)
         self.connect(plot_line_model, plot_line_model.rowsRemoved, self.mplWidget.plot)
         self.connect(plot_line_model, plot_line_model.rowsRemoved, self.mplWidget.plot)
-        self.connect(line_combo_box, line_combo_box.sigCurrentItemChanged, plot_line_view.set_plot_line)
+        self.connect(line_combo_box, line_combo_box.sigCurrentItemChanged, self.plot_line_view.set_plot_line)
 
     def status_message(self, msg):
         self.text.setText(msg)

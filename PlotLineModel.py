@@ -4,20 +4,20 @@ import random
 
 class PlotLine:
 
-    def __init__(self, model):
-        self._xdata = range(10)
-        self._ydata = [random.random() for i in self._xdata ]
+    def __init__(self, model=None):
+        self._xdata = []
+        self._ydata = []
         self._label = ""
         self._mpl_line = None
         self.model = model
         self.stditem = QtGui.QStandardItem()
         self.stditem.setData(self, QtCore.Qt.UserRole)
 
-        self.set_label(self.model.default_label())
+        if self.model is not None:
+            self.set_label(self.model.default_label())
 
-        self.model.insertRow(0, self.stditem)
-        self.model.lines_created += 1
-
+            self.model.insertRow(0, self.stditem)
+            self.model.lines_created += 1
 
     def set_label(self, label):
         self._label = label
@@ -27,7 +27,6 @@ class PlotLine:
             line.set_label(label)
 
         self.stditem.setText(label)
-
 
     def label(self):
         return self._label
@@ -45,7 +44,7 @@ class PlotLine:
         return self._ydata
 
     def regenerate(self):
-        self._ydata = [random.random() for i in self._xdata ]
+        self.update()
         self.data_changed()
 
     def unplot(self):
@@ -54,14 +53,16 @@ class PlotLine:
             line.remove()
 
     def data_changed(self):
-        self.model.emit(self.model.dataChanged,self.model.createIndex(0,0),self.model.createIndex(0,self.model.rowCount()))
+        if self.model is not None:
+            self.model.emit(self.model.dataChanged,self.model.createIndex(0,0),self.model.createIndex(0,self.model.rowCount()))
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
 
-    def __init__(self, parent=None):
+    def __init__(self, plot_line_class, parent=None):
         super(PlotLineModel, self).__init__(parent)
         self.lines_created = 0
+        self.PlotLineClass = plot_line_class
 
     def default_label(self):
         return "Line %d" % ( self.lines_created + 1 )
@@ -93,19 +94,9 @@ class PlotLineModel(QtGui.QStandardItemModel):
 
 
 class PlotLineView(QtGui.QWidget):
-    def __init__(self, plot_line, parent=None):
+    def __init__(self, parent=None):
         super(PlotLineView, self).__init__(parent)
-        self.layout = QtGui.QVBoxLayout()
         self.plot_line = None
-
-        # add regenerate button
-        button = QtGui.QPushButton()
-        button.setText("Regenerate")
-        self.layout.addWidget(button)
-
-        self.connect(button, button.clicked, self.regenerate)
-
-        self.setLayout(self.layout)
         self.setEnabled(False)
 
     def set_plot_line(self, plot_line):
@@ -115,6 +106,3 @@ class PlotLineView(QtGui.QWidget):
     def regenerate(self):
         if self.plot_line is not None:
             self.plot_line.regenerate()
-
-
-

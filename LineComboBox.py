@@ -1,6 +1,5 @@
 from PyQt4 import QtGui, QtCore
 from PlotLineModel import PlotLine, PlotLineModel
-import random
 
 
 class LineComboBox(QtGui.QWidget):
@@ -16,78 +15,74 @@ class LineComboBox(QtGui.QWidget):
 
         self.setLayout(QtGui.QVBoxLayout())
 
-        # create select-and-add widget
-        select_and_add_widget = QtGui.QWidget(self)
-        select_and_add_widget.setLayout(QtGui.QHBoxLayout())
-        select_and_add_widget.layout().setMargin(0)
-
         # create combo box
         self.combo_box = QtGui.QComboBox(self)
         self.combo_box.setModel(model)
+        self.layout().addWidget(self.combo_box)
 
         # create new line button
-        new_line_button = QtGui.QPushButton(self)
-        button_text = "Add"
-        new_line_button.setText(button_text)
-        width = new_line_button.fontMetrics().boundingRect(button_text).width() + 20
-        new_line_button.setMaximumWidth(width)
+        button = QtGui.QPushButton("Add Line", self)
+        self.connect(button, button.clicked, self.add_line)
 
-        # add new line button and combo box to vertical layout
-        select_and_add_widget.layout().addWidget(self.combo_box)
-        select_and_add_widget.layout().addWidget(new_line_button)
-        self.layout().addWidget(select_and_add_widget)
+        # buttons widget
+        buttons = QtGui.QWidget(self)
+        buttons.setLayout(QtGui.QHBoxLayout())
+        buttons.layout().addWidget(button)
+        buttons.layout().setMargin(0)
 
-        # create label-and-delete widget
-        self.label_and_delete_widget = QtGui.QWidget(self)
-        self.label_and_delete_widget.setLayout(QtGui.QHBoxLayout())
-        self.label_and_delete_widget.layout().setMargin(0)
+        # create delete line button
+        button = QtGui.QPushButton("Delete", self)
+        buttons.layout().addWidget(button)
+        button.setEnabled(False)
+        self.connect(button, button.clicked, self.delete_current)
+        self.del_button = button
 
-        # add label QLineEdit
-        self.label_line_edit = QtGui.QLineEdit()
-        self.label_and_delete_widget.layout().addWidget(self.label_line_edit)
+        # create rename line button
+        button = QtGui.QPushButton("Rename", self)
+        buttons.layout().addWidget(button)
+        button.setEnabled(False)
+        self.connect(button, button.clicked, self.rename_current)
+        self.rename_button = button
 
-        # add delete line button
-        del_line_button = QtGui.QPushButton(self)
-        width = del_line_button.fontMetrics().boundingRect(button_text).width() + 20
-        del_line_button.setMaximumWidth(width)
-        button_text = "Del"
-        del_line_button.setText(button_text)
+        # add button to layout
+        self.layout().addWidget(buttons)
 
-        # add label-and-delete widget
-        self.label_and_delete_widget.setEnabled(False)
-        self.label_and_delete_widget.layout().addWidget(del_line_button)
-
-        self.layout().addWidget(self.label_and_delete_widget)
-
-        self.connect(new_line_button, new_line_button.clicked, self.add_line)
         self.connect(model, model.rowsInserted, self.rowsInserted)
-        self.connect(self.label_line_edit, self.label_line_edit.textChanged, self.label_line_edit_text_changed)
-        self.connect(del_line_button, del_line_button.clicked, self.delete_current)
 
         self.connect(self.combo_box, self.combo_box.currentIndexChanged, self.update_current_item)
-        self.connect(self.combo_box, self.combo_box.model().rowsRemoved, self.update_current_item)
+        self.connect(self.combo_box, self.model().rowsRemoved, self.update_current_item)
 
     def rowsInserted(self, index):
         self.combo_box.setCurrentIndex(0)
 
     def add_line(self):
-        line = PlotLine(self.combo_box.model())
+        line = self.model().PlotLineClass(self.model())
+
+    def model(self):
+        return self.combo_box.model()
 
     def update_current_item(self, index):
-        plot_line = self.combo_box.model().line(index)
-        if plot_line is None:
-            self.label_line_edit.setText("")
-        else:
-            self.label_line_edit.setText(plot_line.label())
-
-        self.label_and_delete_widget.setEnabled(index != -1)
+        plot_line = self.current_item()
+        self.rename_button.setEnabled(index != -1)
+        self.del_button.setEnabled(index != -1)
         self.emit(self.sigCurrentItemChanged, plot_line)
 
+    def current_item(self):
+        return self.model().line(self.combo_box.currentIndex())
+
+    def rename(self, plot_item):
+        text, accepted = QtGui.QInputDialog.getText(self, 'Label', 'Choose New Label', QtGui.QLineEdit.Normal, plot_item.label())
+        if accepted:
+            plot_item.set_label(text)
+
+    def rename_current(self):
+        plot_item = self.current_item()
+        self.rename(plot_item)
 
     def delete_current(self):
-        model = self.combo_box.model()
+        model = self.model()
         model.delete_line(self.combo_box.currentIndex())
 
     def label_line_edit_text_changed(self, string):
         index = self.combo_box.currentIndex()
-        self.combo_box.model().set_label(index, string)
+        self.model().set_label(index, string)

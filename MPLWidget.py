@@ -86,6 +86,8 @@ class MPLWidget(QtGui.QWidget):
             else:
                 line.mpl_line().set_data(line.xdata(),line.ydata())
 
+        ax.relim()
+        ax.autoscale_view()
 
         self.figure.tight_layout()
         self.regenerate_legend()
