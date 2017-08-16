@@ -5,7 +5,7 @@ import random
 
 class LineComboBox(QtGui.QWidget):
 
-    sigCurrentItemChanged = QtCore.pyqtSignal()
+    sigCurrentItemChanged = QtCore.pyqtSignal(PlotLine)
 
     def __init__(self, parent=None, model=None):
         super(LineComboBox, self).__init__(parent)
@@ -71,22 +71,22 @@ class LineComboBox(QtGui.QWidget):
         self.combo_box.setCurrentIndex(0)
 
     def add_line(self):
-        line = PlotLine()
-        default_label = "Line %d" % (self.combo_box.model().rowCount() + 1)
-        line.set_label(default_label)
-        self.combo_box.model().add_line(line)
+        line = PlotLine(self.combo_box.model())
 
     def update_current_item(self, index):
-        self.emit(self.sigCurrentItemChanged)
-
         plot_line = self.combo_box.model().line(index)
-        self.label_line_edit.setText(plot_line.label())
-        if index != -1:
-            self.label_and_delete_widget.setEnabled(True)
+        if plot_line is None:
+            self.label_line_edit.setText("")
+        else:
+            self.label_line_edit.setText(plot_line.label())
+
+        self.label_and_delete_widget.setEnabled(index != -1)
+        self.emit(self.sigCurrentItemChanged, plot_line)
+
 
     def delete_current(self):
         model = self.combo_box.model()
-        model.removeRow(self.combo_box.currentIndex())
+        model.delete_line(self.combo_box.currentIndex())
 
     def label_line_edit_text_changed(self, string):
         index = self.combo_box.currentIndex()

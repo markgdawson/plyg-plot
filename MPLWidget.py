@@ -57,6 +57,7 @@ class MPLWidget(QtGui.QWidget):
         self.text.setMargin(10)
 
         self.connect(line_model, line_model.dataChanged, self.regenerate_legend)
+        self.connect(line_model, line_model.dataChanged, self.plot)
 
     def regenerate_legend(self):
         # always re-generate legend

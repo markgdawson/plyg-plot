@@ -52,6 +52,7 @@ class PlotWindow(QtGui.QDialog):
         self.connect(plot_line_model, plot_line_model.rowsInserted, self.mplWidget.plot)
         self.connect(plot_line_model, plot_line_model.rowsRemoved, self.mplWidget.plot)
         self.connect(plot_line_model, plot_line_model.rowsRemoved, self.mplWidget.plot)
+        self.connect(line_combo_box, line_combo_box.sigCurrentItemChanged, plot_line_view.set_plot_line)
 
     def status_message(self, msg):
         self.text.setText(msg)

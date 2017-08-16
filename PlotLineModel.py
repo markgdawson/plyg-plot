@@ -4,12 +4,20 @@ import random
 
 class PlotLine:
 
-    def __init__(self):
-        super(PlotLine, self).__init__()
+    def __init__(self, model):
         self._xdata = range(10)
         self._ydata = [random.random() for i in self._xdata ]
         self._label = ""
         self._mpl_line = None
+        self.model = model
+        self.stditem = QtGui.QStandardItem()
+        self.stditem.setData(self, QtCore.Qt.UserRole)
+
+        self.set_label(self.model.default_label())
+
+        self.model.insertRow(0, self.stditem)
+        self.model.lines_created += 1
+
 
     def set_label(self, label):
         self._label = label
@@ -17,6 +25,9 @@ class PlotLine:
         line = self.mpl_line()
         if line is not None:
             line.set_label(label)
+
+        self.stditem.setText(label)
+
 
     def label(self):
         return self._label
@@ -35,30 +46,50 @@ class PlotLine:
 
     def regenerate(self):
         self._ydata = [random.random() for i in self._xdata ]
+        self.data_changed()
+
+    def unplot(self):
+        line = self.mpl_line()
+        if line is not None:
+            line.remove()
+
+    def data_changed(self):
+        self.model.emit(self.model.dataChanged,self.model.createIndex(0,0),self.model.createIndex(0,self.model.rowCount()))
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
 
     def __init__(self, parent=None):
         super(PlotLineModel, self).__init__(parent)
-        self._lines = []
+        self.lines_created = 0
 
-    def add_line(self, line):
-        item = QtGui.QStandardItem()
-        item.setText(line.label())
-        self._lines.insert(0, line)
-        self.insertRow(0, item)
+    def default_label(self):
+        return "Line %d" % ( self.lines_created + 1 )
+
+    def delete_line(self, index):
+        plot_line = self.line(index)
+        if plot_line is not None:
+            plot_line.unplot()
+        self.removeRow(index)
 
     def set_label(self, index, string):
         if self.item(index) is not None:
             self.line(index).set_label(string)
-            self.item(index).setText(string)
 
     def lines(self):
-        return self._lines
+        l = []
+        for row in range(self.rowCount()):
+            item = self.item(row)
+            plot_line = item.data(QtCore.Qt.UserRole)
+            l.append(plot_line)
+        return l
 
-    def line(self,index):
-        return self._lines[index]
+    def line(self, index):
+        item = self.item(index)
+        if item is None:
+            return None
+        else:
+            return item.data(QtCore.Qt.UserRole)
 
 
 class PlotLineView(QtGui.QWidget):
@@ -74,16 +105,12 @@ class PlotLineView(QtGui.QWidget):
 
         self.connect(button, button.clicked, self.regenerate)
 
-        # add delete button
-        button = QtGui.QPushButton()
-        button.setText("Delete")
-        self.layout.addWidget(button)
         self.setLayout(self.layout)
         self.setEnabled(False)
 
     def set_plot_line(self, plot_line):
-        self.line_edit.setText(plot_line.label())
-        self.setEnabled(True)
+        self.plot_line = plot_line
+        self.setEnabled(self.plot_line is not None)
 
     def regenerate(self):
         if self.plot_line is not None:
