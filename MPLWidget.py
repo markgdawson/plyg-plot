@@ -12,7 +12,7 @@ class MyNavigationToolbar(NavigationToolbar):
     sigConfigurePlot = QtCore.pyqtSignal()
     sigStatusText = QtCore.pyqtSignal(str)
 
-    def __init__(self, figure_canvas, parent= None, coordinates=False):
+    def __init__(self, figure_canvas, parent=None, coordinates=False):
         self.icons = dict({
             'add': 'fa.plus',
             'delete': 'fa.minus'
@@ -88,7 +88,6 @@ class MPLWidget(QtWidgets.QWidget):
         # Create canvas on which self.figure is plotted
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
-        self.plot()
 
         self.layout().addWidget(self.canvas)
 
@@ -119,8 +118,7 @@ class MPLWidget(QtWidgets.QWidget):
         else:
             ax = all_axes[0]
 
-        lines = self.line_model.lines()
-        for line in lines:
+        for line in self.line_model.lines():
             if line.mpl_line() is None:
                 l, = ax.plot(line.xdata(), line.ydata(), line.linestyle, label=line.label())
                 line.set_mpl_line(l)
