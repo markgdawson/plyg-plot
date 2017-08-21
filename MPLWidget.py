@@ -1,6 +1,6 @@
-from PyQt4 import QtGui, QtCore
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from PyQt5 import QtWidgets, QtCore, QtGui
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
 
 
@@ -22,11 +22,11 @@ class MyNavigationToolbar(NavigationToolbar):
             ('Configuration', 'Configure plot', 'subplots', 'configure_plot')
         )
 
-        super(MyNavigationToolbar,self).__init__(figure_canvas, parent=parent, coordinates=coordinates)
+        super(MyNavigationToolbar, self).__init__(figure_canvas, parent=parent, coordinates=coordinates)
 
     def do_edit_parameters(self):
         self.edit_parameters()
-        self.emit(self.sigStaleLegend)
+        self.sigStaleLegend.emit()
 
     def configure_plot(self):
         self.parent.configure_plot()
@@ -35,13 +35,13 @@ class MyNavigationToolbar(NavigationToolbar):
         self.parent.status_message(msg)
 
 
-class MPLWidget(QtGui.QWidget):
+class MPLWidget(QtWidgets.QWidget):
     def __init__(self, line_model, parent = None):
         super(MPLWidget, self).__init__(parent)
 
         self.line_model = line_model
 
-        self.setLayout(QtGui.QVBoxLayout())
+        self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setContentsMargins(0,0,0,0)
         self.layout().setSpacing(0)
 
@@ -52,12 +52,12 @@ class MPLWidget(QtGui.QWidget):
 
         self.layout().addWidget(self.canvas)
 
-        self.text = QtGui.QLabel(self.canvas)
+        self.text = QtWidgets.QLabel(self.canvas)
         self.text.setText("                                                             ")
         self.text.setMargin(10)
 
-        self.connect(line_model, line_model.dataChanged, self.regenerate_legend)
-        self.connect(line_model, line_model.dataChanged, self.plot)
+        line_model.dataChanged.connect(self.regenerate_legend)
+        line_model.dataChanged.connect(self.plot)
 
     def regenerate_legend(self):
         # always re-generate legend
@@ -96,5 +96,4 @@ class MPLWidget(QtGui.QWidget):
         self.canvas.draw()
 
     def configure_plot(self):
-        QtGui.QMessageBox.information(self,"No Configuration Options","Error: No configuration options available for this plot type",QtGui.QMessageBox.Ok);
-
+        QtWidgets.QMessageBox.information(self, "No Configuration Options", "No configuration options available for this plot type", QtWidgets.QMessageBox.Ok)

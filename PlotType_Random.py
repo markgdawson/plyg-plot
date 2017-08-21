@@ -16,14 +16,14 @@ class PlotLineRandomView(PlotLineView):
     def __init__(self, parent=None):
         super(PlotLineRandomView, self).__init__(parent)
 
-        self.layout = QtGui.QVBoxLayout()
+        self.layout = QtWidgets.QVBoxLayout()
 
         # add regenerate button
-        button = QtGui.QPushButton()
+        button = QtWidgets.QPushButton()
         button.setText("Update")
         self.layout.addWidget(button)
 
-        self.connect(button, button.clicked, self.regenerate)
+        button.clicked.connect(self.regenerate)
 
         self.setLayout(self.layout)
 

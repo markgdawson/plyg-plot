@@ -1,6 +1,6 @@
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
-class QPushButtonMinSize(QtGui.QPushButton):
+class QPushButtonMinSize(QtWidgets.QPushButton):
     def __init__(self, text, parent=None):
         super(QPushButtonMinSize, self).__init__(parent)
         self.setText(text)

@@ -1,4 +1,4 @@
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from QPushButtonMinSize import QPushButtonMinSize
 from TorqueFile import TorqueFile
 from GeoFile import Geom
@@ -6,7 +6,7 @@ import os
 
 
 # maintains a list of simulations, and maintains parent.simulation as the current simulation object
-class SimulationComboBox(QtGui.QWidget):
+class SimulationComboBox(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super(SimulationComboBox, self).__init__(parent)
@@ -15,26 +15,26 @@ class SimulationComboBox(QtGui.QWidget):
             self.parent().set_simulation(None)
 
         # setup default or provided model
-        self.setLayout(QtGui.QVBoxLayout())
-        self.layout().setMargin(0)
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         # create label
-        self.layout().addWidget(QtGui.QLabel("Geometry:", self))
+        self.layout().addWidget(QtWidgets.QLabel("Geometry:", self))
         # create combo box
-        widget = QtGui.QWidget(self)
-        widget.setLayout(QtGui.QHBoxLayout())
-        widget.layout().setMargin(0)
+        widget = QtWidgets.QWidget(self)
+        widget.setLayout(QtWidgets.QHBoxLayout())
+        widget.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.combo_box = QtGui.QComboBox(self)
+        self.combo_box = QtWidgets.QComboBox(self)
         self.model = SimulationModelInstance
         self.combo_box.setModel(self.model)
         widget.layout().addWidget(self.combo_box)
 
-        self.connect(self.combo_box, self.combo_box.currentIndexChanged, self.current_index_changed)
+        self.combo_box.currentIndexChanged.connect(self.current_index_changed)
 
         # create new line button
         button = QPushButtonMinSize("Load...", self)
-        self.connect(button, button.clicked, self.load_simulation)
+        button.clicked.connect(self.load_simulation)
         widget.layout().addWidget(button)
 
         self.layout().addWidget(widget)
@@ -49,9 +49,9 @@ class SimulationComboBox(QtGui.QWidget):
         return item.data(QtCore.Qt.UserRole)
 
     def load_simulation(self):
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'caption', 'C:/', 'Geo Files (*.geo)')
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'caption', 'C:/', 'Geo Files (*.geo)')
         if(len(filename) > 0):
-            text, accepted = QtGui.QInputDialog.getText(self, 'Get Label','Simulation Label:',QtGui.QLineEdit.Normal,filename)
+            text, accepted = QtWidgets.QInputDialog.getText(self, 'Get Label','Simulation Label:',QtWidgets.QLineEdit.Normal,filename)
             if(accepted):
                 item = QtGui.QStandardItem()
                 item.setText(text)

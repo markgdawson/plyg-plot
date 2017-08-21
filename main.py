@@ -1,10 +1,10 @@
 import sys
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 from PlotWindow import PlotWindow
 from PlotType_Geo import GeoLineFactory
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     main = PlotWindow(GeoLineFactory())
     main.show()

@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
 from SimulationComboBox import SimulationComboBox
 
@@ -21,18 +21,18 @@ class PlotLineGeoView(PlotLineView):
     def __init__(self, parent=None):
         super(PlotLineGeoView, self).__init__(parent)
 
-        self.layout = QtGui.QVBoxLayout()
+        self.layout = QtWidgets.QVBoxLayout()
 
         # sets the self.simulation object
         sim_select = SimulationComboBox(self)
         self.layout.addWidget(sim_select)
 
         # add regenerate button
-        button = QtGui.QPushButton()
+        button = QtWidgets.QPushButton()
         button.setText("Update")
         self.layout.addWidget(button)
 
-        self.connect(button, button.clicked, self.update)
+        button.clicked.connect(self.update)
 
         self.setLayout(self.layout)
 

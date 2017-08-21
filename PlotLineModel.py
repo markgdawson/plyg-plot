@@ -1,4 +1,4 @@
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 import random
 
 
@@ -100,7 +100,7 @@ class PlotLineModel(QtGui.QStandardItemModel):
             return item.data(QtCore.Qt.UserRole)
 
 
-class PlotLineView(QtGui.QWidget):
+class PlotLineView(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(PlotLineView, self).__init__(parent)
         self._plot_line = None
