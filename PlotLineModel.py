@@ -80,6 +80,9 @@ class PlotLineModel(QtGui.QStandardItemModel):
             plot_line.unplot()
         self.removeRow(index)
 
+    def new_line(self):
+        self.PlotLineClass(model=self)
+
     def set_label(self, index, string):
         if self.item(index) is not None:
             self.line(index).set_label(string)
@@ -105,11 +108,11 @@ class PlotLineView(QtWidgets.QWidget):
         super(PlotLineView, self).__init__(parent)
         self._plot_line = None
         self._simulation = None
-        self.setEnabled(False)
+        self.setVisible(False)
 
     def set_plot_line(self, plot_line):
         self._plot_line = plot_line
-        self.setEnabled(self._plot_line is not None)
+        self.setVisible(self._plot_line is not None)
 
     def plot_line(self):
         return self._plot_line

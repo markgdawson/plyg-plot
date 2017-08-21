@@ -17,11 +17,11 @@ class PlotWindow(QtWidgets.QDialog):
         splitter.addWidget(self.widget)
 
         # create plot line model
-        plot_line_model = plotter_factory.model()
+        self.plot_line_model = plotter_factory.model()
         self.plot_line_view = plotter_factory.view(self)
 
         # create Matplotlib widget
-        self.mplWidget = MPLWidget(plot_line_model, self)
+        self.mplWidget = MPLWidget(self.plot_line_model, self)
         splitter.addWidget(self.mplWidget)
 
         # add Navigation toolbar
@@ -30,7 +30,7 @@ class PlotWindow(QtWidgets.QDialog):
         widget_layout.addWidget(self.toolbar)
 
         # add line editor
-        line_combo_box = LineComboBox(self, plot_line_model)
+        line_combo_box = LineComboBox(self, self.plot_line_model)
         widget_layout.addWidget(line_combo_box)
 
         # add plot line view
@@ -49,13 +49,18 @@ class PlotWindow(QtWidgets.QDialog):
 
         # connect stale legend signals to regenerate_legend slot
         self.toolbar.sigStaleLegend.connect(self.mplWidget.regenerate_legend)
-        plot_line_model.rowsInserted.connect(self.mplWidget.plot)
-        plot_line_model.rowsRemoved.connect(self.mplWidget.plot)
-        plot_line_model.rowsRemoved.connect(self.mplWidget.plot)
+        self.plot_line_model.rowsInserted.connect(self.mplWidget.plot)
+        self.plot_line_model.rowsRemoved.connect(self.mplWidget.plot)
+        self.plot_line_model.rowsRemoved.connect(self.mplWidget.plot)
         line_combo_box.sigCurrentItemChanged.connect(self.plot_line_view.set_plot_line)
 
-    def status_message(self, msg):
-        self.text.setText(msg)
+        # connect toolbar signals
+        self.toolbar.sigNewLine.connect(self.plot_line_model.new_line)
+        self.toolbar.sigDeleteLine.connect(line_combo_box.delete_current)
+        self.toolbar.sigConfigurePlot.connect(self.mplWidget.configure_plot)
+        self.toolbar.sigStatusText.connect(self.text.setText)
+
+        line_combo_box.sigCurrentItemChanged.connect(self.toolbar.current_item_changed)
 
     def show(self):
         super(PlotWindow, self).show()
@@ -63,7 +68,5 @@ class PlotWindow(QtWidgets.QDialog):
         width = self.toolbar.width() + 20
         self.widget.setMinimumWidth(width)
 
-    def configure_plot(self):
-        self.mplWidget.configure_plot()
-
-
+    def delete_current_line(self):
+        self.line_combo_box
