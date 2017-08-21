@@ -2,8 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class GeoFile:
-    def __init__(self,fileName):
+    def __init__(self, fileName):
         self.fileName = fileName
         self.loaded = False
 
@@ -84,7 +85,6 @@ class Geom:
         for iPatch in patches:
             nodes = self.getNodesPatch(iPatch)
 
-            Xplot = []
             for lineNodes in nodes:
                 Xplot = self.geo.x[lineNodes, :2]
                 if rotation:
@@ -103,7 +103,7 @@ class Geom:
 
     # plot faces with matplotlib
     def getPatchFaces(self, patches, color=None, label=None,
-                       rotation=None, linestyle='-', linewidth=1.0, polar=False, plot=False):
+                      rotation=None, linestyle='-', linewidth=1.0, polar=False, plot=False):
         l = []
         x = []
         y = []
@@ -127,17 +127,16 @@ class Geom:
                     Xplot = Xplot.dot(RotOp)
                 
                 if polar:
-                    xtmp = np.arctan2(Xplot[:,0],Xplot[:,1])
-                    ytmp = np.sqrt(Xplot[:,0]**2 + Xplot[:,1]**2)
-                    Xplot[:,0] = xtmp
-                    Xplot[:,1] = ytmp
-                x.extend(Xplot[:,0])
-                y.extend(Xplot[:,1])
+                    xtmp = np.arctan2(Xplot[:, 0], Xplot[:, 1])
+                    ytmp = np.sqrt(Xplot[:, 0]**2 + Xplot[:, 1]**2)
+                    Xplot[:, 0] = xtmp
+                    Xplot[:, 1] = ytmp
+                x.extend(Xplot[:, 0])
+                y.extend(Xplot[:, 1])
                 x.append(np.NaN)
                 y.append(np.NaN)
                 if plot:
-                    l.extend(plt.plot(Xplot[:, 0], Xplot[:, 1], color=color,
-                                  linewidth=linewidth, linestyle=linestyle))
+                    l.extend(plt.plot(Xplot[:, 0], Xplot[:, 1], color=color, linewidth=linewidth, linestyle=linestyle))
 
         if plot:
             l[0].set_label(label)
@@ -174,10 +173,10 @@ class Geom:
     def getNodesCoordsAsLines(self, iPatch):
         nodesAsLines = self.getNodesPatchesAsLines(iPatch)
         
-        if(len(nodesAsLines)==1):
+        if len(nodesAsLines) == 1:
             return self.geo.x[nodesAsLines, :2][0]
         else:
-            return [ self.geo.x[nodesAsLine, :2][0] for nodesAsLine in nodesAsLines ]
+            return [self.geo.x[nodesAsLine, :2][0] for nodesAsLine in nodesAsLines]
 
     def getNodesPatchesAsLines(self, iPatch, join=True):
         self.geo.read()
@@ -226,7 +225,7 @@ class Geom:
                 while i < len(plotLines):
                     deleteLines = []
 
-                    for j in range(i+1,len(plotLines)):
+                    for j in range(i+1, len(plotLines)):
                         if plotLines[i][-1] == plotLines[j][0]:
                             plotLines[i].extend(plotLines[j][1:])
                             deleteLines.append(j)
@@ -269,10 +268,9 @@ class Geom:
 
                 maxface = np.sqrt(np.sum([x**2 for x in Xplot]))
 
-                if(maxface > maxr):
+                if maxface > maxr:
                     maxr = maxface
 
                 plt.plot(Xplot[:, 0], Xplot[:, 1], '-', c=color)
-                plt.hold
 
                 plt.axis('equal')

@@ -1,8 +1,9 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
 import qtawesome as qta
+from PyQt5 import QtWidgets, QtCore
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+
 
 class MyNavigationToolbar(NavigationToolbar):
     sigStaleLegend = QtCore.pyqtSignal()
@@ -137,4 +138,6 @@ class MPLWidget(QtWidgets.QWidget):
         self.canvas.draw()
 
     def configure_plot(self):
-        QtWidgets.QMessageBox.information(self, "No Configuration Options", "No configuration options available for this plot type", QtWidgets.QMessageBox.Ok)
+        QtWidgets.QMessageBox.information(self, "No Configuration Options",
+                                          "No configuration options available for this plot type",
+                                          QtWidgets.QMessageBox.Ok)

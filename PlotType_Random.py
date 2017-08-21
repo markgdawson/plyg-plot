@@ -1,6 +1,6 @@
-from PyQt4 import QtGui
-from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
 import random
+
+from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
 
 
 class PlotLineRandom(PlotLine):
@@ -9,7 +9,7 @@ class PlotLineRandom(PlotLine):
 
     def update(self):
         self._xdata = range(10)
-        self._ydata = [random.random() for i in self._xdata ]
+        self._ydata = [random.random() for i in self._xdata]
 
 
 class PlotLineRandomView(PlotLineView):

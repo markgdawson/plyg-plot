@@ -56,8 +56,8 @@ class SimulationComboBox(QtWidgets.QWidget):
             if accepted:
                 item = QtGui.QStandardItem()
                 item.setText(text)
-                item.setData(Simulation(filename),QtCore.Qt.UserRole)
-                self.model.insertRow(0,item)
+                item.setData(Simulation(filename), QtCore.Qt.UserRole)
+                self.model.insertRow(0, item)
 
 
 class SimulationModel(QtGui.QStandardItemModel):
@@ -67,7 +67,7 @@ class SimulationModel(QtGui.QStandardItemModel):
 class Simulation:
     def __init__(self, geo_file):
         self.geo_file = geo_file
-        self.torque_file = os.path.join(os.path.dirname(geo_file),'TORQUE.csv')
+        self.torque_file = os.path.join(os.path.dirname(geo_file), 'TORQUE.csv')
         self._geom = None
         self._torque = None
 

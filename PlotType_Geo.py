@@ -1,4 +1,5 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets
+
 from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
 from SimulationComboBox import SimulationComboBox
 
@@ -14,7 +15,7 @@ class PlotLineGeo(PlotLine):
         if not geom.geo.loaded:
             print('Loading %s', self.simulation().geo_file)
 
-        self._xdata, self._ydata = geom.getPatchFaces(range(12,14))
+        self._xdata, self._ydata = geom.getPatchFaces(range(12, 14))
 
 
 class PlotLineGeoView(PlotLineView):
@@ -36,7 +37,7 @@ class PlotLineGeoView(PlotLineView):
 
         self.setLayout(self.layout)
 
-    def update(self):
+    def update(self, **kwargs):
         plot_line = self.plot_line()
         plot_line.set_simulation(self.simulation())
         self.regenerate()

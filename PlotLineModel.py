@@ -1,9 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
-import random
 
 
 class PlotLine:
-
     def __init__(self, model=None):
         self._xdata = []
         self._ydata = []
@@ -61,18 +59,18 @@ class PlotLine:
 
     def data_changed(self):
         if self.model is not None:
-            self.model.emit(self.model.dataChanged,self.model.createIndex(0,0),self.model.createIndex(0,self.model.rowCount()))
+            self.model.emit(self.model.dataChanged, self.model.createIndex(0, 0),
+                            self.model.createIndex(0, self.model.rowCount()))
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
-
     def __init__(self, plot_line_class, parent=None):
         super(PlotLineModel, self).__init__(parent)
         self.lines_created = 0
         self.PlotLineClass = plot_line_class
 
     def default_label(self):
-        return "Line %d" % ( self.lines_created + 1 )
+        return "Line %d" % (self.lines_created + 1)
 
     def delete_line(self, index):
         plot_line = self.line(index)

@@ -1,5 +1,4 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PlotLineModel import PlotLineModel
+from PyQt5 import QtWidgets, QtCore
 
 
 class LineComboBox(QtWidgets.QWidget):
@@ -41,7 +40,9 @@ class LineComboBox(QtWidgets.QWidget):
         return self.model().line(self.combo_box.currentIndex())
 
     def rename(self, plot_item):
-        text, accepted = QtWidgets.QInputDialog.getText(self, 'Label', 'Choose New Label', QtWidgets.QLineEdit.Normal, plot_item.label())
+        text, accepted = QtWidgets.QInputDialog.getText(self, 'Label', 'Choose New Label',
+                                                        QtWidgets.QLineEdit.Normal, plot_item.label())
+
         if accepted:
             plot_item.set_label(text)
 

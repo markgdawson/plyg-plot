@@ -1,5 +1,5 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PlotLineModel import PlotLineModel, PlotLineView
+from PyQt5 import QtWidgets, QtCore
+
 from LineComboBox import LineComboBox
 from MPLWidget import MPLWidget, MyNavigationToolbar
 
