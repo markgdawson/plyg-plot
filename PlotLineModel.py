@@ -59,8 +59,7 @@ class PlotLine:
 
     def data_changed(self):
         if self.model is not None:
-            self.model.emit(self.model.dataChanged, self.model.createIndex(0, 0),
-                            self.model.createIndex(0, self.model.rowCount()))
+            self.model.dataChanged.emit(self.model.createIndex(0, 0), self.model.createIndex(0, self.model.rowCount()))
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
