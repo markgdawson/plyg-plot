@@ -12,12 +12,19 @@ class PlotLine:
         self.model = model
         self.stditem = QtGui.QStandardItem()
         self.stditem.setData(self, QtCore.Qt.UserRole)
+        self._simulation = None
 
         if self.model is not None:
             self.set_label(self.model.default_label())
 
             self.model.insertRow(0, self.stditem)
             self.model.lines_created += 1
+
+    def set_simulation(self, simulation):
+        self._simulation = simulation
+
+    def simulation(self):
+        return self._simulation
 
     def set_label(self, label):
         self._label = label
@@ -96,13 +103,23 @@ class PlotLineModel(QtGui.QStandardItemModel):
 class PlotLineView(QtGui.QWidget):
     def __init__(self, parent=None):
         super(PlotLineView, self).__init__(parent)
-        self.plot_line = None
+        self._plot_line = None
+        self._simulation = None
         self.setEnabled(False)
 
     def set_plot_line(self, plot_line):
-        self.plot_line = plot_line
-        self.setEnabled(self.plot_line is not None)
+        self._plot_line = plot_line
+        self.setEnabled(self._plot_line is not None)
+
+    def plot_line(self):
+        return self._plot_line
 
     def regenerate(self):
-        if self.plot_line is not None:
-            self.plot_line.regenerate()
+        if self._plot_line is not None:
+            self._plot_line.regenerate()
+
+    def set_simulation(self, simulation):
+        self._simulation = simulation
+
+    def simulation(self):
+        return self._simulation

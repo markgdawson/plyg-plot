@@ -81,10 +81,10 @@ class MPLWidget(QtGui.QWidget):
         lines = self.line_model.lines()
         for line in lines:
             if line.mpl_line() is None:
-                l, = ax.plot(line.xdata(), line.ydata(), '.-', label=line.label())
+                l, = ax.plot(line.xdata(), line.ydata(), line.linestyle, label=line.label())
                 line.set_mpl_line(l)
             else:
-                line.mpl_line().set_data(line.xdata(),line.ydata())
+                line.mpl_line().set_data(line.xdata(), line.ydata())
 
         ax.relim()
         ax.autoscale_view()

@@ -60,7 +60,6 @@ class PlotWindow(QtGui.QDialog):
     def show(self):
         super(PlotWindow, self).show()
         # fix widget width to Navigation toolbar width
-        width = self.toolbar.width() + 50
-        self.widget.setMaximumWidth(width)
-        self.widget.setFixedWidth(width)
+        width = self.toolbar.width() + 20
+        self.widget.setMinimumWidth(width)
 
