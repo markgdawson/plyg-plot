@@ -2,7 +2,6 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
-from PlotLineModel import PlotLine
 import qtawesome as qta
 
 class MyNavigationToolbar(NavigationToolbar):
@@ -11,19 +10,18 @@ class MyNavigationToolbar(NavigationToolbar):
     sigDeleteLine = QtCore.pyqtSignal()
     sigConfigurePlot = QtCore.pyqtSignal()
     sigStatusText = QtCore.pyqtSignal(str)
+    sigNewPlot = QtCore.pyqtSignal()
 
     def __init__(self, figure_canvas, parent=None, coordinates=False):
-        self.icons = dict({
-            'add': 'fa.plus',
-            'delete': 'fa.minus'
-        })
-
         delete_text = 'Delete Line'
         new_line_text = 'New Line'
+        new_plot_text = 'New Plot'
 
         self.toolitems = (
-            (new_line_text, 'Add new plottable line', self.icons['add'], 'new_line'),
-            (delete_text, 'Add current plottable line', self.icons['delete'], 'delete_line'),
+            (new_plot_text, 'Create new plot', 'fa.file-o', 'new_plot'),
+            (None, None, None, None),
+            (new_line_text, 'Add new plottable line', 'fa.plus', 'new_line'),
+            (delete_text, 'Add current plottable line', 'fa.minus', 'delete_line'),
             (None, None, None, None),
             ('Zoom', 'Zoom to rectangle', 'zoom_to_rect', 'zoom'),
             ('Pan', 'Pan axes with left mouse, zoom with right', 'move', 'pan'),
@@ -41,6 +39,7 @@ class MyNavigationToolbar(NavigationToolbar):
         super(MyNavigationToolbar, self).__init__(figure_canvas, parent=parent, coordinates=coordinates)
 
         # get created Qt actions
+        self.new_plot_action = [a for a in self.actions() if a.text() == new_plot_text][0]
         self.delete_action = [a for a in self.actions() if a.text() == delete_text][0]
         self.new_line_action = [a for a in self.actions() if a.text() == new_line_text][0]
 
@@ -70,6 +69,9 @@ class MyNavigationToolbar(NavigationToolbar):
         reply = QtWidgets.QMessageBox.question(self, "Delete Confirmation", "Delete current line?")
         if reply == QtWidgets.QMessageBox.Yes:
             self.sigDeleteLine.emit()
+
+    def new_plot(self):
+        self.sigNewPlot.emit()
 
     def current_item_changed(self, plot_item):
         self.delete_action.setEnabled(plot_item is not None)

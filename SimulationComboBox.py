@@ -49,10 +49,11 @@ class SimulationComboBox(QtWidgets.QWidget):
         return item.data(QtCore.Qt.UserRole)
 
     def load_simulation(self):
-        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'caption', 'C:/', 'Geo Files (*.geo)')
-        if(len(filename) > 0):
-            text, accepted = QtWidgets.QInputDialog.getText(self, 'Get Label','Simulation Label:',QtWidgets.QLineEdit.Normal,filename)
-            if(accepted):
+        filename, file_filter = QtWidgets.QFileDialog.getOpenFileName(self, 'caption', 'C:/', 'Geo Files (*.geo)')
+        if len(filename) > 0:
+            text, accepted = QtWidgets.QInputDialog.getText(self, 'Get Label',
+                                                            'Simulation Label:', QtWidgets.QLineEdit.Normal, filename)
+            if accepted:
                 item = QtGui.QStandardItem()
                 item.setText(text)
                 item.setData(Simulation(filename),QtCore.Qt.UserRole)

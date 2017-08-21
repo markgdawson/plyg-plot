@@ -5,6 +5,9 @@ from MPLWidget import MPLWidget, MyNavigationToolbar
 
 
 class PlotWindow(QtWidgets.QMainWindow):
+
+    sigNewPlot = QtCore.pyqtSignal(QtCore.QPoint)
+
     def __init__(self, plotter_factory, parent=None):
         super(PlotWindow, self).__init__(parent, QtCore.Qt.WindowMaximizeButtonHint)
 
@@ -16,7 +19,7 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.sidebar = QtWidgets.QWidget(self)
         self.sidebar.setLayout(QtWidgets.QVBoxLayout())
 
-        line_combo_box = LineComboBox(self, self.plot_line_model)
+        line_combo_box = LineComboBox(factory=plotter_factory, parent=self)
         self.sidebar.layout().addWidget(line_combo_box)
 
         self.sidebar.layout().addWidget(self.plot_line_view)
@@ -60,11 +63,9 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.toolbar.sigDeleteLine.connect(line_combo_box.delete_current)
         self.toolbar.sigConfigurePlot.connect(self.mplWidget.configure_plot)
         self.toolbar.sigStatusText.connect(self.text.setText)
+        self.toolbar.sigNewPlot.connect(self.new_plot)
 
         line_combo_box.sigCurrentItemChanged.connect(self.toolbar.current_item_changed)
 
-    def show(self):
-        super(PlotWindow, self).show()
-        # fix widget width to Navigation toolbar width
-        #width = self.toolbar.width() + 20
-        #self.sidebar.setMinimumWidth(width)
+    def new_plot(self):
+        self.sigNewPlot.emit(self.pos())

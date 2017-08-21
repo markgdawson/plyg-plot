@@ -6,12 +6,11 @@ class LineComboBox(QtWidgets.QWidget):
 
     sigCurrentItemChanged = QtCore.pyqtSignal(object)
 
-    def __init__(self, parent=None, model=None):
+    def __init__(self, factory, parent=None):
         super(LineComboBox, self).__init__(parent)
 
         # setup default or provided model
-        if model is None:
-            model = PlotLineModel()
+        model = factory.model()
 
         self.setLayout(QtWidgets.QVBoxLayout())
 
