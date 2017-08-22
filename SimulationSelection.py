@@ -1,8 +1,29 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
-from TorqueFile import TorqueFile
-from GeometryFiles import Geom
-import os
 import ui_SimulationSelectionDialog
+from Simulation import Simulation
+
+
+class SimulationSelectionWidget(QtWidgets.QPushButton):
+    sigSimulationSelected = QtCore.pyqtSignal(Simulation)
+
+    def __init__(self, parent=None):
+        super(SimulationSelectionWidget, self).__init__(parent)
+
+        self.default_text = "Select Simulation..."
+        self.setText("Select Simulation...")
+        self.setDefault(True)
+        self.clicked.connect(self.__select_simulation)
+
+        self.diag = None
+
+    def __select_simulation(self):
+        self.diag = SimulationSelectionDialog(self)
+        self.diag.setModal(True)
+        self.diag.setWindowModality(QtCore.Qt.WindowModal)
+        accepted = self.diag.exec()
+        if accepted:
+            self.sigSimulationSelected.emit(self.diag.simulation())
+            self.setText(self.diag.simulation_label())
 
 
 # maintains a list of simulations, and maintains parent.simulation as the current simulation object
@@ -47,7 +68,7 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
             self.model.endRemoveRows()
 
     def selection_changed(self, index):
-        rows = sorted(set(i.row() for i in index.indexes()))
+        rows = self.rows_from_indexes(index.indexes())
         if len(rows) > 0:
             labels = []
             for row in rows:
@@ -60,6 +81,23 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
 
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(selected)
         self.status.setText(text)
+
+    def rows_from_indexes(self, indexes):
+        return sorted(set(i.row() for i in indexes))
+
+    def simulation(self):
+        indexes = self.tableView.selectedIndexes()
+        if len(indexes) > 0:
+            return self.model.simulation(indexes[0])
+        else:
+            return None
+
+    def simulation_label(self):
+        indexes = self.tableView.selectedIndexes()
+        if len(indexes) > 0:
+            return self.model.item(indexes[0].row(),0).text()
+        else:
+            return None
 
 
 class SimulationTableDelegate(QtWidgets.QStyledItemDelegate):
@@ -142,70 +180,6 @@ class SimulationModel(QtGui.QStandardItemModel):
         row = index.row()
         item = self.item(row, 1)
         return item.data(role=QtCore.Qt.UserRole)
-
-
-class Simulation(QtCore.QObject):
-    sigUpdateProgress = QtCore.pyqtSignal()
-    sigLoaded = QtCore.pyqtSignal()
-
-    def __init__(self, parent, geo_file):
-        super(Simulation, self).__init__(parent)
-
-        self._geom = None
-        self.geo_file_name = geo_file
-
-        self.__sig_emitDataChanged = None
-
-        ThreadLoader(self, self).start()
-
-        # progress update timer
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.sigUpdateProgress.emit)
-        self.timer.start(500)
-        self.sigLoaded.connect(lambda: [self.timer.stop(), self.sigUpdateProgress.emit()])
-
-        torque_file = os.path.join(os.path.dirname(geo_file), 'TORQUE.csv')
-        if os.path.isfile(torque_file):
-            self._torque = TorqueFile(torque_file)
-        else:
-            self._torque = None
-
-    def connect_signals_to_item(self, item):
-        self.__sig_emitDataChanged = item.emitDataChanged
-        self.sigUpdateProgress.connect(self.__sig_emitDataChanged)
-
-    def disconnect_signals_from_item(self):
-        if self.__sig_emitDataChanged is not None:
-            self.sigUpdateProgress.disconnect(self.__sig_emitDataChanged)
-
-    def torque(self):
-        return self._torque
-
-    def geom(self):
-        return self._geom
-
-    def load(self):
-        self._geom = Geom(self.geo_file_name)
-        self._geom.load()
-        self.sigLoaded.emit()
-        self._geom.geo.cache()
-
-    def progress(self):
-        if self._geom is not None and self._geom.geo is not None:
-            return self._geom.geo.progress, self._geom.geo.progress_total
-        else:
-            return None, None
-
-
-# creates the simulation Geom object (including loading the file) in a seperate thread
-class ThreadLoader(QtCore.QThread):
-
-    def __init__(self, parent, load_obj):
-        QtCore.QThread.__init__(self, parent)
-        self.load_obj = load_obj
-
-    def run(self):
-        self.load_obj.load()
 
 SimulationModelInstance = SimulationModel()
 

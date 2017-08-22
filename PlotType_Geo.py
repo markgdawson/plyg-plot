@@ -1,7 +1,6 @@
 from PyQt5 import QtWidgets
-
+from SimulationSelection import SimulationSelectionWidget
 from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
-from SimulationSelectionDialog import SimulationComboBox
 
 
 class PlotLineGeo(PlotLine):
@@ -23,8 +22,8 @@ class PlotLineGeoView(PlotLineView):
         self.layout = QtWidgets.QVBoxLayout()
 
         # sets the self.simulation object
-        sim_select = SimulationComboBox(self)
-        self.layout.addWidget(sim_select)
+        button = SimulationSelectionWidget()
+        self.layout.addWidget(button)
 
         # add regenerate button
         button = QtWidgets.QPushButton()
