@@ -7,6 +7,7 @@ import os
 class Simulation(QtCore.QObject):
     sigUpdateProgress = QtCore.pyqtSignal()
     sigLoaded = QtCore.pyqtSignal()
+    sigUpdateLabel = QtCore.pyqtSignal(str)
 
     def __init__(self, parent, geo_file):
         super(Simulation, self).__init__(parent)
@@ -55,6 +56,10 @@ class Simulation(QtCore.QObject):
             return self._geom.geo.progress, self._geom.geo.progress_total
         else:
             return None, None
+
+    def set_label(self, label):
+        self._label = label
+        self.sigUpdateLabel.emit(label)
 
 
 # creates the simulation Geom object (including loading the file) in a seperate thread

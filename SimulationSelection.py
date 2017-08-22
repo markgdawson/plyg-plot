@@ -14,16 +14,17 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         self.setDefault(True)
         self.clicked.connect(self.__select_simulation)
 
-        self.diag = None
+        self.dialog = None
 
     def __select_simulation(self):
-        self.diag = SimulationSelectionDialog(self)
-        self.diag.setModal(True)
-        self.diag.setWindowModality(QtCore.Qt.WindowModal)
-        accepted = self.diag.exec()
+        self.dialog = SimulationSelectionDialog(self)
+        self.dialog.setModal(True)
+        self.dialog.setWindowModality(QtCore.Qt.WindowModal)
+        accepted = self.dialog.exec()
         if accepted:
-            self.sigSimulationSelected.emit(self.diag.simulation())
-            self.setText(self.diag.simulation_label())
+            self.sigSimulationSelected.emit(self.dialog.simulation())
+            self.setText(self.dialog.simulation_label())
+            self.dialog.simulation().sigUpdateLabel.connect(self.setText)
 
 
 # maintains a list of simulations, and maintains parent.simulation as the current simulation object
@@ -130,6 +131,15 @@ class SimulationModel(QtGui.QStandardItemModel):
     def __init__(self, parent=None):
         super(SimulationModel, self).__init__(parent)
 
+        # ensure that item text and simulation label remain up to date
+        self.itemChanged.connect(self.update_simulation_label)
+
+    def update_simulation_label(self, item):
+        if item.index().column()==0:
+            simulation = self.simulation(item.index())
+            if simulation is not None:
+                simulation.set_label(item.text())
+
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...):
         if role == QtCore.Qt.TextAlignmentRole:
             return QtCore.QVariant(int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter))
@@ -157,15 +167,17 @@ class SimulationModel(QtGui.QStandardItemModel):
 
     def add_simulation(self, simulation):
         self.insertRow(0)
+        label = "Simulation %d" % self.rowCount()
 
         # simulation item + simulation object in userData (column 1)
         item = QtGui.QStandardItem()
-        item.setText("Simulation %d" % (self.rowCount()))
+        item.setText(label)
         self.setItem(0, 0, item)
 
         item = QtGui.QStandardItem()
         item.setText("Yes")
         item.setData(simulation, QtCore.Qt.UserRole)
+        simulation.set_label(label)
         self.setItem(0, 1, item)
 
         # update progress bar twice a second
@@ -179,7 +191,10 @@ class SimulationModel(QtGui.QStandardItemModel):
     def simulation(self, index):
         row = index.row()
         item = self.item(row, 1)
-        return item.data(role=QtCore.Qt.UserRole)
+        if item is None:
+            return None
+        else:
+            return item.data(role=QtCore.Qt.UserRole)
 
 SimulationModelInstance = SimulationModel()
 
