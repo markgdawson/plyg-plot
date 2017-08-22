@@ -1,5 +1,4 @@
 from PyQt5 import QtWidgets, QtCore
-from AggregateProgressBar import AggregateProgressBar
 from LineComboBox import LineComboBox
 from MPLWidget import MPLWidget, MyNavigationToolbar
 
@@ -14,11 +13,6 @@ class PlotWindow(QtWidgets.QMainWindow):
         # create plot line model and view
         self.plot_line_model = plotter_factory.model()
         self.plot_line_view = plotter_factory.view(self)
-
-        # add status progress bar
-        self.progress = AggregateProgressBar()
-        self.statusBar().addPermanentWidget(self.progress)
-        self.statusBar().showMessage("")
 
         # create sidebar
         self.sidebar = QtWidgets.QWidget(self)
