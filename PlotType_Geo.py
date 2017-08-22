@@ -12,10 +12,8 @@ class PlotLineGeo(PlotLine):
 
     def update(self):
         geom = self.simulation().geom()
-        if not geom.geo.loaded:
-            print('Loading %s', self.simulation().geo_file)
-
-        self._xdata, self._ydata = geom.getPatchFaces(range(12, 14))
+        if geom is not None:
+            self._xdata, self._ydata = geom.getPatchFaces(range(12, 14))
 
 
 class PlotLineGeoView(PlotLineView):

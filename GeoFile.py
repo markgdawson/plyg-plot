@@ -3,23 +3,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def default_progress_inc_func(progress):
+    pass
+
+def default_progress_init_func(total_progress):
+    pass
+
 class GeoFile:
     def __init__(self, fileName):
         self.fileName = fileName
         self.loaded = False
 
-    def read(self):
+    def read(self, progress_init_func=default_progress_init_func, progress_inc_func=default_progress_inc_func, message_func=print):
         if not self.loaded:
             with open(self.fileName) as fileobj:
                 ver, nNodes, nFaces, self.nElems = map(int, fileobj.readline().split())
 
-                print('Reading nodes...')
+                progress_init_func(nNodes + nFaces + self.nElems*2)
+
+                message_func('Reading nodes...')
                 self.x = np.empty((nNodes, 3))
                 for iNode in range(nNodes):
                     tmp = fileobj.readline().split()
                     self.x[iNode, :] = list(map(float, tmp[0:3]))
+                    progress_inc_func()
 
-                print('Reading faces...')
+                message_func('Reading faces...')
 
                 self.faceNodes = []
                 self.multiMeshFaceIndex = np.empty(nFaces, dtype=int)
@@ -35,8 +44,9 @@ class GeoFile:
                     self.multiMeshFaceIndex[iFace] = int(tmp[nVerticesFace])
                     self.face2patch[iFace] = int(tmp[nVerticesFace+1])
                     self.patch2face[self.face2patch[iFace]] = iFace
+                    progress_inc_func()
 
-                print('Reading elements...')
+                message_func('Reading elements...')
 
                 self.elemFaces = []
                 self.materialElem = np.empty(self.nElems, dtype=int)
@@ -53,14 +63,16 @@ class GeoFile:
                     self.materialElem[iElem] = int(tmp[nFacesElem])
                     self.elem2patch[iElem] = int(tmp[nFacesElem+1])
                     self.patch2elem[self.elem2patch[iElem]] = iElem
+                    progress_inc_func()
 
-                print('Reading adjacency...')
+                message_func('Reading adjacency...')
                 self.adjElem = []
                 for iElem in range(self.nElems):
                     tmp = fileobj.readline().split()
                     tmp = list(map(int, tmp[0:nFacesElem]))
                     tmp = [x - 1 for x in tmp]
                     self.adjElem.append(tmp)
+                    progress_inc_func()
 
                 self.facePatches = np.unique(self.face2patch)
                 # remove facePatch 0 (since this refers to no patch)

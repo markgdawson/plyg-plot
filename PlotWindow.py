@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
-
+from AggregateProgressBar import AggregateProgressBar
 from LineComboBox import LineComboBox
 from MPLWidget import MPLWidget, MyNavigationToolbar
 
@@ -14,6 +14,11 @@ class PlotWindow(QtWidgets.QMainWindow):
         # create plot line model and view
         self.plot_line_model = plotter_factory.model()
         self.plot_line_view = plotter_factory.view(self)
+
+        # add status progress bar
+        self.progress = AggregateProgressBar()
+        self.statusBar().addPermanentWidget(self.progress)
+        self.statusBar().showMessage("")
 
         # create sidebar
         self.sidebar = QtWidgets.QWidget(self)
@@ -37,10 +42,6 @@ class PlotWindow(QtWidgets.QMainWindow):
         # add stretch
         self.sidebar.layout().addStretch()
 
-        # add status text
-        self.text = QtWidgets.QLabel()
-        self.sidebar.layout().addWidget(self.text)
-
         # add splitter
         splitter = QtWidgets.QSplitter()
         self.setCentralWidget(splitter)
@@ -62,7 +63,7 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.toolbar.sigNewLine.connect(self.plot_line_model.new_line)
         self.toolbar.sigDeleteLine.connect(line_combo_box.delete_current)
         self.toolbar.sigConfigurePlot.connect(self.mplWidget.configure_plot)
-        self.toolbar.sigStatusText.connect(self.text.setText)
+        self.toolbar.sigStatusText.connect(self.statusBar().showMessage)
         self.toolbar.sigNewPlot.connect(self.new_plot)
 
         line_combo_box.sigCurrentItemChanged.connect(self.toolbar.current_item_changed)

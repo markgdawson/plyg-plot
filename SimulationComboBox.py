@@ -2,12 +2,11 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from QPushButtonMinSize import QPushButtonMinSize
 from TorqueFile import TorqueFile
 from GeoFile import Geom
-import os
+import os, time
 
 
 # maintains a list of simulations, and maintains parent.simulation as the current simulation object
 class SimulationComboBox(QtWidgets.QWidget):
-
     def __init__(self, parent=None):
         super(SimulationComboBox, self).__init__(parent)
 
@@ -56,7 +55,9 @@ class SimulationComboBox(QtWidgets.QWidget):
             if accepted:
                 item = QtGui.QStandardItem()
                 item.setText(text)
-                item.setData(Simulation(filename), QtCore.Qt.UserRole)
+                view = self.parent()
+                simulation = Simulation(self, filename, view)
+                item.setData(simulation, QtCore.Qt.UserRole)
                 self.model.insertRow(0, item)
 
 
@@ -64,22 +65,69 @@ class SimulationModel(QtGui.QStandardItemModel):
     pass
 
 
-class Simulation:
-    def __init__(self, geo_file):
-        self.geo_file = geo_file
-        self.torque_file = os.path.join(os.path.dirname(geo_file), 'TORQUE.csv')
+class Simulation(QtCore.QObject):
+
+    def __init__(self, parent, geo_file, view):
+        super(Simulation, self).__init__(parent)
+
         self._geom = None
-        self._torque = None
+
+        thread = GeomFileLoader(self, geo_file)
+        thread.sigFileLoadFinished.connect(self.__geom_loaded)
+        thread.sigProgressDoneTasks.connect(view.progress_bar_tasks_done)
+        thread.sigProgressIncTasks.connect(view.progress_bar_inc_tasks)
+        thread.sigProgressMessage.connect(view.progress_message)
+        thread.start()
+
+        torque_file = os.path.join(os.path.dirname(geo_file), 'TORQUE.csv')
+        if os.path.isfile(torque_file):
+            self._torque = TorqueFile(torque_file)
+        else:
+            self._torque = None
 
     def torque(self):
-        if self._torque is None:
-            self._torque = TorqueFile(self.torque_file)
         return self._torque
 
     def geom(self):
-        if self._geom is None:
-            self._geom = Geom(self.geo_file)
-
         return self._geom
+
+    def __geom_loaded(self, geom):
+        self._geom = geom
+
+
+class GeomFileLoader(QtCore.QThread):
+
+    sigFileLoadFinished = QtCore.pyqtSignal(Geom)
+    sigProgressDoneTasks = QtCore.pyqtSignal(int)
+    sigProgressIncTasks = QtCore.pyqtSignal(int)
+    sigProgressMessage = QtCore.pyqtSignal(str)
+
+    def __init__(self, parent, geo_file):
+        QtCore.QThread.__init__(self, parent)
+        self.geo_file = geo_file
+
+        self.progress_step = 0
+        self.progress_count = 0
+        self.progress_total = 0
+
+    def run(self):
+        geom = Geom(self.geo_file)
+        geom.geo.read(progress_init_func=self.tasks_init, progress_inc_func=self.tasks_done, message_func=self.message)
+        self.sigFileLoadFinished.emit(geom)
+
+    def message(self, msg):
+        self.sigProgressMessage.emit(msg)
+
+    def tasks_init(self, total):
+        self.progress_total = total
+        self.progress_step = int(total/100)
+
+        self.sigProgressIncTasks.emit(total)
+
+    def tasks_done(self):
+        self.progress_count += 1
+        if self.progress_count == self.progress_step:
+            self.sigProgressDoneTasks.emit(self.progress_count)
+            self.progress_count = 0
 
 SimulationModelInstance = SimulationModel()

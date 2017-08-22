@@ -101,11 +101,13 @@ class PlotLineModel(QtGui.QStandardItemModel):
 
 
 class PlotLineView(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super(PlotLineView, self).__init__(parent)
+    def __init__(self, plot_window):
+        super(PlotLineView, self).__init__(plot_window)
         self._plot_line = None
         self._simulation = None
         self.setVisible(False)
+
+        self.plot_window = plot_window
 
     def set_plot_line(self, plot_line):
         self._plot_line = plot_line
@@ -123,3 +125,12 @@ class PlotLineView(QtWidgets.QWidget):
 
     def simulation(self):
         return self._simulation
+
+    def progress_bar_inc_tasks(self, num_tasks):
+        self.plot_window.progress.inc_tasks(num_tasks)
+
+    def progress_bar_tasks_done(self, num_tasks):
+        self.plot_window.progress.tasks_done(num_tasks)
+
+    def progress_message(self, msg):
+        self.plot_window.statusBar().showMessage(msg)
