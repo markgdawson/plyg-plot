@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 
 from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
-from SimulationComboBox import SimulationComboBox
+from SimulationSelectionDialog import SimulationComboBox
 
 
 class PlotLineGeo(PlotLine):
@@ -13,7 +13,7 @@ class PlotLineGeo(PlotLine):
     def update(self):
         geom = self.simulation().geom()
         if geom is not None:
-            self._xdata, self._ydata = geom.getPatchFaces(range(12, 14))
+            self._xdata, self._ydata = geom.get_patch_faces(range(12, 14))
 
 
 class PlotLineGeoView(PlotLineView):
