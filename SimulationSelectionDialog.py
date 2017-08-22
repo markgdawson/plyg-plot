@@ -6,7 +6,7 @@ import ui_SimulationSelectionDialog
 
 
 # maintains a list of simulations, and maintains parent.simulation as the current simulation object
-class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.Ui_SimulationSelectionDialog)
+class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.Ui_SimulationSelectionDialog):
     def __init__(self, parent=None):
         super(SimulationSelectionDialog, self).__init__(parent)
 
