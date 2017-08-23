@@ -121,10 +121,7 @@ class PlotLineView(QtWidgets.QWidget):
             self._plot_line.regenerate()
 
     def set_simulation(self, simulation):
-        self._simulation = simulation
-
-    def simulation(self):
-        return self._simulation
+        self._plot_line.set_simulation(simulation)
 
     def progress_bar_inc_tasks(self, num_tasks):
         self.plot_window.progress.inc_tasks(num_tasks)

@@ -10,9 +10,11 @@ class PlotLineGeo(PlotLine):
         super(PlotLineGeo, self).__init__(model)
 
     def update(self):
-        geom = self.simulation().geom()
-        if geom is not None:
-            self._xdata, self._ydata = geom.get_patch_faces(range(12, 14))
+        sim = self.simulation()
+        if sim is not None:
+            geom = self.simulation().geom()
+            if geom is not None:
+                self._xdata, self._ydata = geom.get_patch_faces(range(12, 14))
 
 
 class PlotLineGeoView(PlotLineView):
@@ -23,6 +25,7 @@ class PlotLineGeoView(PlotLineView):
 
         # sets the self.simulation object
         button = SimulationSelectionWidget()
+        button.sigSimulationSelected.connect(self.set_simulation)
         self.layout.addWidget(button)
 
         # add regenerate button
@@ -36,8 +39,15 @@ class PlotLineGeoView(PlotLineView):
 
     def update(self, **kwargs):
         plot_line = self.plot_line()
-        plot_line.set_simulation(self.simulation())
-        self.regenerate()
+        sim = plot_line.simulation()
+        try:
+            if sim is None:
+                raise ValueError("No Simulation Selected")
+            elif not sim.loaded:
+                raise ValueError("Simulation Not Loaded. Wait for simulation to load.")
+            self.regenerate()
+        except ValueError as err:
+            QtWidgets.QMessageBox.information(self, "Error", str(err), QtWidgets.QMessageBox.Ok)
 
 
 class GeoLineFactory:

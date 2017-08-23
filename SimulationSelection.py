@@ -13,6 +13,7 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         self.setText("Select Simulation...")
         self.setDefault(True)
         self.clicked.connect(self.__select_simulation)
+        self.simulation = None
 
         self.dialog = None
 
@@ -22,9 +23,23 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         self.dialog.setWindowModality(QtCore.Qt.WindowModal)
         accepted = self.dialog.exec()
         if accepted:
-            self.sigSimulationSelected.emit(self.dialog.simulation())
-            self.setText(self.dialog.simulation_label())
-            self.dialog.simulation().sigUpdateLabel.connect(self.setText)
+            self.simulation = self.dialog.simulation()
+            self.sigSimulationSelected.emit(self.simulation)
+            self.update_label
+            self.simulation.sigUpdateLabel.connect(self.update_label)
+            self.simulation.sigUpdateProgress.connect(self.update_label)
+
+    def update_label(self):
+        if self.simulation is None:
+            self.setText(self.default_text)
+        else:
+            progress, progress_total = self.simulation.progress()
+            if progress_total - progress == 0:
+                text = self.simulation.label()
+            else:
+                percent = round((progress/progress_total)*100)
+                text = "%s (%d %%)" % (self.simulation.label(), percent)
+            self.setText(text)
 
 
 # maintains a list of simulations, and maintains parent.simulation as the current simulation object
@@ -92,14 +107,6 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
             return self.model.simulation(indexes[0])
         else:
             return None
-
-    def simulation_label(self):
-        indexes = self.tableView.selectedIndexes()
-        if len(indexes) > 0:
-            return self.model.item(indexes[0].row(),0).text()
-        else:
-            return None
-
 
 class SimulationTableDelegate(QtWidgets.QStyledItemDelegate):
     def paint(self, painter: QtGui.QPainter, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex):

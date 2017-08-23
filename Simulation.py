@@ -14,6 +14,7 @@ class Simulation(QtCore.QObject):
 
         self._geom = None
         self.geo_file_name = geo_file
+        self.loaded = False
 
         self.__sig_emitDataChanged = None
 
@@ -48,6 +49,7 @@ class Simulation(QtCore.QObject):
     def load(self):
         self._geom = Geom(self.geo_file_name)
         self._geom.load()
+        self.loaded = True
         self.sigLoaded.emit()
         self._geom.geo.cache()
 
@@ -60,6 +62,9 @@ class Simulation(QtCore.QObject):
     def set_label(self, label):
         self._label = label
         self.sigUpdateLabel.emit(label)
+
+    def label(self):
+        return self._label
 
 
 # creates the simulation Geom object (including loading the file) in a seperate thread
