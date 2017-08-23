@@ -5,6 +5,8 @@ from Simulation import Simulation
 
 class SimulationSelectionWidget(QtWidgets.QPushButton):
 
+    sigSimulationLoaded = QtCore.pyqtSignal()
+
     def __init__(self, parent=None):
         super(SimulationSelectionWidget, self).__init__(parent)
 
@@ -26,6 +28,7 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
             self.update_label()
             self.simulation.sigUpdateLabel.connect(self.update_label)
             self.simulation.sigUpdateProgress.connect(self.update_label)
+            self.simulation.sigLoaded.connect(self.sigSimulationLoaded.emit)
 
     def update_label(self):
         if self.simulation is None:
