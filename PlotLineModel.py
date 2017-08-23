@@ -3,21 +3,25 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 class PlotLine:
 
-    def __init__(self, model):
+    def __init__(self):
         self._xdata = []
         self._ydata = []
         self._label = ""
         self._mpl_line = None
-        self.model = model
+        self._view = None
         self.stditem = QtGui.QStandardItem()
         self.stditem.setData(self, QtCore.Qt.UserRole)
         self._simulation = None
 
-        if self.model is not None:
-            self.set_label(self.model.default_label())
+        # callbacks to notify model of changes
+        self._label_notify = None
+        self._data_notify = None
 
-            self.model.insertRow(0, self.stditem)
-            self.model.lines_created += 1
+    def set_view(self, view):
+        self._view = view
+
+    def view(self):
+        return self._view
 
     def set_simulation(self, simulation):
         self._simulation = simulation
@@ -33,8 +37,7 @@ class PlotLine:
             line.set_label(label)
 
         self.stditem.setText(label)
-        if self.is_plotted():
-            self.model.sigLegendChanged.emit()
+        self.label_changed()
 
     def label(self):
         return self._label
@@ -60,9 +63,17 @@ class PlotLine:
         if line is not None:
             line.remove()
 
+    def set_callbacks(self, label_notify, data_notify):
+        self._label_notify = label_notify
+        self._data_notify = data_notify
+
+    def label_changed(self):
+        if self._label_notify is not None:
+            self._label_notify()
+
     def data_changed(self):
-        if self.model is not None:
-            self.model.sigPlotDataChanged.emit(self.model.createIndex(0, 0), self.model.createIndex(0, self.model.rowCount()))
+        if self._data_notify is not None:
+            self._data_notify(self)
 
     def is_plotted(self):
         return self._mpl_line is not None
@@ -86,9 +97,16 @@ class PlotLineModel(QtGui.QStandardItemModel):
         if plot_line is not None:
             plot_line.unplot()
         self.removeRow(index)
+        self.sigLegendChanged.emit()
 
     def new_line(self):
-        self.PlotLineClass(model=self)
+        plot_line = self.PlotLineClass()
+        plot_line.set_label(self.default_label())
+        plot_line.set_callbacks(self.label_changed, self.data_changed)
+
+        self.insertRow(0, plot_line.stditem)
+        self.lines_created += 1
+        self.sigLegendChanged.emit()
 
     def set_label(self, index, string):
         if self.item(index) is not None:
@@ -108,6 +126,12 @@ class PlotLineModel(QtGui.QStandardItemModel):
             return None
         else:
             return item.data(QtCore.Qt.UserRole)
+
+    def data_changed(self, plot_line):
+        self.sigPlotDataChanged.emit(plot_line)
+
+    def label_changed(self):
+        self.sigLegendChanged.emit()
 
 
 class PlotLineView(QtWidgets.QWidget):

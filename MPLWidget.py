@@ -103,13 +103,14 @@ class MPLWidget(QtWidgets.QWidget):
         line_model.sigPlotDataChanged.connect(self.plot)
 
     def regenerate_legend(self):
-        if self.ax.legend_ is None:
+        if self.ax.legend_ is not None:
+            self.ax.legend_.remove()
             self.ax.legend()
         else:
             self.ax.legend(loc="best")
 
-            if self.ax.legend_ is not None:
-                self.ax.legend_.draggable(True)
+        if self.ax.legend_ is not None:
+            self.ax.legend_.draggable(True)
 
         self.canvas.draw()
 

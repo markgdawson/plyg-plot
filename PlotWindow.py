@@ -42,7 +42,7 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.plot_line_model.rowsRemoved.connect(mpl_widget.plot)
 
         # connect toolbar signals
-        self.toolbar.sigNewLine.connect(self.plot_line_model.new_line)
+        self.toolbar.sigNewLine.connect(sidebar.new_line)
         self.toolbar.sigConfigurePlot.connect(mpl_widget.configure_plot)
         self.toolbar.sigStatusText.connect(self.statusBar().showMessage)
         self.toolbar.sigNewPlot.connect(lambda: self.sigNewPlot.emit(self.pos()))

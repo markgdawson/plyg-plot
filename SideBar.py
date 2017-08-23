@@ -22,11 +22,14 @@ class SideBar(QtWidgets.QWidget):
         self.label_editor.setEnabled(False)
         self.label_editor.textChanged.connect(self.update_label)
 
+        self.stack = QtWidgets.QStackedWidget(self)
+
         # layout
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().addWidget(self.combo_box)
         self.layout().addWidget(self.label_editor)
         self.layout().addWidget(plot_line_view)
+        self.layout().addWidget(self.stack)
         self.setMinimumWidth(250)
 
         # add stretch
@@ -56,3 +59,6 @@ class SideBar(QtWidgets.QWidget):
 
     def current_item(self):
         return self.model.line(self.combo_box.currentIndex())
+
+    def new_line(self):
+        self.model.new_line()

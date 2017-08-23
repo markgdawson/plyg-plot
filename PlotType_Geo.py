@@ -6,9 +6,6 @@ from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
 class PlotLineGeo(PlotLine):
     linestyle = '-'
 
-    def __init__(self, model=None):
-        super(PlotLineGeo, self).__init__(model)
-
     def update(self):
         sim = self.simulation()
         if sim is not None:
