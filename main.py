@@ -44,11 +44,11 @@ class WindowFactory(QtWidgets.QDialog):
 
         # add combo box
         self.layout().addWidget(QtWidgets.QLabel("Plot Type:"))
-        self.combo_box = QtWidgets.QComboBox(self)
-        self.layout().addWidget(self.combo_box)
+        self.line_list = QtWidgets.QComboBox(self)
+        self.layout().addWidget(self.line_list)
 
         for name, factory in factories:
-            self.combo_box.addItem(name, userData=factory)
+            self.line_list.addItem(name, userData=factory)
 
         # create and connect buttons
         buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)

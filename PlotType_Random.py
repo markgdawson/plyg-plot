@@ -7,7 +7,7 @@ class PlotLineRandom(PlotLine):
     def __init__(self, model=None):
         super(PlotLineRandom, self).__init__(model)
 
-    def update(self):
+    def generate(self):
         self._xdata = range(10)
         self._ydata = [random.random() for i in self._xdata]
 

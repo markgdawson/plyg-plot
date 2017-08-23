@@ -125,11 +125,11 @@ class MPLWidget(QtWidgets.QWidget):
             ax = all_axes[0]
 
         for line in self.line_model.lines():
-            if line.mpl_line() is None:
+            if line.line_handle() is None:
                 l, = ax.plot(line.xdata(), line.ydata(), line.linestyle, label=line.label())
-                line.set_mpl_line(l)
+                line.set_line_handle(l)
             else:
-                line.mpl_line().set_data(line.xdata(), line.ydata())
+                line.line_handle().set_data(line.xdata(), line.ydata())
 
         ax.relim()
         ax.autoscale_view()

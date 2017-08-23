@@ -6,16 +6,11 @@ class PlotLine:
     def __init__(self):
         self._xdata = []
         self._ydata = []
-        self._label = ""
-        self._mpl_line = None
+        self._line_handle = None
         self._view = None
         self.stditem = QtGui.QStandardItem()
         self.stditem.setData(self, QtCore.Qt.UserRole)
         self._simulation = None
-
-        # callbacks to notify model of changes
-        self._label_notify = None
-        self._data_notify = None
 
     def set_view(self, view):
         self._view = view
@@ -29,24 +24,14 @@ class PlotLine:
     def simulation(self):
         return self._simulation
 
-    def set_label(self, label):
-        self._label = label
-
-        line = self.mpl_line()
-        if line is not None:
-            line.set_label(label)
-
-        self.stditem.setText(label)
-        self.label_changed()
-
     def label(self):
-        return self._label
+        return self.stditem.text()
 
-    def set_mpl_line(self, mpl_line):
-        self._mpl_line = mpl_line
+    def set_line_handle(self, line_handle):
+        self._line_handle = line_handle
 
-    def mpl_line(self):
-        return self._mpl_line
+    def line_handle(self):
+        return self._line_handle
 
     def xdata(self):
         return self._xdata
@@ -55,11 +40,12 @@ class PlotLine:
         return self._ydata
 
     def regenerate(self):
-        self.update()
-        self.data_changed()
+        self.generate()
+        model = self.stditem.model()
+        model.sigPlotDataChanged.emit(self)
 
     def unplot(self):
-        line = self.mpl_line()
+        line = self.line_handle()
         if line is not None:
             line.remove()
 
@@ -67,16 +53,8 @@ class PlotLine:
         self._label_notify = label_notify
         self._data_notify = data_notify
 
-    def label_changed(self):
-        if self._label_notify is not None:
-            self._label_notify()
-
-    def data_changed(self):
-        if self._data_notify is not None:
-            self._data_notify(self)
-
-    def is_plotted(self):
-        return self._mpl_line is not None
+    def generate(self):
+        pass
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
@@ -88,30 +66,35 @@ class PlotLineModel(QtGui.QStandardItemModel):
         super(PlotLineModel, self).__init__(parent)
         self.lines_created = 0
         self.PlotLineFactory = plot_line_factory
+        self.itemChanged.connect(self.legend_changed)
 
-    def default_label(self):
-        return "Line %d" % (self.lines_created + 1)
+    def legend_changed(self, item):
+        # sync label to handle for changed item
+        plot_line = item.data(QtCore.Qt.UserRole)
+        handle = plot_line.line_handle()
+        handle.set_label(plot_line.label())
+        self.sigLegendChanged.emit()
 
     def delete_line(self, index):
         plot_line = self.line(index)
         if plot_line is not None:
             plot_line.unplot()
-        self.removeRow(index)
+        self.removeRow(index.row())
         self.sigLegendChanged.emit()
 
     def new_line(self):
         plot_line = self.PlotLineFactory.plot_line()
-        plot_line.set_label(self.default_label())
-        plot_line.set_callbacks(self.label_changed, self.data_changed)
         self.PlotLineFactory.view(plot_line)
 
-        self.insertRow(0, plot_line.stditem)
+        item = plot_line.stditem
+
+        default_label = "Line %d" % (self.lines_created + 1)
+        item.setText(default_label)
+
+        self.insertRow(0, item)
         self.lines_created += 1
         self.sigLegendChanged.emit()
-
-    def set_label(self, index, string):
-        if self.item(index) is not None:
-            self.line(index).set_label(string)
+        return item
 
     def lines(self):
         l = []
@@ -122,7 +105,7 @@ class PlotLineModel(QtGui.QStandardItemModel):
         return l
 
     def line(self, index):
-        item = self.item(index)
+        item = self.item(index.row())
         if item is None:
             return None
         else:

@@ -14,7 +14,7 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.plot_line_model = plotter_factory.model()
 
         # create sidebar
-        sidebar = SideBar(plotter_factory, self.plot_line_model, self)
+        sidebar = SideBar(plotter_factory, self)
 
         # create Matplotlib widget
         mpl_widget = MPLWidget(self.plot_line_model, self)

@@ -6,7 +6,7 @@ from PlotLineModel import PlotLine, PlotLineView, PlotLineModel, PlotLineFactory
 class PlotLineGeo(PlotLine):
     linestyle = '-'
 
-    def update(self):
+    def generate(self):
         sim = self.simulation()
         if sim is not None:
             geom = self.simulation().geom()
@@ -32,12 +32,12 @@ class PlotLineGeoView(PlotLineView):
         button.setText("Update")
         self.layout.addWidget(button)
 
-        button.clicked.connect(self.update)
+        button.clicked.connect(self.generate)
 
         self.setLayout(self.layout)
 
-    def update(self, **kwargs):
-        sim = self.sim_select.simulation()
+    def generate(self, **kwargs):
+        sim = self.sim_select.simulation
         try:
             if sim is None:
                 raise ValueError("No Simulation Selected")
