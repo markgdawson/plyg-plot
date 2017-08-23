@@ -5,7 +5,8 @@ import os, time
 
 
 class GeoFile:
-    def __init__(self, file_name):
+    def __init__(self, file_name, message_func=print):
+        self.message_func = message_func
         self.file_name = file_name
         self.loaded = False
 
@@ -28,9 +29,9 @@ class GeoFile:
         self.adjElem = []
         self.facePatches = None
 
-    def load(self, message_func=print):
+    def load(self):
         if self.load_cache_if_exists():
-            message_func('File loaded from cache...')
+            self.message_func('File loaded from cache...')
             return True
 
         with open(self.file_name) as file:
@@ -38,7 +39,7 @@ class GeoFile:
 
             self.progress_total = num_nodes + num_faces + self.num_elements * 2
 
-            message_func('Reading nodes...')
+            self.message_func('Reading nodes...')
 
             self.x = np.empty((num_nodes, 3))
             for iNode in range(num_nodes):
@@ -46,7 +47,7 @@ class GeoFile:
                 self.x[iNode, :] = list(map(float, tmp[0:3]))
                 self.progress += 1
 
-            message_func('Reading faces...')
+            self.message_func('Reading faces...')
 
             self.face_nodes = []
             self.multi_mesh_face_index = np.empty(num_faces, dtype=int)
@@ -64,7 +65,7 @@ class GeoFile:
                 self.patch2face[self.face2patch[iFace]] = iFace
                 self.progress += 1
 
-            message_func('Reading elements...')
+            self.message_func('Reading elements...')
 
             self.elemFaces = []
             self.materialElem = np.empty(self.num_elements, dtype=int)
@@ -85,7 +86,7 @@ class GeoFile:
                 num_faces_elements[iElem] = num_faces_element
                 self.progress += 1
 
-            message_func('Reading adjacency...')
+            self.message_func('Reading adjacency...')
             self.adjElem = []
             for iElem in range(self.num_elements):
                 tmp = file.readline().split()
@@ -103,6 +104,7 @@ class GeoFile:
     def cache(self):
         if self.cached:
             return
+        self.message_func("Caching...")
         np.savez_compressed(self.file_name,
                             num_elements=self.num_elements,
                             face2patch=self.face2patch,
@@ -116,6 +118,7 @@ class GeoFile:
                             face_nodes=self.face_nodes,
                             facePatches=self.facePatches)
         self.cached = True
+        self.message_func("Cached")
 
     def load_cache_if_exists(self):
         cache_file_name = "%s.npz" % self.file_name
