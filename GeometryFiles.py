@@ -13,7 +13,7 @@ class GeoFile:
         # initialise progress counters
         self.progress = 0
         self.progress_total = 0
-        self.cached = True
+        self.cached = False
 
         # declare variables
         self.num_elements = None
@@ -30,10 +30,16 @@ class GeoFile:
         self.facePatches = None
 
     def load(self):
+        # if already loaded, do nothin
+        if self.loaded:
+            return True
+
+        # if a cache file exists, load from the cache file
         if self.load_cache_if_exists():
             self.message_func('File loaded from cache...')
             return True
 
+        # if needs loading, load from .geo file
         with open(self.file_name) as file:
             ver, num_nodes, num_faces, self.num_elements = map(int, file.readline().split())
 
@@ -126,10 +132,10 @@ class GeoFile:
         if not os.path.isfile(cache_file_name):
             return False
         else:
-            self.load_cached(cache_file_name)
+            self.load_from_cache_file(cache_file_name)
             return True
 
-    def load_cached(self, file_name):
+    def load_from_cache_file(self, file_name):
             saved = np.load(file_name)
             self.progress_total = len(saved.keys())
             self.progress = 0
@@ -141,6 +147,7 @@ class GeoFile:
                 self.progress += 1
 
             self.cached = True
+            self.loaded = True
             '''
             typical load times:
                 num_elements  0.31
