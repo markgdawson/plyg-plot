@@ -4,7 +4,6 @@ from Simulation import Simulation
 
 
 class SimulationSelectionWidget(QtWidgets.QPushButton):
-    sigSimulationSelected = QtCore.pyqtSignal(Simulation)
 
     def __init__(self, parent=None):
         super(SimulationSelectionWidget, self).__init__(parent)
@@ -24,8 +23,7 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         accepted = self.dialog.exec()
         if accepted:
             self.simulation = self.dialog.simulation()
-            self.sigSimulationSelected.emit(self.simulation)
-            self.update_label
+            self.update_label()
             self.simulation.sigUpdateLabel.connect(self.update_label)
             self.simulation.sigUpdateProgress.connect(self.update_label)
 
@@ -34,11 +32,10 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
             self.setText(self.default_text)
         else:
             progress, progress_total = self.simulation.progress()
-            if progress_total - progress == 0:
-                text = self.simulation.label()
-            else:
+            text = "Simulation: %s" % self.simulation.label()
+            if progress_total - progress != 0:
                 percent = round((progress/progress_total)*100)
-                text = "%s (%d %%)" % (self.simulation.label(), percent)
+                text += " (%d %%)" % percent
             self.setText(text)
 
 
