@@ -23,7 +23,7 @@ class Simulation(QtCore.QObject):
         # progress update timer
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.sigUpdateProgress.emit)
-        self.timer.start(500)
+        self.timer.start(4000)
         self.sigLoaded.connect(lambda: [self.timer.stop(), self.sigUpdateProgress.emit()])
 
         torque_file = os.path.join(os.path.dirname(geo_file), 'TORQUE.csv')
