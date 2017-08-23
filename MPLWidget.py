@@ -89,7 +89,7 @@ class MPLWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
 
         # Create canvas on which self.figure is plotted
-        self.figure = plt.figure()
+        self.figure, self.ax = plt.subplots()
         self.canvas = FigureCanvas(self.figure)
 
         self.layout().addWidget(self.canvas)
@@ -103,13 +103,15 @@ class MPLWidget(QtWidgets.QWidget):
         line_model.sigPlotDataChanged.connect(self.plot)
 
     def regenerate_legend(self):
-        all_axes = self.figure.get_axes()
-        for ax in all_axes:
-            if ax.legend_ is not None:
-                ax.legend_.remove()
-            ax.legend(loc="best")
-            if ax.legend_ is not None:
-                ax.legend_.draggable(True)
+        if self.ax.legend_ is None:
+            self.ax.legend()
+        else:
+            self.ax.legend(loc="best")
+
+            if self.ax.legend_ is not None:
+                self.ax.legend_.draggable(True)
+
+        self.canvas.draw()
 
     def plot(self):
         # generate axes unless exist
@@ -130,7 +132,6 @@ class MPLWidget(QtWidgets.QWidget):
         ax.autoscale_view()
 
         self.figure.tight_layout()
-        self.regenerate_legend()
 
         # refresh canvas
         self.canvas.draw()
