@@ -67,7 +67,9 @@ class MyNavigationToolbar(NavigationToolbar):
         self.sigNewLine.emit()
 
     def delete_line(self):
-        reply = QtWidgets.QMessageBox.question(self, "Delete Confirmation", "Delete current line?")
+        reply = QtWidgets.QMessageBox.question(self, "Delete Confirmation", "Delete current line?",
+                                               QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.Yes)
         if reply == QtWidgets.QMessageBox.Yes:
             self.sigDeleteLine.emit()
 
