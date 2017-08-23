@@ -74,8 +74,8 @@ class MyNavigationToolbar(NavigationToolbar):
     def new_plot(self):
         self.sigNewPlot.emit()
 
-    def current_item_changed(self, plot_item):
-        self.delete_action.setEnabled(plot_item is not None)
+    def set_item_selected(self, is_selected):
+        self.delete_action.setEnabled(is_selected)
 
 
 class MPLWidget(QtWidgets.QWidget):
@@ -99,11 +99,10 @@ class MPLWidget(QtWidgets.QWidget):
         self.text.setText("                                                             ")
         self.text.setMargin(10)
 
-        line_model.dataChanged.connect(self.regenerate_legend)
-        line_model.dataChanged.connect(self.plot)
+        line_model.sigLegendChanged.connect(self.regenerate_legend)
+        line_model.sigPlotDataChanged.connect(self.plot)
 
     def regenerate_legend(self):
-        # always re-generate legend
         all_axes = self.figure.get_axes()
         for ax in all_axes:
             if ax.legend_ is not None:
@@ -111,7 +110,6 @@ class MPLWidget(QtWidgets.QWidget):
             ax.legend(loc="best")
             if ax.legend_ is not None:
                 ax.legend_.draggable(True)
-        self.canvas.draw()
 
     def plot(self):
         # generate axes unless exist

@@ -2,7 +2,8 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 
 class PlotLine:
-    def __init__(self, model=None):
+
+    def __init__(self, model):
         self._xdata = []
         self._ydata = []
         self._label = ""
@@ -32,6 +33,8 @@ class PlotLine:
             line.set_label(label)
 
         self.stditem.setText(label)
+        if self.is_plotted():
+            self.model.sigLegendChanged.emit()
 
     def label(self):
         return self._label
@@ -59,10 +62,17 @@ class PlotLine:
 
     def data_changed(self):
         if self.model is not None:
-            self.model.dataChanged.emit(self.model.createIndex(0, 0), self.model.createIndex(0, self.model.rowCount()))
+            self.model.sigPlotDataChanged.emit(self.model.createIndex(0, 0), self.model.createIndex(0, self.model.rowCount()))
+
+    def is_plotted(self):
+        return self._mpl_line is not None
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
+
+    sigLegendChanged = QtCore.pyqtSignal()
+    sigPlotDataChanged = QtCore.pyqtSignal(PlotLine)
+
     def __init__(self, plot_line_class, parent=None):
         super(PlotLineModel, self).__init__(parent)
         self.lines_created = 0
