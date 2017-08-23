@@ -84,10 +84,10 @@ class PlotLineModel(QtGui.QStandardItemModel):
     sigLegendChanged = QtCore.pyqtSignal()
     sigPlotDataChanged = QtCore.pyqtSignal(PlotLine)
 
-    def __init__(self, plot_line_class, parent=None):
+    def __init__(self, plot_line_factory, parent=None):
         super(PlotLineModel, self).__init__(parent)
         self.lines_created = 0
-        self.PlotLineClass = plot_line_class
+        self.PlotLineFactory = plot_line_factory
 
     def default_label(self):
         return "Line %d" % (self.lines_created + 1)
@@ -100,9 +100,10 @@ class PlotLineModel(QtGui.QStandardItemModel):
         self.sigLegendChanged.emit()
 
     def new_line(self):
-        plot_line = self.PlotLineClass()
+        plot_line = self.PlotLineFactory.plot_line()
         plot_line.set_label(self.default_label())
         plot_line.set_callbacks(self.label_changed, self.data_changed)
+        self.PlotLineFactory.view(plot_line)
 
         self.insertRow(0, plot_line.stditem)
         self.lines_created += 1
@@ -135,17 +136,9 @@ class PlotLineModel(QtGui.QStandardItemModel):
 
 
 class PlotLineView(QtWidgets.QWidget):
-    def __init__(self, plot_window):
-        super(PlotLineView, self).__init__(plot_window)
-        self._plot_line = None
-        self._simulation = None
-        self.setVisible(False)
-
-        self.plot_window = plot_window
-
-    def set_plot_line(self, plot_line):
+    def __init__(self, plot_line, parent=None):
+        super(PlotLineView, self).__init__(parent)
         self._plot_line = plot_line
-        self.setVisible(self._plot_line is not None)
 
     def plot_line(self):
         return self._plot_line
@@ -154,14 +147,28 @@ class PlotLineView(QtWidgets.QWidget):
         if self._plot_line is not None:
             self._plot_line.regenerate()
 
-    def set_simulation(self, simulation):
-        self._plot_line.set_simulation(simulation)
+class PlotLineFactory:
+    plot_line_class = None
+    plot_view_class = None
+    plot_model_class = None
 
-    def progress_bar_inc_tasks(self, num_tasks):
-        self.plot_window.progress.inc_tasks(num_tasks)
+    def __init__(self):
+        self._model = None
+        self.view_parent = None
 
-    def progress_bar_tasks_done(self, num_tasks):
-        self.plot_window.progress.tasks_done(num_tasks)
+    def view(self, plot_line):
+        view = self.plot_view_class(plot_line, self.view_parent)
+        plot_line.set_view(view)
+        self.view_parent.addWidget(view)
 
-    def progress_message(self, msg):
-        self.plot_window.statusBar().showMessage(msg)
+    def plot_line(self):
+        return self.plot_line_class()
+
+    def model(self):
+        if self._model is None:
+            self._model = self.plot_model_class(self)
+
+        return self._model
+
+    def set_view_parent(self, parent=None):
+        self.view_parent = parent

@@ -10,7 +10,6 @@ class SideBar(QtWidgets.QWidget):
 
         # create model and plot_line_view
         self.model = plotter_factory.model()
-        plot_line_view = plotter_factory.view(self)
 
         # create combo box
         self.combo_box = QtWidgets.QComboBox(self)
@@ -23,12 +22,12 @@ class SideBar(QtWidgets.QWidget):
         self.label_editor.textChanged.connect(self.update_label)
 
         self.stack = QtWidgets.QStackedWidget(self)
+        plotter_factory.set_view_parent(self.stack)
 
         # layout
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().addWidget(self.combo_box)
         self.layout().addWidget(self.label_editor)
-        self.layout().addWidget(plot_line_view)
         self.layout().addWidget(self.stack)
         self.setMinimumWidth(250)
 
@@ -55,10 +54,17 @@ class SideBar(QtWidgets.QWidget):
         self.label_editor.setText(text)
         self.label_editor.setEnabled(index != -1)
 
+        # set current view widget
+        self.swap_view_widgets()
+
+        # notify others (e.g. toolbar) that there is an item selected
         self.sigItemSelected.emit(index != -1)
 
-    def current_item(self):
+    def current_plot_line(self):
         return self.model.line(self.combo_box.currentIndex())
+
+    def swap_view_widgets(self):
+        self.stack.setCurrentWidget(self.current_plot_line().view())
 
     def new_line(self):
         self.model.new_line()

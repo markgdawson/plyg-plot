@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from SimulationSelection import SimulationSelectionWidget
-from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
+from PlotLineModel import PlotLine, PlotLineView, PlotLineModel, PlotLineFactory
 
 
 class PlotLineGeo(PlotLine):
@@ -15,15 +15,17 @@ class PlotLineGeo(PlotLine):
 
 
 class PlotLineGeoView(PlotLineView):
-    def __init__(self, parent=None):
-        super(PlotLineGeoView, self).__init__(parent)
+    def __init__(self, plot_line, parent=None):
+        super(PlotLineGeoView, self).__init__(plot_line, parent)
 
         self.layout = QtWidgets.QVBoxLayout()
 
+        label = QtWidgets.QLabel(self)
+        label.setText(plot_line.label())
+
         # sets the self.simulation object
-        button = SimulationSelectionWidget()
-        button.sigSimulationSelected.connect(self.set_simulation)
-        self.layout.addWidget(button)
+        self.sim_select = SimulationSelectionWidget()
+        self.layout.addWidget(self.sim_select)
 
         # add regenerate button
         button = QtWidgets.QPushButton()
@@ -35,8 +37,7 @@ class PlotLineGeoView(PlotLineView):
         self.setLayout(self.layout)
 
     def update(self, **kwargs):
-        plot_line = self.plot_line()
-        sim = plot_line.simulation()
+        sim = self.sim_select.simulation()
         try:
             if sim is None:
                 raise ValueError("No Simulation Selected")
@@ -47,22 +48,7 @@ class PlotLineGeoView(PlotLineView):
             QtWidgets.QMessageBox.information(self, "Error", str(err), QtWidgets.QMessageBox.Ok)
 
 
-class GeoLineFactory:
+class GeoLineFactory(PlotLineFactory):
     plot_line_class = PlotLineGeo
     plot_view_class = PlotLineGeoView
     plot_model_class = PlotLineModel
-
-    def __init__(self):
-        self._model = None
-
-    def view(self, parent):
-        return self.plot_view_class(parent)
-
-    def plotter(self):
-        return self.plot_line_class(self.model())
-
-    def model(self):
-        if self._model is None:
-            self._model = self.plot_model_class(self.plot_line_class)
-
-        return self._model
