@@ -129,13 +129,14 @@ class MPLPlotter():
         self.ax = mpl_widget.ax
         self.mpl_widget = mpl_widget
         self.mpl_lines = dict({})
+        self.visible = True
 
     def plot(self, x, y, label=None, linestyle='-', index=-1):
         if index in self.mpl_lines.keys():
             line = self.mpl_lines[index]
             line.set_data(x, y)
         else:
-            l, = self.ax.plot(x, y, linestyle, label=label)
+            l, = self.ax.plot(x, y, linestyle, label=label, visible=self.visible)
             self.mpl_lines[index] = l
 
         self.ax.relim()
@@ -144,17 +145,30 @@ class MPLPlotter():
         self.ax.figure.tight_layout()
 
         # refresh canvas
+        self.redraw()
+
+    def redraw(self):
         self.mpl_widget.redraw()
 
     def unplot(self):
         for line in self.mpl_lines:
             line.remove()
 
-        self.mpl_widget.redraw()
+        self.redraw()
 
     def set_label(self, label, index=-1):
         if index not in self.mpl_lines.keys():
-            self.plot([], [], label=label, linestyle='-')
+            # plot an empty line if there is no line yet
+            self.plot([], [], label=label, index=index)
         self.mpl_lines[index].set_label(label)
+        self.update_legend()
+
+    def set_visibility(self, visible):
+        self.visible = visible
+        for line in self.mpl_lines.values():
+            line.set_visible(self.visible)
+            self.update_legend()
+
+    def update_legend(self):
         self.mpl_widget.update_legend()
 

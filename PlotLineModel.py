@@ -1,37 +1,60 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 
-class PlotLineView(QtWidgets.QWidget):
+class PlotLineView(QtWidgets.QFrame):
     def __init__(self, parent):
         super(PlotLineView, self).__init__(parent)
         self.stditem = QtGui.QStandardItem()
         self.stditem.setData(self, role=QtCore.Qt.UserRole)
         self.plotter = None
 
-        # add label and checkbox
-        self.label_checkbox = QtWidgets.QCheckBox()
-        self.label_checkbox.setChecked(True)
-        self.label_checkbox.setMinimumWidth(200)
+        # add label
+        self.label_widget = QtWidgets.QLabel()
+        self.label_widget.setMinimumWidth(300)
+        self.label_widget.setContentsMargins(0, 0, 0, 5)
 
+        # add visibility checkbox
+        self.visible_checkbox = QtWidgets.QCheckBox()
+        self.visible_checkbox.setChecked(True)
+        self.visible_checkbox.setText("Show on Plot")
+
+        # set frame style
+        self.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Raised)
+
+        # set layout
         layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
-        layout.addWidget(self.label_checkbox)
+
+        # add widgets to layout
+        layout.addWidget(self.label_widget)
+        layout.addWidget(self.visible_checkbox)
         self.setLayout(layout)
+
+        # set content margin to zero
+        self.setContentsMargins(0, 0, 0, 0)
 
     def set_plotter(self, plotter):
         self.plotter = plotter
+        try:
+            self.visible_checkbox.toggled.disconnect()
+        except TypeError as err:
+            pass
+        self.visible_checkbox.toggled.connect(self.plotter.set_visibility)
 
     def label(self):
         return self.stditem.text()
 
+    def label_text(self):
+        return "Properties for %s:" % self.label()
+
     def set_label(self, label):
         self.stditem.setText(label)
-        self.label_checkbox.setText(self.label())
+        self.label_widget.setText(self.label_text())
 
     def sync_label(self):
         if self.plotter is not None:
             self.plotter.set_label(self.label())
-        self.label_checkbox.setText(self.label())
+        self.label_widget.setText(self.label_text())
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
