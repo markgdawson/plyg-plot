@@ -14,7 +14,7 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.button_group = QtWidgets.QButtonGroup()
-        self.button_group.buttonClicked.connect(self.values_changed)
+        self.button_group.buttonClicked[int].connect(self.values_changed)
         self.button_group.setExclusive(False)
         self.selected_values = []
 
@@ -23,6 +23,7 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         self.columns = 3
 
         self.label = None
+        self.warnings = dict({})
 
     def set_label(self, label):
         self.label = label
@@ -66,6 +67,31 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         self.layout().addWidget(checkbox, self.row, self.column)
         self.column += 1
 
-    def values_changed(self):
+    def add_warning(self, warning, index):
+        self.warnings[index] = warning
+
+    def values_changed(self, id):
+        button = self.button_group.button(id)
+        if button.isChecked() and id in self.warnings.keys():
+            reply = QtWidgets.QMessageBox.warning(self, "Warning", self.warnings[id],
+                                                   QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                                                   QtWidgets.QMessageBox.No)
+            if not reply == QtWidgets.QMessageBox.Yes:
+                button.setChecked(False)
+                return
         self.selected_values = [self.button_group.id(b) for b in self.button_group.buttons() if b.isChecked()]
         self.sigSelectionChanged.emit(self.selected_values)
+
+
+class FacePatchSelector(ValueCheckboxSelector):
+    def set_values(self, indexes, counts):
+        super(FacePatchSelector, self).set_values(indexes)
+
+        # add warnings for large plots
+        for index, count in counts.items():
+            if count > 10000:
+                warning = "You about to attempt to plot %d faces! \n\n" \
+                          "this may take a long time " \
+                          "and/or may cause the program to crash or become unusable.\n\n" \
+                          "Do you wish to proceed?" % count
+                self.add_warning(warning, index)

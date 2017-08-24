@@ -169,12 +169,30 @@ class Geom:
     def __init__(self, geo_file):
         self.geo = GeoFile(geo_file)
         self.patchFaceNodes = dict({})
+        self.num_faces_per_patch = None
 
     def load(self):
         self.geo.load()
     
     def get_face_patches(self):
         return self.geo.facePatches
+
+    def get_count_face_patches(self):
+        self.geo.load()
+
+        if self.num_faces_per_patch is not None:
+            return self.num_faces_per_patch
+
+        n_faces_per_patch = dict({})
+        for index in self.geo.facePatches:
+            faces = np.where(self.geo.face2patch == index)
+            if len(faces) > 0:
+                n_faces_per_patch[index] = len(faces[0])
+            else:
+                n_faces_per_patch[index] = 0
+
+        self.num_faces_per_patch = n_faces_per_patch
+        return self.num_faces_per_patch
 
     def get_patch_lines(self, patches, color=None, label=None,
                         rotation=None, linestyle='-', linewidth=1.0):

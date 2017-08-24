@@ -56,6 +56,9 @@ class PlotLineView(QtWidgets.QFrame):
             self.plotter.set_label(self.label())
         self.label_widget.setText(self.label_text())
 
+    def unplot(self):
+        self.plotter.unplot()
+
 
 class PlotLineModel(QtGui.QStandardItemModel):
 

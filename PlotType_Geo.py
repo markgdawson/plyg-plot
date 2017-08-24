@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from SimulationSelection import SimulationSelectionWidget
 from PlotLineModel import PlotLineView
-from ValueCheckboxSelector import ValueCheckboxSelector
+from ValueCheckboxSelector import FacePatchSelector
 
 
 class PlotLineGeoView(PlotLineView):
@@ -20,7 +20,7 @@ class PlotLineGeoView(PlotLineView):
         self.layout().addWidget(self.sim_select)
 
         # add face patch selector
-        self.face_patch_selector = ValueCheckboxSelector(self)
+        self.face_patch_selector = FacePatchSelector(self)
         self.face_patch_selector.set_label("Select Face Patches:")
         self.face_patch_selector.set_num_columns(4)
         self.face_patch_selector.sigSelectionChanged.connect(self.patches_selected)
@@ -30,8 +30,10 @@ class PlotLineGeoView(PlotLineView):
         self.simulation = self.sim_select.simulation
 
         # populate face_patch_selector
-        face_patches = self.simulation.geom().get_face_patches()
-        self.face_patch_selector.set_values(face_patches)
+        geom = self.simulation.geom()
+        face_patches = geom.get_face_patches()
+        num_face_patches = geom.get_count_face_patches()
+        self.face_patch_selector.set_values(face_patches, num_face_patches)
 
         self.replot()
 
