@@ -26,9 +26,12 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         if accepted:
             self.simulation = self.dialog.simulation()
             self.update_label()
-            self.simulation.sigUpdateLabel.connect(self.update_label)
-            self.simulation.sigUpdateProgress.connect(self.update_label)
-            self.simulation.sigLoaded.connect(self.sigSimulationLoaded.emit)
+            if self.simulation.loaded:
+                self.sigSimulationLoaded.emit()
+            else:
+                self.simulation.sigUpdateLabel.connect(self.update_label)
+                self.simulation.sigUpdateProgress.connect(self.update_label)
+                self.simulation.sigLoaded.connect(self.sigSimulationLoaded.emit)
 
     def update_label(self):
         if self.simulation is None:
