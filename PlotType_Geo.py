@@ -1,46 +1,24 @@
 from PyQt5 import QtWidgets
 from SimulationSelection import SimulationSelectionWidget
-from PlotLineModel import PlotLine, PlotLineView, PlotLineModel, PlotLineFactory
-
-
-class PlotLineGeo(PlotLine):
-    linestyle = '-'
-
-    def generate(self):
-        sim = self.simulation()
-        if sim is not None:
-            geom = self.simulation().geom()
-            if geom is not None:
-                self._xdata, self._ydata = geom.get_patch_faces(range(12, 14))
-
-    def set_patches(self, patches):
-        self.patches = patches
-
+from PlotLineModel import PlotLineView
 
 
 class PlotLineGeoView(PlotLineView):
-    def __init__(self, plot_line, parent=None):
-        super(PlotLineGeoView, self).__init__(plot_line, parent)
-
-        self.layout = QtWidgets.QVBoxLayout()
-
-        label = QtWidgets.QLabel(self)
-        label.setText(plot_line.label())
+    def __init__(self, parent=None):
+        super(PlotLineGeoView, self).__init__(parent)
 
         # sets the self.simulation object
         self.simulation = None
         self.sim_select = SimulationSelectionWidget()
         self.sim_select.sigSimulationLoaded.connect(self.simulation_loaded)
-        self.layout.addWidget(self.sim_select)
+        self.layout().addWidget(self.sim_select)
 
         # add regenerate button
         button = QtWidgets.QPushButton()
         button.setText("Update")
-        self.layout.addWidget(button)
+        self.layout().addWidget(button)
 
         button.clicked.connect(self.generate)
-
-        self.setLayout(self.layout)
 
     def simulation_loaded(self):
         self.simulation = self.sim_select.simulation
@@ -53,7 +31,7 @@ class PlotLineGeoView(PlotLineView):
             checkbox = QtWidgets.QCheckBox(self)
             checkbox.setText("%d" % face_patch)
             self.fpatch_checkboxes.addButton(checkbox,face_patch)
-            self.layout.addWidget(checkbox)
+            self.layout().addWidget(checkbox)
         self.fpatch_checkboxes.buttonClicked.connect(self.patches_changed)
 
     def patches_changed(self):
@@ -68,8 +46,13 @@ class PlotLineGeoView(PlotLineView):
         else:
             self.regenerate()
 
+    def generate(self):
+        sim = self.simulation()
+        if sim is not None:
+            geom = self.simulation().geom()
+            if geom is not None:
+                self._xdata, self._ydata = geom.get_patch_faces(range(12, 14))
 
-class GeoLineFactory(PlotLineFactory):
-    plot_line_class = PlotLineGeo
-    plot_view_class = PlotLineGeoView
-    plot_model_class = PlotLineModel
+
+
+

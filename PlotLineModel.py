@@ -1,79 +1,49 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 
-class PlotLine:
-
-    def __init__(self):
-        self._xdata = []
-        self._ydata = []
-        self._line_handle = None
-        self._view = None
+class PlotLineView(QtWidgets.QWidget):
+    def __init__(self, parent):
+        super(PlotLineView, self).__init__(parent)
         self.stditem = QtGui.QStandardItem()
-        self.stditem.setData(self, QtCore.Qt.UserRole)
-        self._simulation = None
+        self.stditem.setData(self, role=QtCore.Qt.UserRole)
+        self.plotter = None
 
-    def set_view(self, view):
-        self._view = view
+        # add label and checkbox
+        self.label_checkbox = QtWidgets.QCheckBox()
+        self.label_checkbox.setChecked(True)
+        self.label_checkbox.setMinimumWidth(200)
 
-    def view(self):
-        return self._view
+        layout = QtWidgets.QVBoxLayout()
+        self.setLayout(layout)
+        layout.addWidget(self.label_checkbox)
+        self.setLayout(layout)
 
-    def set_simulation(self, simulation):
-        self._simulation = simulation
-
-    def simulation(self):
-        return self._simulation
+    def set_plotter(self, plotter):
+        self.plotter = plotter
 
     def label(self):
         return self.stditem.text()
 
-    def set_line_handle(self, line_handle):
-        self._line_handle = line_handle
+    def set_label(self, label):
+        self.stditem.setText(label)
+        self.label_checkbox.setText(self.label())
 
-    def line_handle(self):
-        return self._line_handle
-
-    def xdata(self):
-        return self._xdata
-
-    def ydata(self):
-        return self._ydata
-
-    def regenerate(self):
-        self.generate()
-        model = self.stditem.model()
-        model.sigPlotDataChanged.emit(self)
-
-    def unplot(self):
-        line = self.line_handle()
-        if line is not None:
-            line.remove()
-
-    def set_callbacks(self, label_notify, data_notify):
-        self._label_notify = label_notify
-        self._data_notify = data_notify
-
-    def generate(self):
-        pass
+    def sync_label(self):
+        if self.plotter is not None:
+            self.plotter.set_label(self.label())
+        self.label_checkbox.setText(self.label())
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
 
     sigLegendChanged = QtCore.pyqtSignal()
-    sigPlotDataChanged = QtCore.pyqtSignal(PlotLine)
 
-    def __init__(self, plot_line_factory, parent=None):
+    def __init__(self, plot_line_class, parent=None):
         super(PlotLineModel, self).__init__(parent)
         self.lines_created = 0
-        self.PlotLineFactory = plot_line_factory
-        self.itemChanged.connect(self.legend_changed)
-
-    def legend_changed(self, item):
-        # sync label to handle for changed item
-        plot_line = item.data(QtCore.Qt.UserRole)
-        handle = plot_line.line_handle()
-        handle.set_label(plot_line.label())
-        self.sigLegendChanged.emit()
+        self.itemChanged.connect(self.on_stditem_changed)
+        self.PlotLineClass = plot_line_class
+        self.plotter_generator = None
 
     def delete_line(self, index):
         plot_line = self.line(index)
@@ -83,18 +53,22 @@ class PlotLineModel(QtGui.QStandardItemModel):
         self.sigLegendChanged.emit()
 
     def new_line(self):
-        plot_line = self.PlotLineFactory.plot_line()
-        self.PlotLineFactory.view(plot_line)
+        plot_line = self.PlotLineClass(self._view_parent)
 
-        item = plot_line.stditem
-
+        # set label and plotter
         default_label = "Line %d" % (self.lines_created + 1)
-        item.setText(default_label)
+        plot_line.set_plotter(self.plotter_generator())
+        plot_line.set_label(default_label)
 
-        self.insertRow(0, item)
+        # since plot_line is a view widget, it should be added to the view widget stack
+        self._view_parent.addWidget(plot_line)
+
+        # insert stditem into view
+        self.insertRow(0, plot_line.stditem)
+
         self.lines_created += 1
         self.sigLegendChanged.emit()
-        return item
+        return plot_line.stditem
 
     def lines(self):
         l = []
@@ -111,47 +85,14 @@ class PlotLineModel(QtGui.QStandardItemModel):
         else:
             return item.data(QtCore.Qt.UserRole)
 
-    def data_changed(self, plot_line):
-        self.sigPlotDataChanged.emit(plot_line)
-
-    def label_changed(self):
+    def on_stditem_changed(self, item):
+        # sync label to handle for changed item
+        plot_line = item.data(QtCore.Qt.UserRole)
+        plot_line.sync_label()
         self.sigLegendChanged.emit()
 
+    def set_view_parent(self, view_parent):
+        self._view_parent = view_parent
 
-class PlotLineView(QtWidgets.QWidget):
-    def __init__(self, plot_line, parent=None):
-        super(PlotLineView, self).__init__(parent)
-        self._plot_line = plot_line
-
-    def plot_line(self):
-        return self._plot_line
-
-    def regenerate(self):
-        if self._plot_line is not None:
-            self._plot_line.regenerate()
-
-class PlotLineFactory:
-    plot_line_class = None
-    plot_view_class = None
-    plot_model_class = None
-
-    def __init__(self):
-        self._model = None
-        self.view_parent = None
-
-    def view(self, plot_line):
-        view = self.plot_view_class(plot_line, self.view_parent)
-        plot_line.set_view(view)
-        self.view_parent.addWidget(view)
-
-    def plot_line(self):
-        return self.plot_line_class()
-
-    def model(self):
-        if self._model is None:
-            self._model = self.plot_model_class(self)
-
-        return self._model
-
-    def set_view_parent(self, parent=None):
-        self.view_parent = parent
+    def set_plotter_generator(self, plotter_generator):
+        self.plotter_generator = plotter_generator

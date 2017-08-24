@@ -1,7 +1,8 @@
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PlotWindow import PlotWindow
-from PlotType_Geo import GeoLineFactory
+from PlotType_Geo import PlotLineGeoView
+from PlotLineModel import PlotLineModel
 
 
 def new_plot(last_win_pos=None):
@@ -37,7 +38,7 @@ class WindowFactory(QtWidgets.QDialog):
         self.plot = None
 
         factories = [
-            ('Geometry', GeoLineFactory)
+            ('Geometry', PlotLineGeoView)
         ]
 
         self.setLayout(QtWidgets.QVBoxLayout())
@@ -47,8 +48,8 @@ class WindowFactory(QtWidgets.QDialog):
         self.line_list = QtWidgets.QComboBox(self)
         self.layout().addWidget(self.line_list)
 
-        for name, factory in factories:
-            self.line_list.addItem(name, userData=factory)
+        for name, view in factories:
+            self.line_list.addItem(name, userData=view)
 
         # create and connect buttons
         buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
@@ -59,7 +60,8 @@ class WindowFactory(QtWidgets.QDialog):
         self.setMinimumWidth(250)
 
     def accept(self):
-        self.plot = PlotWindow(GeoLineFactory())
+        view = self.line_list.currentData(role=QtCore.Qt.UserRole)
+        self.plot = PlotWindow(PlotLineModel(view))
 
         # connect new plot signal to factory plot function
         self.plot.sigNewPlot.connect(new_plot)

@@ -7,17 +7,20 @@ class PlotWindow(QtWidgets.QMainWindow):
 
     sigNewPlot = QtCore.pyqtSignal(QtCore.QPoint)
 
-    def __init__(self, plotter_factory, parent=None):
+    def __init__(self, plot_line_model, parent=None):
         super(PlotWindow, self).__init__(parent, QtCore.Qt.WindowMaximizeButtonHint)
 
         # create plot line model and view
-        self.plot_line_model = plotter_factory.model()
+        self.plot_line_model = plot_line_model
 
         # create sidebar
-        sidebar = SideBar(plotter_factory, self)
+        sidebar = SideBar(plot_line_model, self)
 
         # create Matplotlib widget
         mpl_widget = MPLWidget(self.plot_line_model, self)
+
+        # plot line model needs a function to generate plotters
+        self.plot_line_model.set_plotter_generator(mpl_widget.new_plotter)
 
         # add toolbar
         self.toolbar = MyNavigationToolbar(mpl_widget.canvas, self, coordinates=False)
@@ -35,11 +38,8 @@ class PlotWindow(QtWidgets.QMainWindow):
         splitter.addWidget(sidebar)
         splitter.addWidget(mpl_widget)
 
-        # connect stale legend signals to regenerate_legend slot
-        self.toolbar.sigStaleLegend.connect(mpl_widget.regenerate_legend)
-        self.plot_line_model.rowsInserted.connect(mpl_widget.plot)
-        self.plot_line_model.rowsRemoved.connect(mpl_widget.plot)
-        self.plot_line_model.rowsRemoved.connect(mpl_widget.plot)
+        # connect stale legend signals to update slot
+        self.toolbar.sigStaleLegend.connect(mpl_widget.update_legend)
 
         # connect toolbar signals
         self.toolbar.sigNewLine.connect(sidebar.new_line)

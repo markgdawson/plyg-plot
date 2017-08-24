@@ -101,10 +101,11 @@ class MPLWidget(QtWidgets.QWidget):
         self.text.setText("                                                             ")
         self.text.setMargin(10)
 
-        line_model.sigLegendChanged.connect(self.regenerate_legend)
-        line_model.sigPlotDataChanged.connect(self.plot)
-
-    def regenerate_legend(self):
+    def configure_plot(self):
+        QtWidgets.QMessageBox.information(self, "No Configuration Options",
+                                          "No configuration options available for this plot type",
+                                          QtWidgets.QMessageBox.Ok)
+    def update_legend(self):
         if self.ax.legend_ is not None:
             self.ax.legend_.remove()
             self.ax.legend()
@@ -114,32 +115,46 @@ class MPLWidget(QtWidgets.QWidget):
         if self.ax.legend_ is not None:
             self.ax.legend_.draggable(True)
 
+        self.redraw()
+
+    def redraw(self):
         self.canvas.draw()
 
-    def plot(self):
-        # generate axes unless exist
-        all_axes = self.figure.get_axes()
-        if len(all_axes) == 0:
-            ax = self.figure.add_subplot(111)
+    def new_plotter(self):
+        return MPLPlotter(self)
+
+
+class MPLPlotter():
+    def __init__(self, mpl_widget):
+        self.ax = mpl_widget.ax
+        self.mpl_widget = mpl_widget
+        self.mpl_lines = dict({})
+
+    def plot(self, x, y, label=None, linestyle='-', index=-1):
+        if index in self.mpl_lines.keys():
+            line = self.mpl_lines[index]
+            line.set_data(x, y)
         else:
-            ax = all_axes[0]
+            l, = self.ax.plot(x, y, linestyle, label=label)
+            self.mpl_lines[index] = l
 
-        for line in self.line_model.lines():
-            if line.line_handle() is None:
-                l, = ax.plot(line.xdata(), line.ydata(), line.linestyle, label=line.label())
-                line.set_line_handle(l)
-            else:
-                line.line_handle().set_data(line.xdata(), line.ydata())
+        self.ax.relim()
+        self.ax.autoscale_view()
 
-        ax.relim()
-        ax.autoscale_view()
-
-        self.figure.tight_layout()
+        self.ax.figure.tight_layout()
 
         # refresh canvas
-        self.canvas.draw()
+        self.mpl_widget.redraw()
 
-    def configure_plot(self):
-        QtWidgets.QMessageBox.information(self, "No Configuration Options",
-                                          "No configuration options available for this plot type",
-                                          QtWidgets.QMessageBox.Ok)
+    def unplot(self):
+        for line in self.mpl_lines:
+            line.remove()
+
+        self.mpl_widget.redraw()
+
+    def set_label(self, label, index=-1):
+        if index not in self.mpl_lines.keys():
+            self.plot([], [], label=label, linestyle='-')
+        self.mpl_lines[index].set_label(label)
+        self.mpl_widget.update_legend()
+

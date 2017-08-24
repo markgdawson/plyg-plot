@@ -1,15 +1,6 @@
 import random
 
-from PlotLineModel import PlotLine, PlotLineView, PlotLineModel
-
-
-class PlotLineRandom(PlotLine):
-    def __init__(self, model=None):
-        super(PlotLineRandom, self).__init__(model)
-
-    def generate(self):
-        self._xdata = range(10)
-        self._ydata = [random.random() for i in self._xdata]
+from PlotLineModel import PlotLineView, PlotLineModel
 
 
 class PlotLineRandomView(PlotLineView):
@@ -29,6 +20,8 @@ class PlotLineRandomView(PlotLineView):
 
     def regenerate(self):
         super(PlotLineRandomView, self).regenerate()
+        self._xdata = range(10)
+        self._ydata = [random.random() for i in self._xdata]
 
 
 class RandomLineFactory:
