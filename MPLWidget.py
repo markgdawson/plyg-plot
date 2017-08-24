@@ -12,6 +12,7 @@ class MyNavigationToolbar(NavigationToolbar):
     sigConfigurePlot = QtCore.pyqtSignal()
     sigStatusText = QtCore.pyqtSignal(str)
     sigNewPlot = QtCore.pyqtSignal()
+    sigPythonInterpreter = QtCore.pyqtSignal()
 
     def __init__(self, figure_canvas, parent=None, coordinates=False):
         delete_text = 'Delete Line'
@@ -34,7 +35,9 @@ class MyNavigationToolbar(NavigationToolbar):
             ('Save', 'Save the figure', 'filesave', 'save_figure'),
             (None, None, None, None),
             ('Edit Paramters', 'Edit Plot Visuals', 'qt4_editor_options', 'do_edit_parameters'),
-            ('Configuration', 'Configure plot', 'subplots', 'configure_plot')
+            ('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
+            (None, None, None, None),
+            ('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
         )
 
         super(MyNavigationToolbar, self).__init__(figure_canvas, parent=parent, coordinates=coordinates)
@@ -56,6 +59,9 @@ class MyNavigationToolbar(NavigationToolbar):
     def do_edit_parameters(self):
         self.edit_parameters()
         self.sigStaleLegend.emit()
+
+    def do_start_interpreter(self):
+        self.sigPythonInterpreter.emit()
 
     def configure_plot(self):
         self.sigConfigurePlot.emit()
@@ -105,6 +111,7 @@ class MPLWidget(QtWidgets.QWidget):
         QtWidgets.QMessageBox.information(self, "No Configuration Options",
                                           "No configuration options available for this plot type",
                                           QtWidgets.QMessageBox.Ok)
+
     def update_legend(self):
         if self.ax.legend_ is not None:
             self.ax.legend_.remove()

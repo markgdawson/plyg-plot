@@ -10,6 +10,8 @@ class PlotWindow(QtWidgets.QMainWindow):
     def __init__(self, plot_line_model, parent=None):
         super(PlotWindow, self).__init__(parent, QtCore.Qt.WindowMaximizeButtonHint)
 
+        # no interpreter instance yet
+        self.interpreter = None
         # create plot line model and view
         self.plot_line_model = plot_line_model
 
@@ -17,13 +19,13 @@ class PlotWindow(QtWidgets.QMainWindow):
         sidebar = SideBar(plot_line_model, self)
 
         # create Matplotlib widget
-        mpl_widget = MPLWidget(self.plot_line_model, self)
+        self.mpl_widget = MPLWidget(self.plot_line_model, self)
 
         # plot line model needs a function to generate plotters
-        self.plot_line_model.set_plotter_generator(mpl_widget.new_plotter)
+        self.plot_line_model.set_plotter_generator(self.mpl_widget.new_plotter)
 
         # add toolbar
-        self.toolbar = MyNavigationToolbar(mpl_widget.canvas, self, coordinates=False)
+        self.toolbar = MyNavigationToolbar(self.mpl_widget.canvas, self, coordinates=False)
         self.toolbar.setStyleSheet("QToolBar { border: 0px }")
         self.addToolBar(self.toolbar)
         self.toolbar.setStyleSheet("border-bottom: 1px solid #777;")
@@ -36,17 +38,41 @@ class PlotWindow(QtWidgets.QMainWindow):
                                "    width: 1px;"
                                "}")
         splitter.addWidget(sidebar)
-        splitter.addWidget(mpl_widget)
+        splitter.addWidget(self.mpl_widget)
 
         # connect stale legend signals to update slot
-        self.toolbar.sigStaleLegend.connect(mpl_widget.update_legend)
+        self.toolbar.sigStaleLegend.connect(self.mpl_widget.update_legend)
 
         # connect toolbar signals
         self.toolbar.sigNewLine.connect(sidebar.new_line)
-        self.toolbar.sigConfigurePlot.connect(mpl_widget.configure_plot)
+        self.toolbar.sigConfigurePlot.connect(self.mpl_widget.configure_plot)
         self.toolbar.sigStatusText.connect(self.statusBar().showMessage)
         self.toolbar.sigNewPlot.connect(lambda: self.sigNewPlot.emit(self.pos()))
         self.toolbar.sigDeleteLine.connect(sidebar.delete_current)
+        self.toolbar.sigPythonInterpreter.connect(self.start_python_interpreter)
 
         sidebar.sigItemSelected.connect(self.toolbar.set_item_selected)
+
+    def start_python_interpreter(self):
+        if self.interpreter is None:
+            from EmbeddedPythonInterpreter import EmbeddedPythonInterpreter
+            import sys
+            from IPython.core import release
+
+            banner = ''.join([
+                "Python %s\n"%sys.version.split("\n")[0],
+                "IPython {version} -- An enhanced Interactive Python. Type '?' for help.\n\n".format(version=release.version),
+                "* The figure axis is available as plt (e.g. plt.plot([0,1],[0,2]) )\n",
+                "* The draw() function should be called to reflect changes in the plot window\n",
+                "* legend() function should be called up update any changed to the legend\n\n"
+            ])
+
+            self.interpreter = EmbeddedPythonInterpreter(banner=banner)
+
+            # make variables available to interpreter
+            self.interpreter.push_variable('plt', self.mpl_widget.ax)
+            self.interpreter.push_variable('draw', self.mpl_widget.redraw)
+            self.interpreter.push_variable('legend', self.mpl_widget.update_legend)
+
+        self.interpreter.show()
 
