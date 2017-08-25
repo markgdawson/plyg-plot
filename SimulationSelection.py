@@ -4,8 +4,8 @@ from Simulation import Simulation
 
 
 class SimulationSelectionWidget(QtWidgets.QPushButton):
-
-    sigSimulationLoaded = QtCore.pyqtSignal()
+    sigSimulationLoaded = QtCore.pyqtSignal(Simulation)
+    sigTorqueLoaded = QtCore.pyqtSignal(TorqueFile)
 
     def __init__(self, parent=None):
         super(SimulationSelectionWidget, self).__init__(parent)
@@ -26,12 +26,16 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         if accepted:
             self.simulation = self.dialog.simulation()
             self.update_label()
+            self.sigTorqueLoaded.emit(self.simulation.torque())
             if self.simulation.loaded:
-                self.sigSimulationLoaded.emit()
+                self.sigSimulationLoaded.emit(self.simulation())
             else:
                 self.simulation.sigUpdateLabel.connect(self.update_label)
                 self.simulation.sigUpdateProgress.connect(self.update_label)
-                self.simulation.sigLoaded.connect(self.sigSimulationLoaded.emit)
+                self.simulation.sigLoaded.connect(self.emit_simulation_loaded)
+
+    def emit_simulation_loaded(self):
+        self.sigSimulationLoaded.emit(self.simulation)
 
     def update_label(self):
         if self.simulation is None:

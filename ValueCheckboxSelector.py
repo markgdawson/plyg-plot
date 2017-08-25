@@ -55,6 +55,8 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
                 text = "%s" % index
             self.add_checkbox(text, index)
 
+        self.sigSelectionChanged.emit(self.selected_values)
+
     def add_checkbox(self, text, index):
         checkbox = QtWidgets.QCheckBox(self)
         checkbox.setText(text)
@@ -84,14 +86,28 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
 
 
 class FacePatchSelector(ValueCheckboxSelector):
-    def set_values(self, indexes, counts):
+
+    def set_simulation(self, simulation):
+        # populate face_patch_selector
+        geom = simulation.geom()
+        face_patches = geom.get_face_patches()
+        num_face_patches = geom.get_count_face_patches()
+        self.set_values(face_patches, num_face_patches)
+
+    def set_torque(self, torque):
+        # populate face_patch_selector
+        face_patches = torque.patches
+        self.set_values(face_patches)
+
+    def set_values(self, indexes, counts=None, limit=10000):
         super(FacePatchSelector, self).set_values(indexes)
 
-        # add warnings for large plots
-        for index, count in counts.items():
-            if count > 10000:
-                warning = "You about to attempt to plot %d faces! \n\n" \
-                          "this may take a long time " \
-                          "and/or may cause the program to crash or become unusable.\n\n" \
-                          "Do you wish to proceed?" % count
-                self.add_warning(warning, index)
+        if counts is not None:
+            # add warnings for large plots
+            for index, count in counts.items():
+                if count > limit:
+                    warning = "You about to attempt to plot %d faces! \n\n" \
+                              "this may take a long time " \
+                              "and/or may cause the program to crash or become unusable.\n\n" \
+                              "Do you wish to proceed?" % count
+                    self.add_warning(warning, index)
