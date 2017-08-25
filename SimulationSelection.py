@@ -44,7 +44,7 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
             progress, progress_total = self.simulation.progress()
             text = "Simulation: %s" % self.simulation.label()
             if progress_total - progress != 0:
-                percent = round((progress/progress_total)*100)
+                percent = round((progress / progress_total) * 100)
                 text += " (%d %%)" % percent
             self.setText(text)
 
@@ -105,7 +105,8 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(selected)
         self.status.setText(text)
 
-    def rows_from_indexes(self, indexes):
+    @staticmethod
+    def rows_from_indexes(indexes):
         return sorted(set(i.row() for i in indexes))
 
     def simulation(self):
@@ -115,8 +116,9 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         else:
             return None
 
+
 class SimulationTableDelegate(QtWidgets.QStyledItemDelegate):
-    def paint(self, painter: QtGui.QPainter, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex):
+    def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionViewItem, index: QtCore.QModelIndex):
         if index.column() == 1:
             sim = index.data(role=QtCore.Qt.UserRole)
 
@@ -133,7 +135,8 @@ class SimulationTableDelegate(QtWidgets.QStyledItemDelegate):
                 progress_bar_option.textVisible = True
                 progress_bar_option.textAlignment = QtCore.Qt.AlignLeft
 
-                QtWidgets.QApplication.style().drawControl(QtWidgets.QStyle.CE_ProgressBar, progress_bar_option, painter)
+                QtWidgets.QApplication.style().drawControl(QtWidgets.QStyle.CE_ProgressBar, progress_bar_option,
+                                                           painter)
             else:
                 super(SimulationTableDelegate, self).paint(painter, option, index)
 
@@ -149,7 +152,7 @@ class SimulationModel(QtGui.QStandardItemModel):
         self.itemChanged.connect(self.update_simulation_label)
 
     def update_simulation_label(self, item):
-        if item.index().column()==0:
+        if item.index().column() == 0:
             simulation = self.simulation(item.index())
             if simulation is not None:
                 simulation.set_label(item.text())
@@ -166,7 +169,7 @@ class SimulationModel(QtGui.QStandardItemModel):
                 elif section == 2:
                     return QtCore.QVariant("Filename")
             else:
-                return QtCore.QVariant(int(section+1))
+                return QtCore.QVariant(int(section + 1))
         else:
             return QtCore.QVariant()
 
@@ -210,6 +213,7 @@ class SimulationModel(QtGui.QStandardItemModel):
         else:
             return item.data(role=QtCore.Qt.UserRole)
 
+
 SimulationModelInstance = SimulationModel()
 
 if __name__ == "__main__":
@@ -219,4 +223,3 @@ if __name__ == "__main__":
     diag = SimulationSelectionDialog()
     diag.show()
     sys.exit(app.exec_())
-
