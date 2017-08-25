@@ -25,6 +25,8 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         self.label = None
         self.warnings = dict({})
 
+        self.all_checkbox = None
+
     def set_label(self, label):
         self.label = label
 
@@ -33,7 +35,9 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
 
     def reset(self):
         for button in self.button_group.buttons():
-            button
+            self.layout().removeWidget(button)
+        if self.all_checkbox is not None:
+            self.layout().removeWidget(self.all_checkbox)
 
         self.row = 0
         self.column = 0
@@ -42,7 +46,6 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
             label = QtWidgets.QLabel(self.label)
             self.layout().addWidget(label, self.row, self.column, 1, self.columns)
             self.row += 1
-
 
     def set_values(self, indexes):
         self.reset()
@@ -55,7 +58,28 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
                 text = "%s" % index
             self.add_checkbox(text, index)
 
+        # add "all" checkbox
+        if self.column >= self.columns:
+            self.column = 0
+            self.row += 1
+        self.all_checkbox = QtWidgets.QCheckBox(self)
+        self.all_checkbox.setText("All")
+        self.layout().addWidget(self.all_checkbox, self.row, self.column)
+        self.all_checkbox.toggled.connect(self.select_all)
+
         self.sigSelectionChanged.emit(self.selected_values)
+
+    def select_all(self, toggled):
+        if toggled is True:
+            self.button_group.buttonClicked[int].disconnect(self.values_changed)
+            for button in self.button_group.buttons():
+                if self.button_group.id(button) not in self.warnings.keys():
+                    button.setChecked(toggled)
+            self.button_group.buttonClicked[int].connect(self.values_changed)
+            self.emit_selection_changed()
+
+    def remove_all_checkbox_toggle(self):
+        self.all_checkbox.setChecked(False)
 
     def add_checkbox(self, text, index):
         checkbox = QtWidgets.QCheckBox(self)
@@ -72,21 +96,24 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
     def add_warning(self, warning, index):
         self.warnings[index] = warning
 
-    def values_changed(self, id):
-        button = self.button_group.button(id)
-        if button.isChecked() and id in self.warnings.keys():
-            reply = QtWidgets.QMessageBox.warning(self, "Warning", self.warnings[id],
-                                                   QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
+    def values_changed(self, button_id):
+        self.remove_all_checkbox_toggle()
+        button = self.button_group.button(button_id)
+        if button.isChecked() and button_id in self.warnings.keys():
+            reply = QtWidgets.QMessageBox.warning(self, "Warning", self.warnings[button_id],
+                                                  QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                                                  QtWidgets.QMessageBox.No)
             if not reply == QtWidgets.QMessageBox.Yes:
                 button.setChecked(False)
                 return
+        self.emit_selection_changed()
+
+    def emit_selection_changed(self):
         self.selected_values = [self.button_group.id(b) for b in self.button_group.buttons() if b.isChecked()]
         self.sigSelectionChanged.emit(self.selected_values)
 
 
 class FacePatchSelector(ValueCheckboxSelector):
-
     def set_simulation(self, simulation):
         # populate face_patch_selector
         geom = simulation.geom()

@@ -8,7 +8,7 @@ class RevolutionRangeSelector(QtWidgets.QWidget):
         # set layout
         layout = QtWidgets.QGridLayout()
         self.setLayout(QtWidgets.QGridLayout())
-        layout.setContentsMargins(0, 0, 0, 0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.setContentsMargins(0, 0, 0, 0)
 
         # create form validator

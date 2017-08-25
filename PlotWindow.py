@@ -74,3 +74,25 @@ class PlotWindow(QtWidgets.QMainWindow):
 
         self.interpreter.show()
 
+    def inject_simulation_into_current_line(self):
+        from Simulation import Simulation
+        from InformFile import InformFile
+        import SimulationSelection
+        from ValueCheckboxSelector import FacePatchSelector
+
+        geo_file = '/Volumes/HardDrive/Users/mark/PycharmProjects/test_data/H10/TestMesh2.geo'
+        inform_file = '/Volumes/HardDrive/Users/mark/PycharmProjects/test_data/H10/inform'
+        params = InformFile(inform_file)
+        sim = Simulation(None, geo_file=geo_file, params=params)
+        sim.set_label("Label")
+
+        self.toolbar.sigNewLine.emit()
+        sidebar = self.children()[2].children()[1]
+        line_list = sidebar.line_list
+        index = line_list.currentIndex()
+        plot_line = line_list.model().data(index, role=QtCore.Qt.UserRole)
+        simulation_selection_widget = [c for c in plot_line.children() if isinstance(c, SimulationSelection.SimulationSelectionWidget)][0]
+        simulation_selection_widget.set_simulation(sim)
+        patch_selector = [c for c in plot_line.children() if isinstance(c,FacePatchSelector)][0]
+        patch_selector.button_group.buttons()[0].click()
+
