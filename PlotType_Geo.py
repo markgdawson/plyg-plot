@@ -8,15 +8,17 @@ class PlotLineGeoView(PlotLineView):
     def init(self):
         # add simulation selector
         self.sim_select = SimulationSelectionWidget()
-        self.sim_select.sigSimulationLoaded.connect(self.face_patch_selector.set_simulation)
         self.layout().addWidget(self.sim_select)
 
         # add face patch selector
         self.face_patch_selector = FacePatchSelector(self)
         self.face_patch_selector.set_label("Select Face Patches:")
         self.face_patch_selector.set_num_columns(4)
-        self.face_patch_selector.sigSelectionChanged.connect(self.plot)
         self.layout().addWidget(self.face_patch_selector)
+
+        # setup connections
+        self.face_patch_selector.sigSelectionChanged.connect(self.plot)
+        self.sim_select.sigSimulationLoaded.connect(self.face_patch_selector.set_simulation)
 
     def plot(self, patches):
         simulation = self.sim_select.simulation

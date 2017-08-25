@@ -193,7 +193,10 @@ class MPLPlotter:
         if handle in self._labelled.keys():
             del self._labelled[handle]
 
-        handle.remove()
+        try:
+            handle.remove()
+        except ValueError:
+            pass
 
     def add_artist(self, artist, handle=None, label=False):
         self._remove_handle(handle)
@@ -215,6 +218,7 @@ class MPLPlotter:
     def clear(self, handles=None):
         handles = self._make_iterable(handles)
         for handle in handles:
+            handle.remove()
             self._remove_handle(handle)
 
         self.redraw()
@@ -238,7 +242,7 @@ class MPLPlotter:
 
     def _make_iterable(self, handles):
         if handles is None:
-            return self._plotted.keys()
+            return list(self._plotted.keys())
         if isinstance(handles, collections.Iterable):
             return handles
         else:

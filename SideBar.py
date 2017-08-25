@@ -5,11 +5,12 @@ class SideBar(QtWidgets.QWidget):
 
     sigItemSelected = QtCore.pyqtSignal(object)
 
-    def __init__(self, plot_line_model, parent=None):
+    def __init__(self, plot_line_model, available_views, parent=None):
         super(SideBar, self).__init__(parent)
 
         # create model and plot_line_view
         self.model = plot_line_model
+        self.available_views = available_views
 
         # create combo box
         self.line_list = QtWidgets.QListView(self)
@@ -60,9 +61,44 @@ class SideBar(QtWidgets.QWidget):
         self.stack.setCurrentWidget(widget)
 
     def new_line(self):
-        item = self.model.new_line()
-        self.line_list.setCurrentIndex(item.index())
-        self.line_list.edit(item.index())
+        diag = LineSelect(self.available_views, self)
+        accepted = diag.exec()
+        if accepted and diag.view is not None:
+            item = self.model.new_line(diag.view, diag.name)
+            self.line_list.setCurrentIndex(item.index())
+            self.line_list.edit(item.index())
+
+
+class LineSelect(QtWidgets.QDialog):
+    def __init__(self, options, parent=None):
+        super(LineSelect, self).__init__(parent)
+
+        self.view = None
+
+        self.setLayout(QtWidgets.QVBoxLayout())
+
+        # add combo box
+        self.layout().addWidget(QtWidgets.QLabel("Line Type:"))
+        self.line_list = QtWidgets.QComboBox(self)
+        self.layout().addWidget(self.line_list)
+
+        for name, view in options:
+            self.line_list.addItem(name, userData=view)
+
+        # create and connect buttons
+        buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        self.layout().addWidget(buttons)
+
+        self.setMinimumWidth(250)
+
+    def accept(self):
+        self.view = self.line_list.currentData(role=QtCore.Qt.UserRole)
+        self.name = self.line_list.currentData(role=QtCore.Qt.DisplayRole)
+
+        super(LineSelect, self).accept()
+
 
 if __name__ == "__main__":
     import sys

@@ -33,6 +33,10 @@ class PlotLineView(QtWidgets.QFrame):
         # set content margin to zero
         self.setContentsMargins(0, 0, 0, 0)
 
+    def do_init(self):
+        self.init()
+        self.layout().addStretch()
+
     def init(self):
         pass
 
@@ -67,11 +71,10 @@ class PlotLineModel(QtGui.QStandardItemModel):
 
     sigLegendChanged = QtCore.pyqtSignal()
 
-    def __init__(self, plot_line_class, parent=None):
+    def __init__(self, parent=None):
         super(PlotLineModel, self).__init__(parent)
-        self.lines_created = 0
+        self.lines_created = {}
         self.itemChanged.connect(self.on_stditem_changed)
-        self.PlotLineClass = plot_line_class
         self.plotter_generator = None
 
     def delete_line(self, index):
@@ -81,14 +84,17 @@ class PlotLineModel(QtGui.QStandardItemModel):
         self.removeRow(index.row())
         self.sigLegendChanged.emit()
 
-    def new_line(self):
-        plot_line = self.PlotLineClass(self._view_parent)
+    def new_line(self, plot_line_class, plot_line_name):
+        plot_line = plot_line_class(self._view_parent)
+
+        if plot_line_class not in self.lines_created:
+            self.lines_created[plot_line_class] = 1
 
         # set label and plotter
-        default_label = "Line %d" % (self.lines_created + 1)
+        default_label = "%s %d" % (plot_line_name, self.lines_created[plot_line_class])
         plot_line.set_plotter(self.plotter_generator())
         plot_line.set_label(default_label)
-        plot_line.init()
+        plot_line.do_init()
 
         # since plot_line is a view widget, it should be added to the view widget stack
         self._view_parent.addWidget(plot_line)
@@ -96,7 +102,7 @@ class PlotLineModel(QtGui.QStandardItemModel):
         # insert stditem into view
         self.insertRow(0, plot_line.stditem)
 
-        self.lines_created += 1
+        self.lines_created[plot_line_class] += 1
         self.sigLegendChanged.emit()
         return plot_line.stditem
 

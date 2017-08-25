@@ -55,7 +55,7 @@ class AngularTorquePlotter:
         # zero-indexed bin number for positive theta
         bin_size = 2 * np.pi / self.nSteps
         self.bin_index = np.floor(theta_positive / bin_size)
-        self.bin_theta = (np.arange(0, self.nSteps, 1, dtype=int) + 0.5) * bin_size
+        self.bin_theta = (np.arange(0, self.nSteps, 1, dtype=int) + 0.5) * bin_size - np.pi
 
     def plot_circle(self):
         # add circle to plot

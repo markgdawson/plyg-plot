@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, QtCore
 from PlotWindow import PlotWindow
 from PlotType_Geo import PlotLineGeoView
 from PlotLineModel import PlotLineModel
+from PlotType_AngularTorque import PlotLineAngularTorqueView
 
 
 def new_plot(last_win_pos=None):
@@ -37,9 +38,12 @@ class WindowFactory(QtWidgets.QDialog):
 
         self.plot = None
 
-        factories = [
-            ('Geometry', PlotLineGeoView)
-        ]
+        geometry_factories = [ ('Patches', PlotLineGeoView),
+                               ('Angular Torque', PlotLineAngularTorqueView) ]
+        time_factories = []
+
+        factories = [('Geometry', geometry_factories),
+                     ('Time', time_factories)]
 
         self.setLayout(QtWidgets.QVBoxLayout())
 
@@ -60,8 +64,8 @@ class WindowFactory(QtWidgets.QDialog):
         self.setMinimumWidth(250)
 
     def accept(self):
-        View = self.line_list.currentData(role=QtCore.Qt.UserRole)
-        self.plot = PlotWindow(PlotLineModel(View))
+        available_views = self.line_list.currentData(role=QtCore.Qt.UserRole)
+        self.plot = PlotWindow(PlotLineModel(), available_views)
 
         # connect new plot signal to factory plot function
         self.plot.sigNewPlot.connect(new_plot)
