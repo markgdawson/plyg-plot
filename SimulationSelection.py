@@ -1,6 +1,9 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 import ui_SimulationSelectionDialog
 from Simulation import Simulation
+from TorqueFile import TorqueFile
+from InformFile import InformFile
+import os
 
 
 class SimulationSelectionWidget(QtWidgets.QPushButton):
@@ -71,13 +74,31 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         self.deleteButton.clicked.connect(self.delete_selected)
 
     def load_simulation(self):
-        filename, file_filter = QtWidgets.QFileDialog.getOpenFileName(self, 'caption', 'C:/', 'Geo Files (*.geo)')
-        if len(filename) > 0:
-            simulation = Simulation(self.model, filename)
+        filename, file_filter = QtWidgets.QFileDialog.getOpenFileName(self, 'Select Geo File', 'C:/',
+                                                                      'Geo Files (*.geo)')
+        if len(filename) == 0:
+            return
 
-            self.model.add_simulation(simulation)
-            index = self.model.index(0, 0, QtCore.QModelIndex())
-            self.tableView.edit(index)
+        inform_file = os.path.join(os.path.dirname(filename), 'inform')
+
+        if os.path.isfile(inform_file):
+            params = InformFile(inform_file)
+        else:
+            QtWidgets.QMessageBox.information(self, "Warning", "Inform file not found automatically,\
+                                                        please select inform file", QtWidgets.QMessageBox.Ok)
+
+            inform_file, file_filter = QtWidgets.QFileDialog.getOpenFileName(self, 'Select Inform File', 'C:/',
+                                                                             'Any File (*)')
+            if len(inform_file) == 0:
+                params = None
+            else:
+                params = InformFile(inform_file)
+
+        simulation = Simulation(self.model, filename, params=params)
+
+        self.model.add_simulation(simulation)
+        index = self.model.index(0, 0, QtCore.QModelIndex())
+        self.tableView.edit(index)
 
     def delete_selected(self):
         indexes = self.tableView.selectedIndexes()

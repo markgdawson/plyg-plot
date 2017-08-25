@@ -9,7 +9,7 @@ class Simulation(QtCore.QObject):
     sigLoaded = QtCore.pyqtSignal()
     sigUpdateLabel = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, geo_file):
+    def __init__(self, parent, geo_file, params=None):
         super(Simulation, self).__init__(parent)
 
         self._geom = None
@@ -28,7 +28,7 @@ class Simulation(QtCore.QObject):
 
         torque_file = os.path.join(os.path.dirname(geo_file), 'TORQUE.csv')
         if os.path.isfile(torque_file):
-            self._torque = TorqueFile(torque_file)
+            self._torque = TorqueFile(torque_file, params=params)
         else:
             self._torque = None
 
