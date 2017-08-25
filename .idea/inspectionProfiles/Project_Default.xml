@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="PyQt5.QtCore.pyqtSignal.emit" />
+          <option value="PyQt5.QtCore.Qt.ItemFlags.__xor__" />
         </list>
       </option>
     </inspection_tool>

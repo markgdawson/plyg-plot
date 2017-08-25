@@ -27,15 +27,18 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         self.dialog.setWindowModality(QtCore.Qt.WindowModal)
         accepted = self.dialog.exec()
         if accepted:
-            self.simulation = self.dialog.simulation()
-            self.update_label()
-            self.sigTorqueLoaded.emit(self.simulation.torque())
-            if self.simulation.loaded:
-                self.sigSimulationLoaded.emit(self.simulation())
-            else:
-                self.simulation.sigUpdateLabel.connect(self.update_label)
-                self.simulation.sigUpdateProgress.connect(self.update_label)
-                self.simulation.sigLoaded.connect(self.emit_simulation_loaded)
+            self.set_simulation(self.dialog.simulation())
+
+    def set_simulation(self, simulation):
+        self.simulation = simulation
+        self.update_label()
+        self.sigTorqueLoaded.emit(simulation.torque())
+        if simulation.loaded:
+            self.emit_simulation_loaded()
+        else:
+            simulation.sigUpdateLabel.connect(self.update_label)
+            simulation.sigUpdateProgress.connect(self.update_label)
+            simulation.sigLoaded.connect(self.emit_simulation_loaded)
 
     def emit_simulation_loaded(self):
         self.sigSimulationLoaded.emit(self.simulation)

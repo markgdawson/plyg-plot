@@ -124,6 +124,9 @@ class TorqueFile:
 
     # Attribute accessors
 
+    def num_revs(self):
+        return self.X.shape[0] / self.params.StepsPerRev
+
     def T(self):
         return np.max(self.time)
 
