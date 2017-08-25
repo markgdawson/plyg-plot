@@ -60,8 +60,8 @@ class WindowFactory(QtWidgets.QDialog):
         self.setMinimumWidth(250)
 
     def accept(self):
-        view = self.line_list.currentData(role=QtCore.Qt.UserRole)
-        self.plot = PlotWindow(PlotLineModel(view))
+        View = self.line_list.currentData(role=QtCore.Qt.UserRole)
+        self.plot = PlotWindow(PlotLineModel(View))
 
         # connect new plot signal to factory plot function
         self.plot.sigNewPlot.connect(new_plot)

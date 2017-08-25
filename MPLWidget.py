@@ -3,6 +3,7 @@ import qtawesome as qta
 from PyQt5 import QtWidgets, QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import collections
 
 
 class MyNavigationToolbar(NavigationToolbar):
@@ -22,8 +23,8 @@ class MyNavigationToolbar(NavigationToolbar):
         self.toolitems = (
             (new_plot_text, 'Create new plot', 'fa.file-o', 'new_plot'),
             (None, None, None, None),
-            (new_line_text, 'Add new plottable line', 'fa.plus', 'new_line'),
-            (delete_text, 'Add current plottable line', 'fa.minus', 'delete_line'),
+            (new_line_text, 'Add new plot line', 'fa.plus', 'new_line'),
+            (delete_text, 'Delete current plot line', 'fa.minus', 'delete_line'),
             (None, None, None, None),
             ('Zoom', 'Zoom to rectangle', 'zoom_to_rect', 'zoom'),
             ('Pan', 'Pan axes with left mouse, zoom with right', 'move', 'pan'),
@@ -34,7 +35,7 @@ class MyNavigationToolbar(NavigationToolbar):
             (None, None, None, None),
             ('Save', 'Save the figure', 'filesave', 'save_figure'),
             (None, None, None, None),
-            ('Edit Paramters', 'Edit Plot Visuals', 'qt4_editor_options', 'do_edit_parameters'),
+            ('Edit Parameters', 'Edit Plot Visuals', 'qt4_editor_options', 'do_edit_parameters'),
             ('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
             (None, None, None, None),
             ('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
@@ -112,7 +113,7 @@ class MPLWidget(QtWidgets.QWidget):
                                           "No configuration options available for this plot type",
                                           QtWidgets.QMessageBox.Ok)
 
-    def update_legend(self):
+    def redraw(self):
         if self.ax.legend_ is not None:
             self.ax.legend_.remove()
             self.ax.legend()
@@ -122,60 +123,127 @@ class MPLWidget(QtWidgets.QWidget):
         if self.ax.legend_ is not None:
             self.ax.legend_.draggable(True)
 
-        self.redraw()
-
-    def redraw(self):
         self.canvas.draw()
 
     def new_plotter(self):
         return MPLPlotter(self)
 
 
-class MPLPlotter():
+class MPLPlotter:
     def __init__(self, mpl_widget):
         self.ax = mpl_widget.ax
         self.mpl_widget = mpl_widget
         self.mpl_lines = dict({})
+        self.artists = dict({})
         self.visible = True
+        self._label = None
+        self._labelled = {}
+        self._plotted = {}
+        self._master = None
 
-    def plot(self, x, y, label=None, linestyle='-', index=-1):
-        if index in self.mpl_lines.keys():
-            line = self.mpl_lines[index]
-            line.set_data(x, y)
+    # this plot will automatically be labelled and managed internally
+    def plot(self, x, y):
+        self._master = self.auxplot(x, y, handle=self._master, label=True)
+        self.redraw()
+
+    # auxiliary/additional plotted lines, which must be handled by caller
+    def auxplot(self, x, y, handle=None, label=False):
+        if handle is None:
+            handle, = self.ax.plot(x, y)
         else:
-            l, = self.ax.plot(x, y, linestyle, label=label, visible=self.visible)
-            self.mpl_lines[index] = l
+            handle.set_data(x, y)
+
+        self._process_properties(label, handle)
 
         self.ax.relim()
         self.ax.autoscale_view()
 
         self.ax.figure.tight_layout()
 
-        # refresh canvas
-        self.redraw()
+        return handle
+
+    def _process_properties(self, label, handle):
+
+        if label:
+            label = self._label
+            self._labelled[handle] = True
+        else:
+            label = None
+            if handle in self._labelled.keys() and self._labelled[handle]:
+                self._labelled[handle] = False
+
+        handle.set_label(label)
+
+        # set visibility
+        handle.set_visible(self.visible)
+
+        # store handles
+        self._plotted[handle] = True
 
     def redraw(self):
         self.mpl_widget.redraw()
 
-    def unplot(self):
-        for line in self.mpl_lines:
-            line.remove()
+    def _remove_handle(self, handle):
+        if handle is None:
+            return
+
+        if handle in self._plotted.keys():
+            del self._plotted[handle]
+
+        if handle in self._labelled.keys():
+            del self._labelled[handle]
+
+        handle.remove()
+
+    def add_artist(self, artist, handle=None, label=False):
+        self._remove_handle(handle)
+
+        handle = self.ax.add_artist(artist)
+        handle.set_label(label)
+
+        self._process_properties(label, handle)
+
+        self._plotted[handle] = True
+
+        return handle
+
+    def set_properties(self, handles, **kwargs):
+        handles = self._make_iterable(handles)
+        for handle in handles:
+            handle.update(kwargs)
+
+    def clear(self, handles=None):
+        handles = self._make_iterable(handles)
+        for handle in handles:
+            self._remove_handle(handle)
 
         self.redraw()
 
-    def set_label(self, label, index=-1):
-        if index not in self.mpl_lines.keys():
-            # plot an empty line if there is no line yet
-            self.plot([], [], label=label, index=index)
-        self.mpl_lines[index].set_label(label)
-        self.update_legend()
+    def set_label(self, label):
+        self._label = label
+        for line in self._labelled.keys():
+            if self._labelled[line]:
+                line.set_label(label)
 
-    def set_visibility(self, visible):
+        self.redraw()
+
+    def set_visibility(self, visible, handles=None):
         self.visible = visible
-        for line in self.mpl_lines.values():
-            line.set_visible(self.visible)
-            self.update_legend()
 
-    def update_legend(self):
-        self.mpl_widget.update_legend()
+        handles = self._make_iterable(handles)
+        for handle in handles:
+            handle.set_visible(self.visible)
 
+        self.redraw()
+
+    def _make_iterable(self, handles):
+        if handles is None:
+            return self._plotted.keys()
+        if isinstance(handles, collections.Iterable):
+            return handles
+        else:
+            return [handles]
+
+    def set_spine_visible(self, visibility, spines=('left', 'right', 'top', 'bottom')):
+        for spine in spines:
+            self.ax.spines[spine].set_visible(visibility)

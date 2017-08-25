@@ -41,7 +41,7 @@ class PlotWindow(QtWidgets.QMainWindow):
         splitter.addWidget(self.mpl_widget)
 
         # connect stale legend signals to update slot
-        self.toolbar.sigStaleLegend.connect(self.mpl_widget.update_legend)
+        self.toolbar.sigStaleLegend.connect(self.mpl_widget.redraw)
 
         # connect toolbar signals
         self.toolbar.sigNewLine.connect(sidebar.new_line)
@@ -63,16 +63,14 @@ class PlotWindow(QtWidgets.QMainWindow):
                 "Python %s\n"%sys.version.split("\n")[0],
                 "IPython {version} -- An enhanced Interactive Python. Type '?' for help.\n\n".format(version=release.version),
                 "* The figure axis is available as plt (e.g. plt.plot([0,1],[0,2]) )\n",
-                "* The draw() function should be called to reflect changes in the plot window\n",
-                "* legend() function should be called up update any changed to the legend\n\n"
+                "* The update() function should be called to reflect changes in the plot window\n",
             ])
 
             self.interpreter = EmbeddedPythonInterpreter(banner=banner)
 
             # make variables available to interpreter
             self.interpreter.push_variable('plt', self.mpl_widget.ax)
-            self.interpreter.push_variable('draw', self.mpl_widget.redraw)
-            self.interpreter.push_variable('legend', self.mpl_widget.update_legend)
+            self.interpreter.push_variable('update', self.mpl_widget.redraw)
 
         self.interpreter.show()
 

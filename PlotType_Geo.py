@@ -5,9 +5,7 @@ from ValueCheckboxSelector import FacePatchSelector
 
 
 class PlotLineGeoView(PlotLineView):
-    def __init__(self, parent=None):
-        super(PlotLineGeoView, self).__init__(parent)
-
+    def init(self):
         # plotting parameter defaults
         self.simulation = None
         self.fpatches = []
@@ -45,6 +43,18 @@ class PlotLineGeoView(PlotLineView):
         if self.simulation is not None:
             geom = self.simulation.geom()
             if geom is not None:
-                x,y = geom.get_patch_faces(self.fpatches)
+                x, y = geom.get_patch_faces(self.fpatches)
                 self.plotter.plot(x, y)
 
+if __name__ == "__main__":
+    import sys
+    from PlotWindow import PlotWindow
+    from PlotLineModel import PlotLineModel, PlotLineView
+    from PyQt5 import QtWidgets
+
+    app = QtWidgets.QApplication(sys.argv)
+
+    pw = PlotWindow(PlotLineModel(PlotLineGeoView))
+    pw.show()
+    pw.toolbar.sigNewLine.emit()
+    sys.exit(app.exec_())

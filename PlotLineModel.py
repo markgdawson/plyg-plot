@@ -33,6 +33,9 @@ class PlotLineView(QtWidgets.QFrame):
         # set content margin to zero
         self.setContentsMargins(0, 0, 0, 0)
 
+    def init(self):
+        pass
+
     def set_plotter(self, plotter):
         self.plotter = plotter
         try:
@@ -49,7 +52,7 @@ class PlotLineView(QtWidgets.QFrame):
 
     def set_label(self, label):
         self.stditem.setText(label)
-        self.label_widget.setText(self.label_text())
+        self.sync_label()
 
     def sync_label(self):
         if self.plotter is not None:
@@ -57,7 +60,7 @@ class PlotLineView(QtWidgets.QFrame):
         self.label_widget.setText(self.label_text())
 
     def unplot(self):
-        self.plotter.unplot()
+        self.plotter.clear()
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
@@ -74,7 +77,7 @@ class PlotLineModel(QtGui.QStandardItemModel):
     def delete_line(self, index):
         plot_line = self.line(index)
         if plot_line is not None:
-            plot_line.unplot()
+            plot_line.plotter.clear()
         self.removeRow(index.row())
         self.sigLegendChanged.emit()
 
@@ -85,6 +88,7 @@ class PlotLineModel(QtGui.QStandardItemModel):
         default_label = "Line %d" % (self.lines_created + 1)
         plot_line.set_plotter(self.plotter_generator())
         plot_line.set_label(default_label)
+        plot_line.init()
 
         # since plot_line is a view widget, it should be added to the view widget stack
         self._view_parent.addWidget(plot_line)
