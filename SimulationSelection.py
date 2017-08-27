@@ -1,13 +1,16 @@
+import os
+
 from PyQt5 import QtWidgets, QtCore, QtGui
+
 import ui_SimulationSelectionDialog
+from InformFile import InformFile
 from Simulation import Simulation
 from TorqueFile import TorqueFile
-from InformFile import InformFile
-import os
 
 
 class SimulationSelectionWidget(QtWidgets.QPushButton):
     sigSimulationLoaded = QtCore.pyqtSignal(Simulation)
+    sigSimulationSelected = QtCore.pyqtSignal(Simulation)
     sigTorqueLoaded = QtCore.pyqtSignal(TorqueFile)
 
     def __init__(self, parent=None):
@@ -17,8 +20,8 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         self.setText("Select Simulation...")
         self.setDefault(True)
         self.clicked.connect(self.__select_simulation)
-        self.simulation = None
 
+        self.simulation = None
         self.dialog = None
 
     def __select_simulation(self):
@@ -33,6 +36,7 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
         self.simulation = simulation
         self.update_label()
         self.sigTorqueLoaded.emit(simulation.torque())
+        self.emit_simulation_selected()
         if simulation.loaded:
             self.emit_simulation_loaded()
         else:
@@ -42,6 +46,9 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
 
     def emit_simulation_loaded(self):
         self.sigSimulationLoaded.emit(self.simulation)
+
+    def emit_simulation_selected(self):
+        self.sigSimulationSelected.emit(self.simulation)
 
     def update_label(self):
         if self.simulation is None:
@@ -110,7 +117,8 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         for row in reversed(sorted(set(rows))):
             self.model.beginRemoveRows(QtCore.QModelIndex(), row, row)
             index = self.model.createIndex(row, 0)
-            self.model.simulation(index).disconnect_signals_from_item()
+            simulation = self.model.simulation(index)
+            simulation.disconnect_signals_from_item()
             self.model.removeRow(row)
             self.model.endRemoveRows()
 

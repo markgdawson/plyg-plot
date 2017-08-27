@@ -1,9 +1,10 @@
+import collections
+
 import matplotlib.pyplot as plt
 import qtawesome as qta
 from PyQt5 import QtWidgets, QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-import collections
 
 
 class MyNavigationToolbar(NavigationToolbar):

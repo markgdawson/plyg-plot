@@ -1,9 +1,13 @@
 import sys
+
 from PyQt5 import QtWidgets, QtCore
-from PlotWindow import PlotWindow
-from PlotType_Geo import PlotLineGeoView
+
 from PlotLineModel import PlotLineModel
 from PlotType_AngularTorque import PlotLineAngularTorqueView
+from PlotType_Geo import PlotLineGeoView
+from PlotType_MeanValues import PlotLineMeanTorqueOverRevs, PlotLineMeanCpOverRevs
+from PlotType_SlidingWindows import PlotLineCpSlidingWindowView, PlotLineTorqueSlidingWindowView
+from PlotWindow import PlotWindow
 
 
 def new_plot(last_win_pos=None):
@@ -38,9 +42,13 @@ class WindowFactory(QtWidgets.QDialog):
 
         self.plot = None
 
-        geometry_factories = [ ('Patches', PlotLineGeoView),
-                               ('Angular Torque', PlotLineAngularTorqueView) ]
-        time_factories = []
+        geometry_factories = [('Patches', PlotLineGeoView),
+                              ('Angular Torque', PlotLineAngularTorqueView)]
+
+        time_factories = [('Sliding Window Cp', PlotLineCpSlidingWindowView),
+                          ('Sliding Window Torque', PlotLineTorqueSlidingWindowView),
+                          ('Mean Torque', PlotLineMeanTorqueOverRevs),
+                          ('Mean Cp', PlotLineMeanCpOverRevs)]
 
         factories = [('Geometry', geometry_factories),
                      ('Time', time_factories)]
@@ -69,8 +77,9 @@ class WindowFactory(QtWidgets.QDialog):
 
         # connect new plot signal to factory plot function
         self.plot.sigNewPlot.connect(new_plot)
-        
+
         super(WindowFactory, self).accept()
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

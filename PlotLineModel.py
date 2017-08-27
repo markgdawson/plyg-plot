@@ -2,21 +2,27 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 
 class PlotLineView(QtWidgets.QFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, plotter, label):
         super(PlotLineView, self).__init__(parent)
+
         self.stditem = QtGui.QStandardItem()
         self.stditem.setData(self, role=QtCore.Qt.UserRole)
-        self.plotter = None
+        self.stditem.setText(label)
+
+        self.plotter = plotter
+        self.plotter.set_label(label)
 
         # add label
         self.label_widget = QtWidgets.QLabel()
         self.label_widget.setMinimumWidth(300)
         self.label_widget.setContentsMargins(0, 0, 0, 5)
+        self.label_widget.setText(label)
 
         # add visibility checkbox
         self.visible_checkbox = QtWidgets.QCheckBox()
         self.visible_checkbox.setChecked(True)
         self.visible_checkbox.setText("Show on Plot")
+        self.visible_checkbox.toggled.connect(self.plotter.set_visibility)
 
         # set frame style
         self.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Raised)
@@ -33,21 +39,6 @@ class PlotLineView(QtWidgets.QFrame):
         # set content margin to zero
         self.setContentsMargins(0, 0, 0, 0)
 
-    def do_init(self):
-        self.init()
-        self.layout().addStretch()
-
-    def init(self):
-        pass
-
-    def set_plotter(self, plotter):
-        self.plotter = plotter
-        try:
-            self.visible_checkbox.toggled.disconnect()
-        except TypeError as err:
-            pass
-        self.visible_checkbox.toggled.connect(self.plotter.set_visibility)
-
     def label(self):
         return self.stditem.text()
 
@@ -59,8 +50,7 @@ class PlotLineView(QtWidgets.QFrame):
         self.sync_label()
 
     def sync_label(self):
-        if self.plotter is not None:
-            self.plotter.set_label(self.label())
+        self.plotter.set_label(self.label())
         self.label_widget.setText(self.label_text())
 
     def unplot(self):
@@ -68,7 +58,6 @@ class PlotLineView(QtWidgets.QFrame):
 
 
 class PlotLineModel(QtGui.QStandardItemModel):
-
     sigLegendChanged = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
@@ -76,6 +65,7 @@ class PlotLineModel(QtGui.QStandardItemModel):
         self.lines_created = {}
         self.itemChanged.connect(self.on_stditem_changed)
         self.plotter_generator = None
+        self._view_parent = None
 
     def delete_line(self, index):
         plot_line = self.line(index)
@@ -85,16 +75,15 @@ class PlotLineModel(QtGui.QStandardItemModel):
         self.sigLegendChanged.emit()
 
     def new_line(self, plot_line_class, plot_line_name):
-        plot_line = plot_line_class(self._view_parent)
-
         if plot_line_class not in self.lines_created:
+            # initiate line count
             self.lines_created[plot_line_class] = 1
 
         # set label and plotter
         default_label = "%s %d" % (plot_line_name, self.lines_created[plot_line_class])
-        plot_line.set_plotter(self.plotter_generator())
-        plot_line.set_label(default_label)
-        plot_line.do_init()
+
+        plot_line = plot_line_class(self._view_parent, self.plotter_generator(), default_label)
+        plot_line.layout().addStretch()
 
         # since plot_line is a view widget, it should be added to the view widget stack
         self._view_parent.addWidget(plot_line)

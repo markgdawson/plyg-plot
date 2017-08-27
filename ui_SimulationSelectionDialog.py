@@ -6,8 +6,10 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
+
+# noinspection PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit,PyAttributeOutsideInit
 class Ui_SimulationSelectionDialog(object):
     def setupUi(self, SimulationSelectionDialog):
         SimulationSelectionDialog.setObjectName("SimulationSelectionDialog")
@@ -42,7 +44,7 @@ class Ui_SimulationSelectionDialog(object):
         self.horizontalLayout_2.addWidget(self.status)
         self.buttonBox = QtWidgets.QDialogButtonBox(SimulationSelectionDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.horizontalLayout_2.addWidget(self.buttonBox)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
@@ -55,8 +57,8 @@ class Ui_SimulationSelectionDialog(object):
     def retranslateUi(self, SimulationSelectionDialog):
         _translate = QtCore.QCoreApplication.translate
         SimulationSelectionDialog.setWindowTitle(_translate("SimulationSelectionDialog", "Simulation Import"))
-        self.label.setText(_translate("SimulationSelectionDialog", "Select from simulation list or load a new simulation."))
+        self.label.setText(
+            _translate("SimulationSelectionDialog", "Select from simulation list or load a new simulation."))
         self.loadButton.setText(_translate("SimulationSelectionDialog", "Load..."))
         self.deleteButton.setText(_translate("SimulationSelectionDialog", "Delete"))
         self.status.setText(_translate("SimulationSelectionDialog", "<Nothing Selected>"))
-

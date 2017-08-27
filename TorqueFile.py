@@ -1,76 +1,214 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May 30 11:44:38 2017
+import functools
 
-@author: m.dawson
-"""
-
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class IncompleteFile(EOFError):
     pass
 
 
+class NoPatchesError(EOFError):
+    pass
+
+
 class TorqueFile:
-    def __init__(self, fileName, params=None, label=None):
-        self.fileName = fileName
+    #
+    # Sliding window quantities
+    #
+
+    def mean_torque_sliding_window(self, n_revs_window=1, patches=None):
+
+        total_torque_per_time_step, time_steps = self.total_torque_per_time_step(patches=patches)
+
+        num_steps = int(np.round(n_revs_window * self.params.StepsPerRev))
+
+        # compute mean torque
+        mean_torque_prev_rev = []
+        for iTS in range(0, self.num_time_steps - num_steps):
+            torque = np.mean(total_torque_per_time_step[iTS:iTS + num_steps])
+            mean_torque_prev_rev.append(torque)
+
+        mean_torque_prev_rev = np.array(mean_torque_prev_rev)
+        time_steps_end_rev = np.array([iTS + num_steps for iTS in range(0, self.num_time_steps - num_steps)])
+
+        return mean_torque_prev_rev, time_steps_end_rev
+
+    def mean_cp_sliding_window(self, n_revs_window=1, plot=False, patches=None, units=None):
+
+        torque, time_steps_end_rev = self.mean_torque_sliding_window(n_revs_window=n_revs_window, patches=patches)
+        cp = self.cp(torque)
+
+        if plot:
+            self._plot_transient_over_range(cp, time_steps=time_steps_end_rev, units=units, y_label='Cp')
+
+        return cp, time_steps_end_rev
+
+    #
+    # Quantities per time step
+    #
+    @functools.lru_cache(20)
+    def total_torque_per_time_step(self, patches=None, plot=False, units=None):
+        if patches is None or len(patches) == 0:
+            raise NoPatchesError
+
+        tot_torque = np.zeros(self.num_time_steps)
+
+        time_steps = list(range(0, self.num_time_steps))
+
+        for iTS in time_steps:
+            for patch_index in patches:
+                tot_torque[iTS] = tot_torque[iTS] + self.torque[iTS, patch_index]
+
+        if plot:
+            self._plot_transient_over_range(tot_torque, time_steps, units=units)
+
+        return tot_torque, time_steps
+
+    def cp_per_time_step(self, patches=None, plot=False, units=None):
+
+        torque, time_steps = self.total_torque_per_time_step(patches=patches)
+
+        cp = self.cp(torque)
+
+        if plot:
+            self._plot_transient_over_range(cp, time_steps, units=units, y_label='Cp')
+
+        return cp, time_steps
+
+    #
+    # Mean values over ranges
+    #
+    def mean_torque_over_revs(self, start_rev, end_rev, patches=None, plot=False, units=None):
+        total_torque_per_time_step = self.total_torque_per_time_step(patches=patches)
+
+        start_ts = self.get_rev_time_step(start_rev)
+        end_ts = self.get_rev_time_step(end_rev)
+
+        time_steps = self.time_steps[start_ts:end_ts]
+        total_torque_per_time_step = total_torque_per_time_step[start_ts:end_ts]
+
+        mean_torque = np.mean(total_torque_per_time_step)
+
+        if plot:
+            self._plot_transient_over_range(total_torque_per_time_step, time_steps=time_steps, units=units)
+            self._plot_scalar_over_range(mean_torque, start_ts, end_ts, units=units)
+
+        return mean_torque, time_steps[[0, -1]]
+
+    def mean_cp_over_revs(self, start_rev, end_rev, patches=None, units=None, plot=False):
+        mean_torque, time_steps = self.mean_torque_over_revs(start_rev, end_rev, patches=patches)
+        simulated_power = self.simulated_power(mean_torque)
+        theoretical_power = self.theoretical_power()
+
+        mean_cp = (simulated_power / theoretical_power) * 100
+
+        if plot:
+            self._plot_scalar_over_range(mean_cp, time_steps[0], time_steps[-1], units=units)
+
+        return mean_cp, time_steps
+
+    #
+    # Convert between time units
+    #
+
+    UNITS_TIME = 0
+    UNITS_REVOLUTIONS = 1
+    UNITS_TIME_STEPS = 1
+
+    def convert_units(self, time_steps, units=None):
+        if units is None:
+            units = self.UNITS_REVOLUTIONS
+
+        if units == self.UNITS_TIME:
+            time = [self.time[i] for i in time_steps - 1]
+            x_label = 'time (s)'
+        elif units == self.UNITS_REVOLUTIONS:
+            time = np.true_divide(time_steps, self.params.StepsPerRev)
+            x_label = 'time (revolutions)'
+        elif units == self.UNITS_TIME_STEPS:
+            time = time_steps
+            x_label = 'time (number of time steps)'
+        else:
+            raise ValueError('%s not valid units value' % units)
+
+        return time, x_label
+
+    #
+    #  File reading and setup
+    #
+
+    def __init__(self, file_name, params=None, label=None):
+        self.fileName = file_name
         self.label = label
         self.params = params
-        self.readFile()
-        self._afterFileReadHook()
 
-    # File Reading Operations
+        self.number_patches = None
+        self.num_time_steps = None
+        self.time_steps = None
+        self.patches = None
+        self.time = None
+        self.omega = None
+        self.torque = None
+        self.F = None
+        self.X = None
+        self.area = None
+
+        try:
+            self.read_file()
+            self._after_file_read_hook()
+        except IncompleteFile as err:
+            self._after_file_read_hook()
+            raise err
+
     @staticmethod
-    def readHeader(file):
+    def read_header(file):
         tmp = file.readline().rstrip('\n')
         tmp = tmp.split(',')
 
-        nPatch = int(tmp[1])
-        nTS = int(tmp[0])
+        number_patches = int(tmp[1])
+        number_time_steps = int(tmp[0])
 
         # discard header
-        tmp = file.readline()
+        file.readline()
 
-        return nPatch, nTS
+        return number_patches, number_time_steps
 
-    def readPatchNumbers(self):
+    def read_patch_numbers(self):
         with open(self.fileName) as file:
-            self.nPatch, self.nTS = self.readHeader(file)
-            self.patches = np.empty([self.nPatch], dtype=int)
+            self.number_patches, self.num_time_steps = self.read_header(file)
+            self.patches = np.empty([self.number_patches], dtype=int)
 
-            for iPatch in range(0, self.nPatch):
+            for iPatch in range(0, self.number_patches):
                 tmp = file.readline().split(',')
 
                 self.patches[iPatch] = int(tmp[2])
 
-    def readFile(self):
-
+    def read_file(self):
+        time_step = 0
         try:
             with open(self.fileName) as file:
-                self.readPatchNumbers()
+                self.read_patch_numbers()
 
-                # explicitly set
-                maxPatchIdx = np.max(self.patches) + 1
+                max_patch_index = np.max(self.patches) + 1
 
-                self.nPatch, self.nTS = self.readHeader(file)
+                self.number_patches, self.num_time_steps = self.read_header(file)
 
-                self.time = np.empty(self.nTS, dtype=float)
-                self.omega = np.empty(maxPatchIdx, dtype=float)
+                self.time = np.empty(self.num_time_steps, dtype=float)
+                self.omega = np.empty(max_patch_index, dtype=float)
 
-                self.torque = np.empty([self.nTS, maxPatchIdx], dtype=float)
+                self.torque = np.empty([self.num_time_steps, max_patch_index], dtype=float)
 
-                self.F = np.empty([self.nTS, maxPatchIdx, 3])
+                self.F = np.empty([self.num_time_steps, max_patch_index, 3])
 
-                self.X = np.empty([self.nTS, maxPatchIdx, 3])
+                self.X = np.empty([self.num_time_steps, max_patch_index, 3])
 
-                self.area = np.empty([self.nTS, maxPatchIdx])
+                self.area = np.empty([self.num_time_steps, max_patch_index])
 
                 # read torque file
                 lines = []
-                for iTS in range(0, self.nTS):
-                    for iPatch in range(0, self.nPatch):
+                for time_step in range(0, self.num_time_steps):
+                    for iPatch in range(0, self.number_patches):
                         line = file.readline()
                         lines.append(line)
                         tmp = line.split(',')
@@ -78,301 +216,159 @@ class TorqueFile:
                         if len(tmp[0]) == 0 or len(tmp) < 11:
                             raise IncompleteFile('Torque file incomplete: %s' % self.fileName)
 
-                        self.time[iTS] = float(tmp[0])
+                        self.time[time_step] = float(tmp[0])
                         self.omega[iPatch] = float(tmp[1])
 
-                        iPatchID = int(self.patches[iPatch])
+                        patch_index = int(self.patches[iPatch])
 
-                        if not iPatchID == float(tmp[2]):
+                        if not patch_index == float(tmp[2]):
                             raise ValueError('invalid file')
 
-                        self.torque[iTS, iPatchID] = float(tmp[3])
+                        self.torque[time_step, patch_index] = float(tmp[3])
 
-                        self.F[iTS, iPatchID, 0] = float(tmp[4])
-                        self.F[iTS, iPatchID, 1] = float(tmp[5])
-                        self.F[iTS, iPatchID, 2] = float(tmp[6])
+                        self.F[time_step, patch_index, 0] = float(tmp[4])
+                        self.F[time_step, patch_index, 1] = float(tmp[5])
+                        self.F[time_step, patch_index, 2] = float(tmp[6])
 
-                        self.X[iTS, iPatchID, 0] = float(tmp[7])
-                        self.X[iTS, iPatchID, 1] = float(tmp[8])
-                        self.X[iTS, iPatchID, 2] = float(tmp[9])
+                        self.X[time_step, patch_index, 0] = float(tmp[7])
+                        self.X[time_step, patch_index, 1] = float(tmp[8])
+                        self.X[time_step, patch_index, 2] = float(tmp[9])
 
-                        self.area[iTS, iPatchID] = float(tmp[10])
-                fileSuccess = True
-        except IncompleteFile as incompleteFileException:
-            # remove last (possibly incomplete) timestep
-            print(incompleteFileException.message)
-            iTS = iTS - 1
-            self.truncateTorqueFile(iTS)
-            fileSuccess = False
+                        self.area[time_step, patch_index] = float(tmp[10])
 
-        return fileSuccess
+        except IncompleteFile as incomplete_file_exception:
+            # remove last (possibly incomplete)
+            time_step = time_step - 1
+            self.truncate_torque_tile(time_step)
+            raise incomplete_file_exception
 
-    def _afterFileReadHook(self):
-        self.timesteps = np.array([i + 1 for i in range(0, self.nTS)])
+    def _after_file_read_hook(self):
+        self.time_steps = np.array([i + 1 for i in range(0, self.num_time_steps)])
 
-    def truncateTorqueFile(self, nTS):
-        self.time = self.time[1:nTS]
+    def truncate_torque_tile(self, num_time_steps):
+        self.time = self.time[1:num_time_steps]
 
-        self.torque = self.torque[1:nTS, :]
+        self.torque = self.torque[1:num_time_steps, :]
 
-        self.F = self.F[1:nTS, :, :]
+        self.F = self.F[1:num_time_steps, :, :]
 
-        self.X = self.X[1:nTS, :, :]
+        self.X = self.X[1:num_time_steps, :, :]
 
         # adjust for zero indexing
-        self.nTS = nTS - 1
+        self.num_time_steps = num_time_steps - 1
 
-    # Attribute accessors
+    #
+    # Accessors
+    #
 
     def num_revs(self):
-        return self.X.shape[0] / self.params.StepsPerRev
+        return self.num_time_steps / self.params.StepsPerRev
 
-    def T(self):
+    def max_time(self):
         return np.max(self.time)
 
-    # Computed Attribute Accessors
-    def getTotalTorquePerTimeStep(self, patches=None):
-        if patches is None:
-            patches = self.patches
+    #
+    # get start/end ranges
+    #
 
-        totTorque = np.zeros(self.nTS)
+    def get_rev_time_step(self, rev):
+        if rev == 0:
+            raise ValueError('input revolution value should be larger than 0')
+        time_step = int((rev - 1) * self.params.StepsPerRev)
 
-        for iTS in range(0, self.nTS):
-            for iPatch in patches:
-                totTorque[iTS] = totTorque[iTS] + self.torque[iTS, iPatch]
+        if time_step > self.num_time_steps or time_step < 0:
+            raise ValueError('revolution %d is outside of range' % rev)
 
-        return totTorque
+        return time_step
 
-    def getGivenRevStartTS(self, iRev):
-        if (iRev < 1):
-            raise ValueError('input revolution value should be larger than 1')
-        return (iRev - 1) * self.params.StepsPerRev
-
-    def getMeanCpOverLastNRevs(self, nRev, plot=False, xunits='revs'):
-        iRev = self.getNRevs() - nRev + 1
-        meancp, tStepStart, tStepEnd, lines = self.getMeanCpOverRevs(iRev, nRev, plot=plot, xunits=xunits)
-
-        return meancp, tStepStart, tStepEnd, lines
-
-    def getMeanCpOverRevs(self, iRev, nRev, xunits='revs', plot=False):
-        meanTorque, tStepStart, tStepEnd = self.getMeanTorqueOverRevs(iRev, nRev)
-        simpower = self._calcSimulatedPower(meanTorque)
-        thpower = self.getTheoreticalPower()
-
-        meancp = (simpower / thpower) * 100
-
-        if (plot):
-            l = self._plotScalarOverRange(meancp, tStepStart, tStepEnd, xunits=xunits)
-        else:
-            l = []
-
-        return meancp, tStepStart, tStepEnd, l
-
-    def getNRevs(self):
-        return self.nTS / self.params.StepsPerRev
-
+    #
     # Drawing/Plotting Methods
-    def drawTorqueVector(self, iStep, iPatch, scalefactor=3000, linestyle='-', color=False):
-        Xstart = self.X[iStep, iPatch, :2]
-        F = self.F[iStep, iPatch, :2]
-        Funit = F / np.sqrt(np.sum(F ** 2))
-        T = self.torque[iStep, iPatch]
-        Ftorque = Funit * (np.abs(T) / scalefactor)
-        Xend = Xstart + Ftorque
+    #
 
-        plt.arrow(Xstart[0], Xstart[1], Xend[0] - Xstart[0], Xend[1] - Xstart[1], head_width=0.1, head_length=0.2,
-                  fc=color, ec=color, linestyle=linestyle, linewidth=1)
+    def draw_torque_vector(self, time_step, patch_index, scale_factor=3000, linestyle='-', color=False):
+        vector_start = self.X[time_step, patch_index, :2]
+        force = self.F[time_step, patch_index, :2]
+        force_unit = force / np.sqrt(np.sum(force ** 2))
+        torque = self.torque[time_step, patch_index]
+        torque_in_force_direction = force_unit * (np.abs(torque) / scale_factor)
+        vector_end = vector_start + torque_in_force_direction
 
-        return T
+        plt.arrow(vector_start[0], vector_start[1], vector_end[0] - vector_start[0], vector_end[1] - vector_start[1],
+                  head_width=0.1, head_length=0.2, fc=color, ec=color, linestyle=linestyle, linewidth=1)
 
-    def plotTransientTorque(self, xunits='revs', color='red'):
-        totalTorquePerTimeStep = self.getTotalTorquePerTimeStep()
+        return torque, (vector_start, vector_end)
 
-        return self._plotTransientOverRange(totalTorquePerTimeStep, xunits=xunits, ylabel='torque', color=color)
+    def _plot_transient_over_range(self, transient, time_steps=None, units=None, color=None, y_label=None):
 
-    def _plotTransientOverRange(self, transient, tSteps=None, xunits='revs', color=None):
+        if time_steps is None:
+            time_steps = self.time_steps
 
-        if tSteps is None:
-            tSteps = self.timesteps
-
-        if xunits == 'time':
-            time = [self.time[i] for i in tSteps - 1]
-        elif xunits == 'revs':
-            time = np.true_divide(tSteps, self.params.StepsPerRev)
-        elif xunits == 'timesteps':
-            time = tSteps
-        else:
-            raise ValueError('%s not valid xunits value' % xunits)
+        time, x_label = self.convert_units(time_steps, units=units)
 
         if color is None:
             l, = plt.plot(time, transient, label=self.label)
         else:
             l, = plt.plot(time, transient, label=self.label, color=color)
 
+        plt.xlabel(x_label)
+
+        if y_label is not None:
+            plt.ylabel(y_label)
+
         return time, transient, l
 
-    def _plotScalarOverRange(self, scalar, tStepStart, tStepEnd, xunits='revs'):
-        tSteps = np.array([tStepStart, tStepEnd], dtype=int)
+    def _plot_scalar_over_range(self, scalar, time_step_start, time_step_end, units=None):
+        time_steps = np.array([time_step_start, time_step_end], dtype=int)
 
-        if xunits == 'time':
-            time = [self.time[tStepStart - 1], self.time[tStepEnd - 1]]
-            xlabel = 'time'
-        elif xunits == 'revs':
-            time = np.true_divide(tSteps, self.params.StepsPerRev)
-            xlabel = 'window end time (revolutions)'
-        elif xunits == 'timesteps':
-            time = tSteps
-            xlabel = 'timesteps'
-        else:
-            raise ValueError('%s not valid xunits value' % xunits)
+        time, x_label = self.convert_units(time_steps, units=units)
 
         l, = plt.plot(time, [scalar, scalar])
 
-        plt.xlabel(xlabel)
+        plt.xlabel(x_label)
 
         return l, time
 
-    def getMeanTorqueOverRevs(self, iRev, nRev, plot=False, xunits='revs'):
-        totalTorquePerTimeStep = self.getTotalTorquePerTimeStep()
-
-        endRev = int(self.getGivenRevStartTS(iRev + nRev))
-        startRev = endRev - self.params.StepsPerRev * nRev
-
-        if (endRev > self.nTS):
-            raise ValueError('revolution %d is outside of range' % (iRev + nRev))
-
-        timesteps = self.timesteps[startRev:endRev]
-        totalTorquePerTimeStep = totalTorquePerTimeStep[startRev:endRev]
-
-        meanTorque = np.mean(totalTorquePerTimeStep)
-
-        if plot:
-            self._plotTransientOverRange(totalTorquePerTimeStep, tSteps=timesteps, xunits=xunits)
-            self._plotScalarOverRange(meanTorque, startRev, endRev, xunits=xunits)
-
-        return meanTorque, startRev, endRev
-
-    def plotTransientTorqueGivenRev(self, iRev, xunits='revs', labeloff=False):
-        totalTorquePerTimeStep = self.getTotalTorquePerTimeStep()
-
-        tSteps = np.array([i + 1 for i in range(0, self.nTS)])
-
-        startRev = self.getGivenRevStartTS(iRev)
-        endRev = self.getGivenRevStartTS(iRev + 1)
-
-        totalTorquePerTimeStep = totalTorquePerTimeStep[startRev:endRev]
-        tSteps = tSteps[startRev:endRev]
-        tSteps = tSteps - tSteps[0]
-
-        if xunits == 'time':
-            time = self.time[startRev:endRev]
-            xlabel = 'time'
-        elif xunits == 'revs':
-            time = tSteps / self.params.StepsPerRev
-            xlabel = 'window end time (revolutions)'
-        elif xunits == 'timesteps':
-            time = tSteps
-            xlabel = 'timesteps'
-        else:
-            raise ValueError('%s not valid xunits value' % xunits)
-
-        if labeloff:
-            label = None
-        else:
-            label = self.label
-
-        l, = plt.plot(time, totalTorquePerTimeStep, label=label)
-
-        plt.ylim([0, np.max(totalTorquePerTimeStep) * 1.1])
-
-        plt.xlabel(xlabel)
-        plt.ylabel('torque')
-
-        return (time, totalTorquePerTimeStep, l)
-
-    def _calcSimulatedPower(self, torque):
+    # Power and Torque per Time Step
+    def simulated_power(self, torque):
         return torque * (self.params.TSR * self.params.Uinf / self.params.R)
 
-    # Power and Torque per Time Step
-
-    def getSimulatedPowerPerTimeStep(self):
-        return self._calcSimulatedPower(self.getTotalTorquePerTimeStep())
-
-    def getTheoreticalPower(self):
+    def theoretical_power(self):
         return 0.5 * self.params.density * (self.params.R * 2) * self.params.Uinf ** 3
 
-    def getCpPerTimeStep(self):
-        return 100 * self.getSimulatedPowerPerTimeStep() / self.getTheoreticalPower()
+    def cp(self, torque):
+        return 100 * self.simulated_power(torque) / self.theoretical_power()
 
-    def getDt(self):
+    def delta_t(self):
         return self.time[-1] - self.time[-2]
-
-    # Power and Torque per Revolution
-    def getMeanTorqueSlidingWindow(self, n_revs_window=1, patches=None):
-        if patches is None:
-            patches = self.patches
-
-        totalTorquePerTimeStep = self.getTotalTorquePerTimeStep(patches=patches)
-
-        nSteps = np.round(n_revs_window * self.params.StepsPerRev)
-        meanTorquePrevRev = [np.mean(totalTorquePerTimeStep[iTS:iTS + nSteps]) for iTS in range(0, self.nTS - nSteps)]
-        meanTorquePrevRev = np.array(meanTorquePrevRev)
-        tStepsEndRev = np.array([iTS + nSteps for iTS in range(0, self.nTS - nSteps)])
-
-        return (meanTorquePrevRev, tStepsEndRev)
-
-    def getTransientCpSlidingWindow(self, n_revs_window=1, plot=False, patches=None):
-        if patches is None:
-            patches = self.patches
-        torque, tSteps = self.getMeanTorqueSlidingWindow(n_revs_window=n_revs_window, patches=patches)
-        cp = 100 * self._calcSimulatedPower(torque) / self.getTheoreticalPower()
-
-        if plot:
-            time, transient, l = self._plotTransientOverRange(cp, tSteps=tSteps, xunits='revs', ylabel='Cp')
-        else:
-            l = None
-
-        return (cp, tSteps, l)
-
-    def plotTransientCp(self, xunits='revs'):
-        CpPerTimeStep = self.getCpPerTimeStep()
-
-        return self._plotTransientOverRange(CpPerTimeStep, xunits=xunits, ylabel='Cp')
-
-    def set_label(self, label):
-        self.label = label
-
-        if len(self.l) > 0:
-            plt.setp(self.l, 'label', self.label)
 
 
 class ResumedTorqueFile(TorqueFile):
-    def __init__(self, fileNames, params=None, label=None):
-        super(ResumedTorqueFile, self).__init__(fileNames, params=None, label=None)
-        self.fileName = fileNames[1]
+    def __init__(self, file_names, params=None, label=None):
+        super(ResumedTorqueFile, self).__init__(file_names, params=None, label=None)
+        self.fileName = file_names[1]
         self.label = label
         self.params = params
-        self.readFile()
+        self.read_file()
 
         time = self.time
         omega = self.omega
         torque = self.torque
-        F = self.F
-        X = self.X
+        force = self.F
+        x = self.X
         area = self.area
 
-        self.fileName = fileNames[0]
+        self.fileName = file_names[0]
 
-        self.readFile()
+        self.read_file()
 
         self.time = np.append(self.time, time)
         self.omega = np.append(self.omega, omega)
 
         self.torque = np.append(self.torque, torque, axis=0)
 
-        self.F = np.append(self.F, F, axis=0)
+        self.F = np.append(self.F, force, axis=0)
 
-        self.X = np.append(self.X, X, axis=0)
+        self.X = np.append(self.X, x, axis=0)
 
         self.area = np.append(self.area, area, axis=0)
 
@@ -380,4 +376,4 @@ class ResumedTorqueFile(TorqueFile):
 
         self.nTS = len(self.time)
 
-        self._afterFileReadHook()
+        self._after_file_read_hook()

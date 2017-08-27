@@ -2,7 +2,6 @@ from PyQt5 import QtWidgets, QtCore
 
 
 class SideBar(QtWidgets.QWidget):
-
     sigItemSelected = QtCore.pyqtSignal(object)
 
     def __init__(self, plot_line_model, available_views, parent=None):
@@ -74,6 +73,7 @@ class LineSelect(QtWidgets.QDialog):
         super(LineSelect, self).__init__(parent)
 
         self.view = None
+        self.name = None
 
         self.setLayout(QtWidgets.QVBoxLayout())
 
@@ -106,8 +106,7 @@ if __name__ == "__main__":
     from PlotType_Geo import PlotLineGeoView
 
     app = QtWidgets.QApplication(sys.argv)
-    model = PlotLineModel(PlotLineGeoView)
-    sb = SideBar(model)
+    sb = SideBar(PlotLineModel(), ('Plot Line Geo', PlotLineGeoView))
     sb.new_line()
     sb.new_line()
     sb.show()

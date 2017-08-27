@@ -1,8 +1,8 @@
+from IPython.core import usage
+from qtconsole.inprocess import QtInProcessKernelManager
 from qtconsole.qt import QtGui
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
-from qtconsole.inprocess import QtInProcessKernelManager
 
-from IPython.core import usage
 
 class EmbeddedPythonInterpreter(RichJupyterWidget):
     def __init__(self, parent=None, banner=None):
@@ -22,7 +22,7 @@ class EmbeddedPythonInterpreter(RichJupyterWidget):
 
     def push_variable(self, name, variable):
         kernel = self.kernel_manager.kernel
-        kernel.shell.push({name:variable})
+        kernel.shell.push({name: variable})
 
 
 if __name__ == "__main__":

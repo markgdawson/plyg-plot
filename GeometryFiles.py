@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import numpy as np
+import os
+
 import matplotlib.pyplot as plt
-import os, time
+import numpy as np
 
 
 class GeoFile:
@@ -67,7 +68,7 @@ class GeoFile:
                 temp_vertices = [x - 1 for x in temp_vertices]
                 self.face_nodes.append(temp_vertices)
                 self.multi_mesh_face_index[iFace] = int(tmp[num_vertices_face])
-                self.face2patch[iFace] = int(tmp[num_vertices_face+1])
+                self.face2patch[iFace] = int(tmp[num_vertices_face + 1])
                 self.patch2face[self.face2patch[iFace]] = iFace
                 self.progress += 1
 
@@ -87,7 +88,7 @@ class GeoFile:
                 elem_faces_tmp = [x - 1 for x in elem_faces_tmp]
                 self.elemFaces.append(elem_faces_tmp)
                 self.materialElem[iElem] = int(tmp[num_faces_element])
-                self.elem2patch[iElem] = int(tmp[num_faces_element+1])
+                self.elem2patch[iElem] = int(tmp[num_faces_element + 1])
                 self.patch2elem[self.elem2patch[iElem]] = iElem
                 num_faces_elements[iElem] = num_faces_element
                 self.progress += 1
@@ -136,33 +137,33 @@ class GeoFile:
             return True
 
     def load_from_cache_file(self, file_name):
-            saved = np.load(file_name)
-            self.progress_total = len(saved.keys())
-            self.progress = 0
+        saved = np.load(file_name)
+        self.progress_total = len(saved.keys())
+        self.progress = 0
 
-            for key in saved.keys():
-                if not key == 'adjElem':
-                    # adjElem not loaded since it isn't used
-                    self.__setattr__(key, saved[key])
-                self.progress += 1
+        for key in saved.keys():
+            if not key == 'adjElem':
+                # adjElem not loaded since it isn't used
+                self.__setattr__(key, saved[key])
+            self.progress += 1
 
-            self.cached = True
-            self.loaded = True
-            '''
-            typical load times:
-                num_elements  0.31
-                face_nodes  9.63
-                multi_mesh_face_index  0.11
-                face2patch  0.11
-                patch2face  0.11
-                x  0.44
-                elemFaces  3.10
-                materialElem  0.03
-                elem2patch  0.029
-                patch2elem  0.03
-                adjElem  3.09
-                facePatches  0.01
-            '''
+        self.cached = True
+        self.loaded = True
+        '''
+        typical load times:
+            num_elements  0.31
+            face_nodes  9.63
+            multi_mesh_face_index  0.11
+            face2patch  0.11
+            patch2face  0.11
+            x  0.44
+            elemFaces  3.10
+            materialElem  0.03
+            elem2patch  0.029
+            patch2elem  0.03
+            adjElem  3.09
+            facePatches  0.01
+        '''
 
 
 class Geom:
@@ -173,7 +174,7 @@ class Geom:
 
     def load(self):
         self.geo.load()
-    
+
     def get_face_patches(self):
         return self.geo.facePatches
 
@@ -204,13 +205,13 @@ class Geom:
             nodes = self.getNodesPatch(iPatch)
 
             for lineNodes in nodes:
-                Xplot = self.geo.x[lineNodes, :2]
+                x_plot = self.geo.x[lineNodes, :2]
                 if rotation:
                     theta = np.deg2rad(rotation)
-                    RotOp = np.array([[np.cos(theta), - np.sin(theta)],
+                    rot_op = np.array([[np.cos(theta), - np.sin(theta)],
                                       [np.sin(theta), np.cos(theta)]])
-                    Xplot = Xplot.dot(RotOp)
-                l.extend(plt.plot(Xplot[:, 0], Xplot[:, 1], color=color,
+                    x_plot = x_plot.dot(rot_op)
+                l.extend(plt.plot(x_plot[:, 0], x_plot[:, 1], color=color,
                                   linewidth=linewidth, linestyle=linestyle))
 
         l[0].set_label(label)
@@ -232,30 +233,30 @@ class Geom:
             if not color:
                 cmap = plt.get_cmap('jet_r')
 
-                N = np.max(self.geo.face2patch)
+                n = np.max(self.geo.face2patch)
 
-                color = cmap(iPatch/N)
+                color = cmap(iPatch / n)
                 label = 'Patch %d' % iPatch
 
             for lineNodes in nodes:
-                Xplot = self.geo.x[lineNodes, :2]
+                x_plot = self.geo.x[lineNodes, :2]
                 if rotation is not None:
                     theta = np.deg2rad(rotation)
-                    RotOp = np.array([[np.cos(theta), -np.sin(theta)],
-                                      [np.sin(theta),  np.cos(theta)]])
-                    Xplot = Xplot.dot(RotOp)
-                
+                    rot_op = np.array([[np.cos(theta), -np.sin(theta)],
+                                      [np.sin(theta), np.cos(theta)]])
+                    x_plot = x_plot.dot(rot_op)
+
                 if polar:
-                    xtmp = np.arctan2(Xplot[:, 0], Xplot[:, 1])
-                    ytmp = np.sqrt(Xplot[:, 0]**2 + Xplot[:, 1]**2)
-                    Xplot[:, 0] = xtmp
-                    Xplot[:, 1] = ytmp
-                x.extend(Xplot[:, 0])
-                y.extend(Xplot[:, 1])
+                    xtmp = np.arctan2(x_plot[:, 0], x_plot[:, 1])
+                    ytmp = np.sqrt(x_plot[:, 0] ** 2 + x_plot[:, 1] ** 2)
+                    x_plot[:, 0] = xtmp
+                    x_plot[:, 1] = ytmp
+                x.extend(x_plot[:, 0])
+                y.extend(x_plot[:, 1])
                 x.append(np.NaN)
                 y.append(np.NaN)
                 if plot:
-                    l.extend(plt.plot(Xplot[:, 0], Xplot[:, 1], color=color, linewidth=linewidth, linestyle=linestyle))
+                    l.extend(plt.plot(x_plot[:, 0], x_plot[:, 1], color=color, linewidth=linewidth, linestyle=linestyle))
 
         if plot:
             l[0].set_label(label)
@@ -265,9 +266,9 @@ class Geom:
             return x, y
 
     def get_patch_coords(self, patch_index):
-        return self.geo.x[self.getPatchNodes(patch_index), :2]
+        return self.geo.x[self.get_patch_nodes(patch_index), :2]
 
-    def getPatchNodes(self, patch_index):
+    def get_patch_nodes(self, patch_index):
         self.geo.load()
 
         if patch_index not in self.geo.facePatches:
@@ -293,7 +294,7 @@ class Geom:
         self.geo.load()
 
         nodes_as_lines = self.get_nodes_patches_as_lines(patch_index)
-        
+
         if len(nodes_as_lines) == 1:
             return self.geo.x[nodes_as_lines, :2][0]
         else:
@@ -346,7 +347,7 @@ class Geom:
                 while i < len(plot_lines):
                     delete_lines = []
 
-                    for j in range(i+1, len(plot_lines)):
+                    for j in range(i + 1, len(plot_lines)):
                         if plot_lines[i][-1] == plot_lines[j][0]:
                             plot_lines[i].extend(plot_lines[j][1:])
                             delete_lines.append(j)
@@ -387,7 +388,7 @@ class Geom:
                 nodes = self.geo.face_nodes[iFace]
                 x_plot = self.geo.x[nodes, 0:2]
 
-                max_face = np.sqrt(np.sum([x**2 for x in x_plot]))
+                max_face = np.sqrt(np.sum([x ** 2 for x in x_plot]))
 
                 if max_face > max_radius:
                     max_radius = max_face

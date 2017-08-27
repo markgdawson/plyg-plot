@@ -1,9 +1,10 @@
 import collections
+
 from PyQt5 import QtWidgets, QtCore
 
 
 class ValueCheckboxSelector(QtWidgets.QWidget):
-    sigSelectionChanged = QtCore.pyqtSignal(list)
+    sigSelectionChanged = QtCore.pyqtSignal(tuple)
 
     def __init__(self, parent=None):
         super(ValueCheckboxSelector, self).__init__(parent)
@@ -44,6 +45,7 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
 
         if self.label is not None:
             label = QtWidgets.QLabel(self.label)
+            # noinspection PyArgumentList
             self.layout().addWidget(label, self.row, self.column, 1, self.columns)
             self.row += 1
 
@@ -51,8 +53,11 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         self.reset()
         for index in indexes:
             if isinstance(index, collections.Iterable):
-                index = index[0]
-                text = index[1]
+                if isinstance(index, tuple):
+                    index = index[0]
+                    text = index[1]
+                else:
+                    raise ValueError("tuple of values expected")
             else:
                 index = index
                 text = "%s" % index
@@ -67,7 +72,7 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         self.layout().addWidget(self.all_checkbox, self.row, self.column)
         self.all_checkbox.toggled.connect(self.select_all)
 
-        self.sigSelectionChanged.emit(self.selected_values)
+        self.emit_selection_changed()
 
     def select_all(self, toggled):
         if toggled is True:
@@ -90,6 +95,7 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
             self.column = 0
             self.row += 1
 
+        # noinspection PyArgumentList
         self.layout().addWidget(checkbox, self.row, self.column)
         self.column += 1
 
@@ -110,7 +116,7 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
 
     def emit_selection_changed(self):
         self.selected_values = [self.button_group.id(b) for b in self.button_group.buttons() if b.isChecked()]
-        self.sigSelectionChanged.emit(self.selected_values)
+        self.sigSelectionChanged.emit(tuple(self.selected_values))
 
 
 class FacePatchSelector(ValueCheckboxSelector):

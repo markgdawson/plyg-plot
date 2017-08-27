@@ -1,7 +1,9 @@
-from PyQt5 import QtCore
-from TorqueFile import TorqueFile
-from GeometryFiles import Geom
 import os
+
+from PyQt5 import QtCore
+
+from GeometryFiles import Geom
+from TorqueFile import TorqueFile
 
 
 class Simulation(QtCore.QObject):
@@ -15,6 +17,7 @@ class Simulation(QtCore.QObject):
         self._geom = None
         self.geo_file_name = geo_file
         self.loaded = False
+        self._label = None
 
         self.__sig_emitDataChanged = None
 
@@ -69,11 +72,9 @@ class Simulation(QtCore.QObject):
 
 # creates the simulation Geom object (including loading the file) in a seperate thread
 class ThreadLoader(QtCore.QThread):
-
     def __init__(self, parent, load_obj):
         QtCore.QThread.__init__(self, parent)
         self.load_obj = load_obj
 
     def run(self):
         self.load_obj.load()
-

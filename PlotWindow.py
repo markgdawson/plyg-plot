@@ -1,10 +1,10 @@
 from PyQt5 import QtWidgets, QtCore
+
 from MPLWidget import MPLWidget, MyNavigationToolbar
 from SideBar import SideBar
 
 
 class PlotWindow(QtWidgets.QMainWindow):
-
     sigNewPlot = QtCore.pyqtSignal(QtCore.QPoint)
 
     def __init__(self, plot_line_model, available_views, parent=None):
@@ -60,8 +60,9 @@ class PlotWindow(QtWidgets.QMainWindow):
             from IPython.core import release
 
             banner = ''.join([
-                "Python %s\n"%sys.version.split("\n")[0],
-                "IPython {version} -- An enhanced Interactive Python. Type '?' for help.\n\n".format(version=release.version),
+                "Python %s\n" % sys.version.split("\n")[0],
+                "IPython {version} -- An enhanced Interactive Python. Type '?' for help.\n\n".format(
+                    version=release.version),
                 "* The figure axis is available as plt (e.g. plt.plot([0,1],[0,2]) )\n",
                 "* The update() function should be called to reflect changes in the plot window\n",
             ])
@@ -73,4 +74,3 @@ class PlotWindow(QtWidgets.QMainWindow):
             self.interpreter.push_variable('update', self.mpl_widget.redraw)
 
         self.interpreter.show()
-

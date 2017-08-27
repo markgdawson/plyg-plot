@@ -1,10 +1,9 @@
 import matplotlib.patches as mplpatches
 import numpy as np
-from RevolutionRangeSelector import RevolutionRangeSelector
-from PlotLineModel import PlotLineView
-from SimulationSelection import SimulationSelectionWidget
-from ValueCheckboxSelector import FacePatchSelector
+
+import InterfaceBuilders
 import errors
+from PlotLineModel import PlotLineView
 
 
 class AngularTorquePlotter:
@@ -14,7 +13,7 @@ class AngularTorquePlotter:
         self.nSteps = 200
         self.nRadialLines = 20
         self.plot_zero = 3.5
-        self.plot_depth = 0.5/100
+        self.plot_depth = 0.5 / 100
         self.plot_max = 1
         self.patches = []
         self.iRevStart = 1.0
@@ -61,7 +60,7 @@ class AngularTorquePlotter:
         # add circle to plot
         if self.circle_handle is None:
             circle = mplpatches.Circle((0, 0), self.plot_zero, color=None, ec='gray', fill=False, linewidth=0.5,
-                                   linestyle='--')
+                                       linestyle='--')
             self.circle_handle = self.plotter.add_artist(circle, self.circle_handle)
 
     def plot(self):
@@ -147,44 +146,35 @@ class AngularTorquePlotter:
 
 
 class PlotLineAngularTorqueView(PlotLineView):
-    # noinspection PyAttributeOutsideInit
-    def init(self):
+    def __init__(self, parent, plotter, label):
+        super(PlotLineAngularTorqueView, self).__init__(parent, plotter, label)
+
         # plotting parameter defaults
         self.torque_plotter = AngularTorquePlotter(self.plotter)
 
-        # add simulation selector
-        sim_select = SimulationSelectionWidget()
+        # build interface components
+        patch_select = InterfaceBuilders.face_patch_selector(self, patches_connect=self.torque_plotter.set_patches)
+
+        revs = InterfaceBuilders.revolution_range_selector(self, self.torque_plotter.iRevStart,
+                                                           self.torque_plotter.iRevEnd,
+                                                           range_connect=self.torque_plotter.set_range)
+
+        sim_select = InterfaceBuilders.simulation_selector(self, torque_connect=(patch_select.set_torque,
+                                                                                 self.torque_plotter.set_torque_file,
+                                                                                 revs.set_max_from_torque_revs))
+
         self.layout().addWidget(sim_select)
-
-        # add face patch selector
-        face_patch_selector = FacePatchSelector(self)
-        face_patch_selector.set_label("Select Face Patches:")
-        face_patch_selector.set_num_columns(4)
-        self.layout().addWidget(face_patch_selector)
-
-        # add revolution selector
-        default_start = self.torque_plotter.iRevStart
-        default_end = self.torque_plotter.iRevEnd
-
-        revs = RevolutionRangeSelector(self)
-        revs.init(default_start, default_end)
+        self.layout().addWidget(patch_select)
         self.layout().addWidget(revs)
 
-        # setup connections
-        sim_select.sigTorqueLoaded.connect(face_patch_selector.set_torque)
-        sim_select.sigTorqueLoaded.connect(self.torque_plotter.set_torque_file)
-        face_patch_selector.sigSelectionChanged.connect(self.torque_plotter.set_patches)
-        revs.sigRangeChanged.connect(self.torque_plotter.set_range)
-        sim_select.sigTorqueLoaded.connect(revs.set_max_from_torque_revs)  # dynamically set range from torque file
-
-    # self.torque_plotter.plot()
-    #
-    # self.plotter.ax.set_xticks([])
-    # self.plotter.ax.set_yticks([])
-    # self.plotter.set_spine_visible(False)
-    #
-    # self.plotter.ax.set_xlim([-10, 10])
-    # self.plotter.ax.set_ylim([-10, 10])
+        # self.torque_plotter.plot()
+        #
+        # self.plotter.ax.set_xticks([])
+        # self.plotter.ax.set_yticks([])
+        # self.plotter.set_spine_visible(False)
+        #
+        # self.plotter.ax.set_xlim([-10, 10])
+        # self.plotter.ax.set_ylim([-10, 10])
 
 
 if __name__ == "__main__":
@@ -195,7 +185,9 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
 
-    pw = PlotWindow(PlotLineModel(PlotLineAngularTorqueView))
+    model = PlotLineModel()
+    available_views = ('Plot Line Angular Torque', PlotLineAngularTorqueView)
+    pw = PlotWindow(PlotLineModel, available_views)
     pw.show()
     pw.inject_simulation_into_current_line()
     sys.exit(app.exec_())

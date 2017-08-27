@@ -36,16 +36,19 @@ class RevolutionRangeSelector(QtWidgets.QWidget):
     def add_label(self, text, row):
         label = QtWidgets.QLabel(self)
         label.setText(text)
+        # noinspection PyArgumentList
         self.layout().addWidget(label, row, 0, 1, 2)
         return label
 
     def add_row(self, string, value, row):
         label = QtWidgets.QLabel(self)
         label.setText(string)
+        # noinspection PyArgumentList
         self.layout().addWidget(label, row, 0)
         text = QtWidgets.QLineEdit(self)
         text.setText("%.1f" % value)
         text.setValidator(self.validator)
+        # noinspection PyArgumentList
         self.layout().addWidget(text, row, 1)
         text.textChanged.connect(self.check_state)
         return text

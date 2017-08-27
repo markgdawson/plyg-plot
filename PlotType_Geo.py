@@ -1,32 +1,32 @@
-from PyQt5 import QtWidgets
-from SimulationSelection import SimulationSelectionWidget
+import InterfaceBuilders
 from PlotLineModel import PlotLineView
-from ValueCheckboxSelector import FacePatchSelector
 
 
 class PlotLineGeoView(PlotLineView):
-    def init(self):
-        # add simulation selector
-        self.sim_select = SimulationSelectionWidget()
-        self.layout().addWidget(self.sim_select)
+    def __init__(self, parent, plotter, label):
+        super(PlotLineGeoView, self).__init__(parent, plotter, label)
 
-        # add face patch selector
-        self.face_patch_selector = FacePatchSelector(self)
-        self.face_patch_selector.set_label("Select Face Patches:")
-        self.face_patch_selector.set_num_columns(4)
-        self.layout().addWidget(self.face_patch_selector)
+        self.simulation = None
 
-        # setup connections
-        self.face_patch_selector.sigSelectionChanged.connect(self.plot)
-        self.sim_select.sigSimulationLoaded.connect(self.face_patch_selector.set_simulation)
+        # build interface components
+        patch_select = InterfaceBuilders.face_patch_selector(self, patches_connect=self.plot)
+
+        sim_select = InterfaceBuilders.simulation_selector(self, simulation_connect=(self.set_simulation,
+                                                                                     patch_select.set_simulation))
+
+        self.layout().addWidget(sim_select)
+        self.layout().addWidget(patch_select)
+
+    def set_simulation(self, simulation):
+        self.simulation = simulation
 
     def plot(self, patches):
-        simulation = self.sim_select.simulation
-        if simulation is not None:
-            geom = simulation.geom()
+        if self.simulation is not None:
+            geom = self.simulation.geom()
             if geom is not None:
                 x, y = geom.get_patch_faces(patches)
                 self.plotter.plot(x, y)
+
 
 if __name__ == "__main__":
     import sys
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
 
-    pw = PlotWindow(PlotLineModel(PlotLineGeoView))
+    pw = PlotWindow(PlotLineModel, ('Plot Line Geo', PlotLineGeoView))
     pw.show()
     pw.toolbar.sigNewLine.emit()
     sys.exit(app.exec_())
