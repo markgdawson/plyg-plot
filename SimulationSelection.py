@@ -83,7 +83,7 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         self.loadButton.clicked.connect(self.load_simulation)
         self.deleteButton.clicked.connect(self.delete_selected)
 
-    def load_simulation(self):
+    def load_simulation(self, edit_on_load=False):
         filename, file_filter = QtWidgets.QFileDialog.getOpenFileName(self, 'Select Geo File', 'C:/',
                                                                       'Geo Files (*.geo)')
         if len(filename) == 0:
@@ -106,9 +106,16 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
 
         simulation = Simulation(self.model, filename, params=params)
 
-        self.model.add_simulation(simulation)
+        label = os.path.basename(os.path.dirname(filename))
+
+        self.model.add_simulation(simulation, label=label)
+
         index = self.model.index(0, 0, QtCore.QModelIndex())
-        self.tableView.edit(index)
+        if edit_on_load:
+            self.tableView.edit(index)
+
+        self.tableView.selectRow(0)
+
 
     def delete_selected(self):
         indexes = self.tableView.selectedIndexes()
@@ -214,9 +221,10 @@ class SimulationModel(QtGui.QStandardItemModel):
 
         return flags
 
-    def add_simulation(self, simulation):
+    def add_simulation(self, simulation, label=None):
         self.insertRow(0)
-        label = "Simulation %d" % self.rowCount()
+        if label is None:
+            label = "Simulation %d" % self.rowCount()
 
         # simulation item + simulation object in userData (column 1)
         item = QtGui.QStandardItem()
