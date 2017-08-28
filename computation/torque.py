@@ -17,7 +17,8 @@ class TorqueFile:
     # Sliding window quantities
     #
 
-    def mean_torque_sliding_window(self, n_revs_window=1, patches=None):
+    # computes the total torque over all patches, averaged over time over a sliding window
+    def total_torque_mean_over_sliding_window(self, n_revs_window=1, patches=None):
 
         total_torque_per_time_step, time_steps = self.total_torque_per_time_step(patches=patches)
 
@@ -34,9 +35,10 @@ class TorqueFile:
 
         return mean_torque_prev_rev, time_steps_end_rev
 
-    def mean_cp_sliding_window(self, n_revs_window=1, plot=False, patches=None, units=None):
+    # computes the total cp over all patches, averaged over time over a sliding window
+    def cp_mean_over_sliding_window(self, n_revs_window=1, plot=False, patches=None, units=None):
 
-        torque, time_steps_end_rev = self.mean_torque_sliding_window(n_revs_window=n_revs_window, patches=patches)
+        torque, time_steps_end_rev = self.total_torque_mean_over_sliding_window(n_revs_window=n_revs_window, patches=patches)
         cp = self.cp(torque)
 
         if plot:
