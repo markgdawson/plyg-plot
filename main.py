@@ -2,12 +2,12 @@ import sys
 
 from PyQt5 import QtWidgets, QtCore
 
-from PlotLineModel import PlotLineModel
-from PlotType_AngularTorque import PlotLineAngularTorqueView
-from PlotType_Geo import PlotLineGeoView
-from PlotType_MeanValues import PlotLineMeanTorqueOverRevs, PlotLineMeanCpOverRevs
-from PlotType_SlidingWindows import PlotLineCpSlidingWindowView, PlotLineTorqueSlidingWindowView
-from PlotWindow import PlotWindow
+from main_window.plot_line_bases import PlotLineModel
+from main_window.main_plot_window import PlotWindow
+from plot_types.angular_torque import PlotLineAngularTorqueView
+from plot_types.mean_values import PlotLineMeanTorqueOverRevs, PlotLineMeanCpOverRevs
+from plot_types.patches import PlotLineGeoView
+from plot_types.sliding_window_plots import PlotLineCpSlidingWindowView, PlotLineTorqueSlidingWindowView
 
 
 def new_plot(last_win_pos=None):

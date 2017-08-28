@@ -1,5 +1,5 @@
-import InterfaceBuilders
-from PlotLineModel import PlotLineView
+from main_window.plot_line_bases import PlotLineView
+from sidebar_selectors import interface_build
 
 
 class PlotLineGeoView(PlotLineView):
@@ -9,10 +9,10 @@ class PlotLineGeoView(PlotLineView):
         self.simulation = None
 
         # build interface components
-        patch_select = InterfaceBuilders.face_patch_selector(self, patches_connect=self.plot)
+        patch_select = interface_build.face_patch_selector(self, patches_connect=self.plot)
 
-        sim_select = InterfaceBuilders.simulation_selector(self, simulation_connect=(self.set_simulation,
-                                                                                     patch_select.set_simulation))
+        sim_select = interface_build.simulation_selector(self, simulation_connect=(self.set_simulation,
+                                                                                   patch_select.set_simulation))
 
         self.layout().addWidget(sim_select)
         self.layout().addWidget(patch_select)
@@ -30,8 +30,8 @@ class PlotLineGeoView(PlotLineView):
 
 if __name__ == "__main__":
     import sys
-    from PlotWindow import PlotWindow
-    from PlotLineModel import PlotLineModel, PlotLineView
+    from main_window.main_plot_window import PlotWindow
+    from main_window.plot_line_bases import PlotLineModel, PlotLineView
     from PyQt5 import QtWidgets
 
     app = QtWidgets.QApplication(sys.argv)

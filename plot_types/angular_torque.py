@@ -1,9 +1,9 @@
 import matplotlib.patches as mplpatches
 import numpy as np
 
-import InterfaceBuilders
 import errors
-from PlotLineModel import PlotLineView
+from main_window.plot_line_bases import PlotLineView
+from sidebar_selectors import interface_build
 
 
 class AngularTorquePlotter:
@@ -153,15 +153,15 @@ class PlotLineAngularTorqueView(PlotLineView):
         self.torque_plotter = AngularTorquePlotter(self.plotter)
 
         # build interface components
-        patch_select = InterfaceBuilders.face_patch_selector(self, patches_connect=self.torque_plotter.set_patches)
+        patch_select = interface_build.face_patch_selector(self, patches_connect=self.torque_plotter.set_patches)
 
-        revs = InterfaceBuilders.revolution_range_selector(self, self.torque_plotter.iRevStart,
-                                                           self.torque_plotter.iRevEnd,
-                                                           range_connect=self.torque_plotter.set_range)
+        revs = interface_build.revolution_range_selector(self, self.torque_plotter.iRevStart,
+                                                         self.torque_plotter.iRevEnd,
+                                                         range_connect=self.torque_plotter.set_range)
 
-        sim_select = InterfaceBuilders.simulation_selector(self, torque_connect=(patch_select.set_torque,
-                                                                                 self.torque_plotter.set_torque_file,
-                                                                                 revs.set_max_from_torque_revs))
+        sim_select = interface_build.simulation_selector(self, torque_connect=(patch_select.set_torque,
+                                                                               self.torque_plotter.set_torque_file,
+                                                                               revs.set_max_from_torque_revs))
 
         self.layout().addWidget(sim_select)
         self.layout().addWidget(patch_select)
@@ -179,8 +179,8 @@ class PlotLineAngularTorqueView(PlotLineView):
 
 if __name__ == "__main__":
     import sys
-    from PlotWindow import PlotWindow
-    from PlotLineModel import PlotLineModel, PlotLineView
+    from main_window.main_plot_window import PlotWindow
+    from main_window.plot_line_bases import PlotLineModel, PlotLineView
     from PyQt5 import QtWidgets
 
     app = QtWidgets.QApplication(sys.argv)
@@ -189,5 +189,4 @@ if __name__ == "__main__":
     available_views = ('Plot Line Angular Torque', PlotLineAngularTorqueView)
     pw = PlotWindow(PlotLineModel, available_views)
     pw.show()
-    pw.inject_simulation_into_current_line()
     sys.exit(app.exec_())

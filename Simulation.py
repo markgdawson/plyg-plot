@@ -2,8 +2,8 @@ import os
 
 from PyQt5 import QtCore
 
-from GeometryFiles import Geom
-from TorqueFile import TorqueFile
+from computation.torque import TorqueFile
+from computation.geometry import Geom
 
 
 class Simulation(QtCore.QObject):

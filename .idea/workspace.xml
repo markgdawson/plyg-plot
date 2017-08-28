@@ -5,31 +5,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="371ccf92-2540-430d-8d6f-41e30b3591a6" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/InterfaceBuilders.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/PlotType_MeanValues.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/PlotType_SlidingWindows.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/RevCountSelector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/SOMBOT2.iml" afterPath="$PROJECT_DIR$/.idea/SOMBOT2.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/computation/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main_window/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/plot_types/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sidebar_selectors/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sidebar_selectors/base_class_selector.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sidebar_selectors/designer_files/SimulationSelectionDialog.ui" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sidebar_selectors/designer_files/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sidebar_selectors/selector_face_patches.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sidebar_selectors/selector_time_units.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/SimulationSelectionDialog.ui" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/GeometryFiles.py" afterPath="$PROJECT_DIR$/computation/geometry.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/InformFile.py" afterPath="$PROJECT_DIR$/computation/inform.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/InterfaceBuilders.py" afterPath="$PROJECT_DIR$/sidebar_selectors/interface_build.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/MPLWidget.py" afterPath="$PROJECT_DIR$/main_window/mpl_widget.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/PlotLineModel.py" afterPath="$PROJECT_DIR$/main_window/plot_line_bases.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/PlotType_AngularTorque.py" afterPath="$PROJECT_DIR$/plot_types/angular_torque.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/PlotType_Geo.py" afterPath="$PROJECT_DIR$/plot_types/patches.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/PlotType_MeanValues.py" afterPath="$PROJECT_DIR$/plot_types/mean_values.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/PlotType_SlidingWindows.py" afterPath="$PROJECT_DIR$/plot_types/sliding_window_plots.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/PlotWindow.py" afterPath="$PROJECT_DIR$/main_window/main_plot_window.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/RevCountSelector.py" afterPath="$PROJECT_DIR$/sidebar_selectors/selector_revolution_count.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/RevolutionRangeSelector.py" afterPath="$PROJECT_DIR$/sidebar_selectors/selector_revolution_range_.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/SideBar.py" afterPath="$PROJECT_DIR$/main_window/sidebar.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/SimulationSelection.py" afterPath="$PROJECT_DIR$/sidebar_selectors/selector_simulation.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/TorqueFile.py" afterPath="$PROJECT_DIR$/computation/torque.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/ValueCheckboxSelector.py" afterPath="$PROJECT_DIR$/sidebar_selectors/selector_value_checkbox.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/ui_SimulationSelectionDialog.py" afterPath="$PROJECT_DIR$/sidebar_selectors/designer_files/ui_SimulationSelectionDialog.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EmbeddedPythonInterpreter.py" afterPath="$PROJECT_DIR$/EmbeddedPythonInterpreter.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GeometryFiles.py" afterPath="$PROJECT_DIR$/GeometryFiles.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/InformFile.py" afterPath="$PROJECT_DIR$/InformFile.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MPLWidget.py" afterPath="$PROJECT_DIR$/MPLWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotLineModel.py" afterPath="$PROJECT_DIR$/PlotLineModel.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotType_AngularTorque.py" afterPath="$PROJECT_DIR$/PlotType_AngularTorque.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotType_Geo.py" afterPath="$PROJECT_DIR$/PlotType_Geo.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PlotWindow.py" afterPath="$PROJECT_DIR$/PlotWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RevolutionRangeSelector.py" afterPath="$PROJECT_DIR$/RevolutionRangeSelector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SideBar.py" afterPath="$PROJECT_DIR$/SideBar.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Simulation.py" afterPath="$PROJECT_DIR$/Simulation.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SimulationSelection.py" afterPath="$PROJECT_DIR$/SimulationSelection.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SimulationSelectionDialog.ui" afterPath="$PROJECT_DIR$/SimulationSelectionDialog.ui" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TorqueFile.py" afterPath="$PROJECT_DIR$/TorqueFile.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ValueCheckboxSelector.py" afterPath="$PROJECT_DIR$/ValueCheckboxSelector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/errors.py" afterPath="$PROJECT_DIR$/errors.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui_SimulationSelectionDialog.py" afterPath="$PROJECT_DIR$/ui_SimulationSelectionDialog.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -40,98 +46,98 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="PlotType_Geo.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotType_Geo.py">
+      <file leaf-file-name="selector_value_checkbox.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_value_checkbox.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="5" column="44" lean-forward="false" selection-start-line="5" selection-start-column="44" selection-end-line="5" selection-end-column="44" />
+            <state relative-caret-position="210">
+              <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
               <folding>
-                <element signature="e#0#24#0" expanded="true" />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlotType_AngularTorque.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotType_AngularTorque.py">
+      <file leaf-file-name="selector_revolution_range_.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_revolution_range_.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
-              <caret line="149" column="77" lean-forward="false" selection-start-line="149" selection-start-column="77" selection-end-line="149" selection-end-column="77" />
+            <state relative-caret-position="150">
+              <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ui_SimulationSelectionDialog.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ui_SimulationSelectionDialog.py">
+      <file leaf-file-name="mean_values.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/plot_types/mean_values.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="15" lean-forward="false" selection-start-line="11" selection-start-column="15" selection-end-line="11" selection-end-column="15" />
+            <state relative-caret-position="185">
+              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="selector_time_units.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_time_units.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="11" column="66" lean-forward="false" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InterfaceBuilders.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/InterfaceBuilders.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="37" column="35" lean-forward="false" selection-start-line="37" selection-start-column="35" selection-end-line="37" selection-end-column="35" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotType_SlidingWindows.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotType_SlidingWindows.py">
+      <file leaf-file-name="selector_face_patches.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_face_patches.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="75">
-              <caret line="7" column="77" lean-forward="false" selection-start-line="7" selection-start-column="77" selection-end-line="7" selection-end-column="77" />
+              <caret line="5" column="74" lean-forward="false" selection-start-line="5" selection-start-column="74" selection-end-line="5" selection-end-column="74" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="selector_revolution_count.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_revolution_count.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="10" column="42" lean-forward="true" selection-start-line="10" selection-start-column="42" selection-end-line="10" selection-end-column="42" />
               <folding>
-                <element signature="e#0#24#0" expanded="true" />
+                <element signature="e#0#42#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimulationSelection.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SimulationSelection.py">
+      <file leaf-file-name="plot_line_bases.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main_window/plot_line_bases.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-296">
-              <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
+            <state relative-caret-position="473">
+              <caret line="32" column="13" lean-forward="false" selection-start-line="32" selection-start-column="13" selection-end-line="32" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlotLineModel.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotLineModel.py">
+      <file leaf-file-name="mpl_widget.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main_window/mpl_widget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="143">
-              <caret line="18" column="39" lean-forward="false" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="39" />
+            <state relative-caret-position="103">
+              <caret line="97" column="22" lean-forward="false" selection-start-line="97" selection-start-column="22" selection-end-line="97" selection-end-column="22" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RevCountSelector.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/RevCountSelector.py">
+      <file leaf-file-name="base_class_selector.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sidebar_selectors/base_class_selector.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+            <state relative-caret-position="97">
+              <caret line="10" column="32" lean-forward="false" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlotType_MeanValues.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PlotType_MeanValues.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="7" column="74" lean-forward="false" selection-start-line="7" selection-start-column="74" selection-end-line="7" selection-end-column="74" />
-              <folding>
-                <element signature="e#0#24#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -147,24 +153,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Marker</find>
-      <find>unplot</find>
-      <find>__main__</find>
-      <find>PlotWindow</find>
-      <find>sigNewPoint</find>
-      <find>sigNewPlot</find>
-      <find>set_plott</find>
-      <find>update_legend</find>
-      <find>noInspe</find>
-      <find>temp_</find>
-      <find>QDialo</find>
-      <find>warning</find>
-      <find>Line</find>
-      <find>new_line()</find>
-      <find>new_line(</find>
-      <find>cp_per</find>
-      <find>RevolutionRangeSelector</find>
-      <find>SimulationSelectionWidget</find>
       <find>SimulationSelectionWi</find>
       <find>add_simulation_selec</find>
       <find>simulation_selection_widget</find>
@@ -177,6 +165,24 @@
       <find>PyAttributeOutsideInit</find>
       <find>set_plotter</find>
       <find>set_label</find>
+      <find>length of sli</find>
+      <find>REV</find>
+      <find>units</find>
+      <find>RevCountSelector</find>
+      <find>Range:</find>
+      <find>UnitsComboBox</find>
+      <find>Select re</find>
+      <find>Select Sim</find>
+      <find>Select Face</find>
+      <find>face_patch_selector</find>
+      <find>FacePatchSelector</find>
+      <find>add_hlin</find>
+      <find>add_hline</find>
+      <find>InterfaceWi</find>
+      <find>hline</find>
+      <find>inject_simulation_into_current_line</find>
+      <find>setContent</find>
+      <find>UNITS_RE</find>
     </findStrings>
     <replaceStrings>
       <replace>QtWidgets.QWidget</replace>
@@ -195,19 +201,10 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/LineEditor.py" />
-        <option value="$PROJECT_DIR$/MPLWidget" />
-        <option value="$PROJECT_DIR$/QPushButtonMinSize.py" />
-        <option value="$PROJECT_DIR$/AggregateProgressBar.py" />
-        <option value="$PROJECT_DIR$/ui_SimulationLoadDialog.py" />
-        <option value="$PROJECT_DIR$/GeoFile.py" />
-        <option value="$PROJECT_DIR$/SimulationComboBox.py" />
-        <option value="$PROJECT_DIR$/SimulationSelectionDialog.py" />
         <option value="$PROJECT_DIR$/LineComboBox.py" />
         <option value="$PROJECT_DIR$/matplotlib_example.py" />
         <option value="$PROJECT_DIR$/../matplotlib_example/matplotlib_example.py" />
         <option value="$PROJECT_DIR$/../matplotlib_example_PyQt5/matplotlib_example.py" />
-        <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/MatplotlibPlotter.py" />
         <option value="$PROJECT_DIR$/FlowLayout.py" />
         <option value="$PROJECT_DIR$/PlotType_Random.py" />
@@ -220,21 +217,41 @@
         <option value="$PROJECT_DIR$/PlotType_SlidingWindowCp.py" />
         <option value="$PROJECT_DIR$/errors.py" />
         <option value="$PROJECT_DIR$/TorqueFile.py" />
-        <option value="$PROJECT_DIR$/RevolutionRangeSelector.py" />
         <option value="$PROJECT_DIR$/ui_SimulationSelectionDialog.py" />
         <option value="$PROJECT_DIR$/Simulation.py" />
         <option value="$PROJECT_DIR$/SideBar.py" />
         <option value="$PROJECT_DIR$/GeometryFiles.py" />
-        <option value="$PROJECT_DIR$/ValueCheckboxSelector.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/SimulationSelection.py" />
-        <option value="$PROJECT_DIR$/InterfaceBuilders.py" />
-        <option value="$PROJECT_DIR$/PlotType_AngularTorque.py" />
-        <option value="$PROJECT_DIR$/PlotType_Geo.py" />
+        <option value="$PROJECT_DIR$/UnitsComboBox.py" />
+        <option value="$PROJECT_DIR$/HLine.py" />
+        <option value="$PROJECT_DIR$/PlotLineModel.py" />
         <option value="$PROJECT_DIR$/PlotType_MeanValues.py" />
         <option value="$PROJECT_DIR$/PlotType_SlidingWindows.py" />
-        <option value="$PROJECT_DIR$/PlotLineModel.py" />
+        <option value="$PROJECT_DIR$/PlotType_Geo.py" />
+        <option value="$PROJECT_DIR$/PlotType_AngularTorque.py" />
+        <option value="$PROJECT_DIR$/InterfaceBuilders.py" />
+        <option value="$PROJECT_DIR$/SimulationSelection.py" />
         <option value="$PROJECT_DIR$/RevCountSelector.py" />
+        <option value="$PROJECT_DIR$/RevolutionRangeSelector.py" />
+        <option value="$PROJECT_DIR$/ValueCheckboxSelector.py" />
+        <option value="$PROJECT_DIR$/OptionsWidgetAbstract.py" />
+        <option value="$PROJECT_DIR$/GuiComponents/OptionsWidgetAbstract.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/gui_components/OptionsWidgetAbstract.py" />
+        <option value="$PROJECT_DIR$/gui_components/OptionsSidebarWidget.py" />
+        <option value="$PROJECT_DIR$/gui_components/ValueCheckboxSelector.py" />
+        <option value="$PROJECT_DIR$/gui_components/selector_value_checkbox.py" />
+        <option value="$PROJECT_DIR$/gui_components/selector_face_patches.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/plot_types/angular_torque.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/interface_build.py" />
+        <option value="$PROJECT_DIR$/plot_types/mean_values.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/selector_simulation.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/selector_value_checkbox.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/selector_revolution_range_.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/selector_face_patches.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/base_class_selector.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/selector_revolution_count.py" />
+        <option value="$PROJECT_DIR$/sidebar_selectors/selector_time_units.py" />
       </list>
     </option>
   </component>
@@ -267,6 +284,21 @@
               <item name="physicaturbineinterface" type="b2602c69:ProjectViewProjectNode" />
               <item name="physicaturbineinterface" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="physicaturbineinterface" type="b2602c69:ProjectViewProjectNode" />
+              <item name="physicaturbineinterface" type="462c0819:PsiDirectoryNode" />
+              <item name="main_window" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="physicaturbineinterface" type="b2602c69:ProjectViewProjectNode" />
+              <item name="physicaturbineinterface" type="462c0819:PsiDirectoryNode" />
+              <item name="plot_types" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="physicaturbineinterface" type="b2602c69:ProjectViewProjectNode" />
+              <item name="physicaturbineinterface" type="462c0819:PsiDirectoryNode" />
+              <item name="sidebar_selectors" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -290,6 +322,15 @@
     </option>
     <option name="myShowDebugConsoleByDefault" value="true" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/main_window" />
+      <recent name="$PROJECT_DIR$/computation" />
+      <recent name="$PROJECT_DIR$/gui_components/designer_files" />
+      <recent name="$PROJECT_DIR$/PlotTypes" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -303,74 +344,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.main">
-    <configuration name="MatplotlibAnimationExample" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/anaconda/envs/Py3.6_PyQt5/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SOMBOT2" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MatplotlibAnimationExample.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="PlotAngularTorque" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/anaconda/envs/Py3.6_PyQt5/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SOMBOT2" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PlotType_AngularTorque.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="PlotType_Geo" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/anaconda/envs/Py3.6_PyQt5/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SOMBOT2" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PlotType_Geo.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="RevolutionRangeSelector" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/anaconda/envs/Py3.6_PyQt5/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SOMBOT2" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/RevolutionRangeSelector.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -455,20 +428,88 @@
         <option name="ToolBeforeRunTask" enabled="false" actionId="Tool_External Tools_mkpyqt" />
       </method>
     </configuration>
+    <configuration name="mean_values" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SOMBOT2" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/plot_types/mean_values.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="selector_face_patches" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SOMBOT2" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sidebar_selectors/selector_face_patches.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="selector_revolution_count" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SOMBOT2" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sidebar_selectors/selector_revolution_count.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="selector_simulation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SOMBOT2" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sidebar_selectors/selector_simulation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.main" />
-      <item index="1" class="java.lang.String" itemvalue="Python.MatplotlibAnimationExample" />
-      <item index="2" class="java.lang.String" itemvalue="Python.PlotAngularTorque" />
-      <item index="3" class="java.lang.String" itemvalue="Python.PlotType_Geo" />
-      <item index="4" class="java.lang.String" itemvalue="Python.RevolutionRangeSelector" />
+      <item index="1" class="java.lang.String" itemvalue="Python.mean_values" />
+      <item index="2" class="java.lang.String" itemvalue="Python.selector_simulation" />
+      <item index="3" class="java.lang.String" itemvalue="Python.selector_face_patches" />
+      <item index="4" class="java.lang.String" itemvalue="Python.selector_revolution_count" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.main" />
-        <item index="1" class="java.lang.String" itemvalue="Python.PlotAngularTorque" />
-        <item index="2" class="java.lang.String" itemvalue="Python.RevolutionRangeSelector" />
-        <item index="3" class="java.lang.String" itemvalue="Python.PlotType_Geo" />
-        <item index="4" class="java.lang.String" itemvalue="Python.MatplotlibAnimationExample" />
+        <item index="1" class="java.lang.String" itemvalue="Python.mean_values" />
+        <item index="2" class="java.lang.String" itemvalue="Python.selector_revolution_count" />
+        <item index="3" class="java.lang.String" itemvalue="Python.selector_face_patches" />
+        <item index="4" class="java.lang.String" itemvalue="Python.selector_simulation" />
       </list>
     </recent_temporary>
   </component>
@@ -528,7 +569,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="14" y="23" width="1280" height="773" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4085282" sideWeight="0.5048465" order="7" side_tool="true" content_ui="tabs" />
@@ -540,7 +580,7 @@
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3259587" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3259587" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4380531" sideWeight="0.4951535" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4380531" sideWeight="0.4951535" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -557,17 +597,17 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4085282" sideWeight="0.5048465" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3259587" sideWeight="0.49676898" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3259587" sideWeight="0.49676898" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32890856" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24071082" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25282714" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3259587" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3259587" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4380531" sideWeight="0.4951535" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4380531" sideWeight="0.4951535" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
@@ -591,7 +631,7 @@
           <option name="timeStamp" value="266" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PlotType_Geo.py</url>
+          <url>file://$PROJECT_DIR$/plot_types/patches.py</url>
           <line>41</line>
           <option name="timeStamp" value="307" />
         </line-breakpoint>
@@ -606,28 +646,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="347" />
+      <option name="time" value="360" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/anaconda/envs/Py3.6_PyQt5/lib/python3.6/site-packages/matplotlib/backends/backend_qt5.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="852">
-          <caret line="645" column="23" lean-forward="true" selection-start-line="645" selection-start-column="23" selection-end-line="645" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AggregateProgressBar.py" />
-    <entry file="file://$PROJECT_DIR$/ui_SimulationLoadDialog.py" />
-    <entry file="file://$USER_HOME$/anaconda/envs/Py3.6_PyQt5/lib/python3.6/zipfile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="1467" column="0" lean-forward="false" selection-start-line="1467" selection-start-column="0" selection-end-line="1467" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LineComboBox.py" />
     <entry file="file://$PROJECT_DIR$/matplotlib_example.py" />
     <entry file="file://$PROJECT_DIR$/../matplotlib_example/matplotlib_example.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -678,7 +701,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.py" />
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons/builtins.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -755,14 +777,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/errors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="61" lean-forward="false" selection-start-line="4" selection-start-column="61" selection-end-line="4" selection-end-column="61" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/anaconda/envs/Py3.6_PyQt5/lib/python3.6/site-packages/numpy/core/_methods.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="531">
@@ -770,31 +784,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MPLWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2378">
-          <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TorqueFile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="122" column="42" lean-forward="false" selection-start-line="122" selection-start-column="42" selection-end-line="122" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="9" column="55" lean-forward="true" selection-start-line="9" selection-start-column="55" selection-end-line="9" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SideBar.py">
+    <entry file="file://$PROJECT_DIR$/main_window/sidebar.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="245">
           <caret line="107" column="41" lean-forward="false" selection-start-line="107" selection-start-column="41" selection-end-line="107" selection-end-column="41" />
@@ -806,32 +796,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="900">
           <caret line="65" column="8" lean-forward="false" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#9#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/RevolutionRangeSelector.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="8" lean-forward="false" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/InformFile.py">
+    <entry file="file://$PROJECT_DIR$/computation/inform.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
           <caret line="26" column="24" lean-forward="false" selection-start-line="26" selection-start-column="24" selection-end-line="26" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GeometryFiles.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4005">
-          <caret line="270" column="8" lean-forward="false" selection-start-line="270" selection-start-column="8" selection-end-line="270" selection-end-column="8" />
           <folding />
         </state>
       </provider>
@@ -841,101 +813,200 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/designer_files/ui_SimulationSelectionDialog.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="15" lean-forward="false" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HLine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plot_types/patches.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plot_types/sliding_window_plots.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="263">
+          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plot_types/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="67" column="25" lean-forward="false" selection-start-line="67" selection-start-column="25" selection-end-line="67" selection-end-column="25" />
+        <state relative-caret-position="150">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/computation/geometry.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4005">
+          <caret line="270" column="8" lean-forward="false" selection-start-line="270" selection-start-column="8" selection-end-line="270" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_window/main_plot_window.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="9" column="55" lean-forward="false" selection-start-line="9" selection-start-column="55" selection-end-line="9" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ValueCheckboxSelector.py">
+    <entry file="file://$PROJECT_DIR$/plot_types/angular_torque.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        <state relative-caret-position="229">
+          <caret line="191" column="0" lean-forward="false" selection-start-line="191" selection-start-column="0" selection-end-line="191" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/InterfaceBuilders.py">
+    <entry file="file://$PROJECT_DIR$/errors.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="37" column="35" lean-forward="false" selection-start-line="37" selection-start-column="35" selection-end-line="37" selection-end-column="35" />
+        <state relative-caret-position="60">
+          <caret line="4" column="61" lean-forward="false" selection-start-line="4" selection-start-column="61" selection-end-line="4" selection-end-column="61" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SimulationSelection.py">
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/interface_build.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-296">
-          <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
+        <state relative-caret-position="304">
+          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_simulation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3810">
+          <caret line="262" column="0" lean-forward="false" selection-start-line="262" selection-start-column="0" selection-end-line="262" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ui_SimulationSelectionDialog.py">
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_revolution_range_.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="15" lean-forward="false" selection-start-line="11" selection-start-column="15" selection-end-line="11" selection-end-column="15" />
+        <state relative-caret-position="150">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotType_AngularTorque.py">
+    <entry file="file://$PROJECT_DIR$/main_window/plot_line_bases.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="149" column="77" lean-forward="false" selection-start-line="149" selection-start-column="77" selection-end-line="149" selection-end-column="77" />
+        <state relative-caret-position="473">
+          <caret line="32" column="13" lean-forward="false" selection-start-line="32" selection-start-column="13" selection-end-line="32" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlotType_MeanValues.py">
+    <entry file="file://$PROJECT_DIR$/main_window/mpl_widget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="97" column="22" lean-forward="false" selection-start-line="97" selection-start-column="22" selection-end-line="97" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_face_patches.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
-          <caret line="7" column="74" lean-forward="false" selection-start-line="7" selection-start-column="74" selection-end-line="7" selection-end-column="74" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotType_SlidingWindows.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="7" column="77" lean-forward="false" selection-start-line="7" selection-start-column="77" selection-end-line="7" selection-end-column="77" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotType_Geo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="5" column="44" lean-forward="false" selection-start-line="5" selection-start-column="44" selection-end-line="5" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PlotLineModel.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="18" column="39" lean-forward="false" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="39" />
+          <caret line="5" column="74" lean-forward="false" selection-start-line="5" selection-start-column="74" selection-end-line="5" selection-end-column="74" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/RevCountSelector.py">
+    <entry file="file://$PROJECT_DIR$/plot_types/mean_values.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+        <state relative-caret-position="185">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/base_class_selector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="10" column="32" lean-forward="false" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_revolution_count.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="42" lean-forward="true" selection-start-line="10" selection-start-column="42" selection-end-line="10" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_value_checkbox.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/computation/torque.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="115" column="4" lean-forward="false" selection-start-line="115" selection-start-column="4" selection-end-line="115" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sidebar_selectors/selector_time_units.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="11" column="66" lean-forward="false" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
           <folding />
         </state>
       </provider>

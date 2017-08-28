@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
 
-from MPLWidget import MPLWidget, MyNavigationToolbar
-from SideBar import SideBar
+from main_window.mpl_widget import MPLWidget, MyNavigationToolbar
+from main_window.sidebar import SideBar
 
 
 class PlotWindow(QtWidgets.QMainWindow):

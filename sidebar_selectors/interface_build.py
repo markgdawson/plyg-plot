@@ -1,15 +1,15 @@
 import collections
 
-from RevCountSelector import RevCountSelector
-from RevolutionRangeSelector import RevolutionRangeSelector
-from SimulationSelection import SimulationSelectionWidget
-from ValueCheckboxSelector import FacePatchSelector
+from sidebar_selectors.selector_revolution_count import RevCountSelector
+from sidebar_selectors.selector_revolution_range_ import RevolutionRangeSelector
+from sidebar_selectors.selector_simulation import SimulationSelectionSidebarWidget
+from sidebar_selectors.selector_face_patches import FacePatchSelector
 
 
-def revolution_range_selector(self, default_start, default_end, range_connect=None):
-    revs = RevolutionRangeSelector(self)
+def revolution_range_selector(parent, default_start, default_end, range_connect=None):
+    revs = RevolutionRangeSelector(parent)
     revs.init(default_start, default_end)
-    self.layout().addWidget(revs)
+    parent.layout().addWidget(revs)
 
     connect_signals(revs.sigRangeChanged, range_connect)
 
@@ -20,7 +20,7 @@ LastSimulationSelected = None
 
 
 def simulation_selector(parent, torque_connect=None, simulation_connect=None):
-    sim_select = SimulationSelectionWidget(parent)
+    sim_select = SimulationSelectionSidebarWidget(parent)
 
     connect_signals(sim_select.sigTorqueLoaded, torque_connect)
     connect_signals(sim_select.sigSimulationLoaded, simulation_connect)
@@ -38,9 +38,8 @@ def set_last_selected_simulation(simulation):
     LastSimulationSelected = simulation
 
 
-def face_patch_selector(parent, label="Select Face Patches:", columns=4, patches_connect=None):
+def face_patch_selector(parent, columns=4, patches_connect=None):
     patch_select = FacePatchSelector(parent)
-    patch_select.set_label(label)
     patch_select.set_num_columns(columns)
 
     connect_signals(patch_select.sigSelectionChanged, patches_connect)

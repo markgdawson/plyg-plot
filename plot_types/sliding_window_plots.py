@@ -1,6 +1,6 @@
-import InterfaceBuilders
-from PlotLineModel import PlotLineView
-from TorqueFile import NoPatchesError
+from computation.torque import NoPatchesError
+from main_window.plot_line_bases import PlotLineView
+from sidebar_selectors import interface_build
 
 
 class PlotLineSlidingWindowView(PlotLineView):
@@ -11,12 +11,12 @@ class PlotLineSlidingWindowView(PlotLineView):
         self.num_revs_window = 1
 
         # build interface components
-        patch_select = InterfaceBuilders.face_patch_selector(self, patches_connect=self.patches_changed)
+        patch_select = interface_build.face_patch_selector(self, patches_connect=self.patches_changed)
 
-        sim_select = InterfaceBuilders.simulation_selector(self, torque_connect=patch_select.set_torque)
+        sim_select = interface_build.simulation_selector(self, torque_connect=patch_select.set_torque)
 
-        num_revs = InterfaceBuilders.revolution_count_selector(self, self.num_revs_window,
-                                                               revs_change_connect=self.set_num_revs)
+        num_revs = interface_build.revolution_count_selector(self, self.num_revs_window,
+                                                             revs_change_connect=self.set_num_revs)
 
         # layout
         self.layout().addWidget(sim_select)
@@ -60,8 +60,8 @@ class PlotLineTorqueSlidingWindowView(PlotLineSlidingWindowView):
 
 if __name__ == "__main__":
     import sys
-    from PlotWindow import PlotWindow
-    from PlotLineModel import PlotLineModel, PlotLineView
+    from main_window.main_plot_window import PlotWindow
+    from main_window.plot_line_bases import PlotLineModel, PlotLineView
     from PyQt5 import QtWidgets
 
     app = QtWidgets.QApplication(sys.argv)

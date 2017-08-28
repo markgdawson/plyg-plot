@@ -12,12 +12,6 @@ class PlotLineView(QtWidgets.QFrame):
         self.plotter = plotter
         self.plotter.set_label(label)
 
-        # add label
-        self.label_widget = QtWidgets.QLabel()
-        self.label_widget.setMinimumWidth(300)
-        self.label_widget.setContentsMargins(0, 0, 0, 5)
-        self.label_widget.setText(label)
-
         # add visibility checkbox
         self.visible_checkbox = QtWidgets.QCheckBox()
         self.visible_checkbox.setChecked(True)
@@ -32,7 +26,6 @@ class PlotLineView(QtWidgets.QFrame):
         self.setLayout(layout)
 
         # add widgets to layout
-        layout.addWidget(self.label_widget)
         layout.addWidget(self.visible_checkbox)
         self.setLayout(layout)
 
@@ -51,7 +44,6 @@ class PlotLineView(QtWidgets.QFrame):
 
     def sync_label(self):
         self.plotter.set_label(self.label())
-        self.label_widget.setText(self.label_text())
 
     def unplot(self):
         self.plotter.clear()

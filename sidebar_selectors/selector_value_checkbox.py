@@ -1,35 +1,27 @@
 import collections
-
 from PyQt5 import QtWidgets, QtCore
+from sidebar_selectors.base_class_selector import SidebarSelectorBase
 
 
-class ValueCheckboxSelector(QtWidgets.QWidget):
+class ValueCheckboxSelector(SidebarSelectorBase):
     sigSelectionChanged = QtCore.pyqtSignal(tuple)
 
-    def __init__(self, parent=None):
-        super(ValueCheckboxSelector, self).__init__(parent)
-
-        # set layout and remove margins
-        self.setLayout(QtWidgets.QGridLayout())
-        self.setContentsMargins(0, 0, 0, 0)
-        self.layout().setContentsMargins(0, 0, 0, 0)
+    def __init__(self, label='Select Value', parent=None):
+        self.columns = 3
+        super(ValueCheckboxSelector, self).__init__(parent, label=label,
+                                                    layout=SidebarSelectorBase.GRID_LAYOUT,
+                                                    columns=self.columns)
 
         self.button_group = QtWidgets.QButtonGroup()
         self.button_group.buttonClicked[int].connect(self.values_changed)
         self.button_group.setExclusive(False)
         self.selected_values = []
 
-        self.row = 0
-        self.column = 0
-        self.columns = 3
-
-        self.label = None
         self.warnings = dict({})
 
         self.all_checkbox = None
 
-    def set_label(self, label):
-        self.label = label
+        self.reset()
 
     def set_num_columns(self, columns):
         self.columns = columns
@@ -40,14 +32,8 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         if self.all_checkbox is not None:
             self.layout().removeWidget(self.all_checkbox)
 
-        self.row = 0
+        self.row = 1
         self.column = 0
-
-        if self.label is not None:
-            label = QtWidgets.QLabel(self.label)
-            # noinspection PyArgumentList
-            self.layout().addWidget(label, self.row, self.column, 1, self.columns)
-            self.row += 1
 
     def set_values(self, indexes):
         self.reset()
@@ -95,7 +81,6 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
             self.column = 0
             self.row += 1
 
-        # noinspection PyArgumentList
         self.layout().addWidget(checkbox, self.row, self.column)
         self.column += 1
 
@@ -119,28 +104,3 @@ class ValueCheckboxSelector(QtWidgets.QWidget):
         self.sigSelectionChanged.emit(tuple(self.selected_values))
 
 
-class FacePatchSelector(ValueCheckboxSelector):
-    def set_simulation(self, simulation):
-        # populate face_patch_selector
-        geom = simulation.geom()
-        face_patches = geom.get_face_patches()
-        num_face_patches = geom.get_count_face_patches()
-        self.set_values(face_patches, num_face_patches)
-
-    def set_torque(self, torque):
-        # populate face_patch_selector
-        face_patches = torque.patches
-        self.set_values(face_patches)
-
-    def set_values(self, indexes, counts=None, limit=10000):
-        super(FacePatchSelector, self).set_values(indexes)
-
-        if counts is not None:
-            # add warnings for large plots
-            for index, count in counts.items():
-                if count > limit:
-                    warning = "You about to attempt to plot %d faces! \n\n" \
-                              "this may take a long time " \
-                              "and/or may cause the program to crash or become unusable.\n\n" \
-                              "Do you wish to proceed?" % count
-                    self.add_warning(warning, index)

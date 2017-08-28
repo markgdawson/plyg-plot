@@ -1,16 +1,16 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 
+from sidebar_selectors.base_class_selector import SidebarSelectorBase
+from sidebar_selectors.selector_time_units import UnitsComboBox
 
-class RevolutionRangeSelector(QtWidgets.QWidget):
-    sigRangeChanged = QtCore.pyqtSignal(float, float)
+
+class RevolutionRangeSelector(SidebarSelectorBase):
+    sigRangeChanged = QtCore.pyqtSignal(float, float, int)
+
+    def __init__(self, parent=None):
+        super(RevolutionRangeSelector, self).__init__(parent, 'Select Revolution Range', layout=SidebarSelectorBase.GRID_LAYOUT)
 
     def init(self, start, end, max=20.0):
-        # set layout
-        layout = QtWidgets.QGridLayout()
-        self.setLayout(QtWidgets.QGridLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setContentsMargins(0, 0, 0, 0)
-
         # create form validator
         self.validator = QtGui.QDoubleValidator(0.0, max, 1)
 
@@ -20,35 +20,34 @@ class RevolutionRangeSelector(QtWidgets.QWidget):
         self.prev = None
 
         # setup UI
-        self.add_label("Select revolution range:", 0)
+        self.start_le = self.add_row("from:", start, 1)
+        self.end_le = self.add_row("to:", end, 2)
 
-        self.start_le = self.add_row("from", start, 1)
-        self.end_le = self.add_row("to", end, 2)
+        label = QtWidgets.QLabel(self)
+        label.setText("units:")
+        self.layout().addWidget(label, 3, 0)
 
-        self.label = self.add_label("", 3)
+        units = UnitsComboBox(self)
+        units.sigUnitsChanged.connect(self.units_changed)
+        units.selection_changed()
+        self.layout().addWidget(units, 3, 1)
 
         self.emit_range_changed()
+
+    def units_changed(self, units):
+        self.units = units
 
     def set_max_from_torque_revs(self, torque):
         self.validator = QtGui.QDoubleValidator(0.0, torque.num_revs(), 1)
         self.check_state()
 
-    def add_label(self, text, row):
-        label = QtWidgets.QLabel(self)
-        label.setText(text)
-        # noinspection PyArgumentList
-        self.layout().addWidget(label, row, 0, 1, 2)
-        return label
-
     def add_row(self, string, value, row):
         label = QtWidgets.QLabel(self)
         label.setText(string)
-        # noinspection PyArgumentList
         self.layout().addWidget(label, row, 0)
         text = QtWidgets.QLineEdit(self)
         text.setText("%.1f" % value)
         text.setValidator(self.validator)
-        # noinspection PyArgumentList
         self.layout().addWidget(text, row, 1)
         text.textChanged.connect(self.check_state)
         return text
@@ -61,11 +60,11 @@ class RevolutionRangeSelector(QtWidgets.QWidget):
         if condition:
             if self.prev is None or self.start != self.prev[0] or self.end != self.prev[1]:
                 self.emit_range_changed()
+
             self.prev = [self.start, self.end]
 
     def emit_range_changed(self):
-        self.sigRangeChanged.emit(self.start, self.end)
-        self.label.setText("Range: %.1f -> %.1f" % (self.start, self.end))
+        self.sigRangeChanged.emit(self.start, self.end, self.units)
 
     def check_widget_level_state(self):
         try:

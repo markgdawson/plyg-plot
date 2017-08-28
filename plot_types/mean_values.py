@@ -1,6 +1,6 @@
-import InterfaceBuilders
 import errors
-from PlotLineModel import PlotLineView
+from main_window.plot_line_bases import PlotLineView
+from sidebar_selectors import interface_build
 
 
 class PlotLineMeanValuesView(PlotLineView):
@@ -13,14 +13,14 @@ class PlotLineMeanValuesView(PlotLineView):
         self.end_range = 2.0
 
         # build interface components
-        face_patch = InterfaceBuilders.face_patch_selector(self, patches_connect=self.set_patches)
+        face_patch = interface_build.face_patch_selector(self, patches_connect=self.set_patches)
 
-        revs = InterfaceBuilders.revolution_range_selector(self, self.start_range, self.end_range,
-                                                           range_connect=self.set_range)
+        revs = interface_build.revolution_range_selector(self, self.start_range, self.end_range,
+                                                         range_connect=self.set_range)
 
-        sim_select = InterfaceBuilders.simulation_selector(self, torque_connect=(self.set_torque_file,
-                                                                                 face_patch.set_torque,
-                                                                                 revs.set_max_from_torque_revs))
+        sim_select = interface_build.simulation_selector(self, torque_connect=(self.set_torque_file,
+                                                                               face_patch.set_torque,
+                                                                               revs.set_max_from_torque_revs))
 
         # add face patch selector
         self.layout().addWidget(sim_select)
@@ -63,13 +63,18 @@ class PlotLineMeanCpOverRevs(PlotLineMeanValuesView):
 
 if __name__ == "__main__":
     import sys
-    from PlotWindow import PlotWindow
-    from PlotLineModel import PlotLineModel, PlotLineView
+    from main_window.mpl_widget import MPLPlotter, MPLWidget
+    from main_window.plot_line_bases import PlotLineModel
     from PyQt5 import QtWidgets
 
     app = QtWidgets.QApplication(sys.argv)
 
-    pw = PlotWindow(PlotLineModel(), ('Plot Line Mean Torque', PlotLineMeanTorqueOverRevs))
+    line_model = PlotLineModel()
+    mpl_widget = MPLWidget(line_model)
+    plotter = MPLPlotter(mpl_widget)
+
+    pw = PlotLineMeanValuesView(None, plotter, 'Test Label' )
     pw.show()
-    pw.inject_simulation_into_current_line()
+    #pw = PlotWindow(PlotLineModel(), ('Plot Line Mean Torque', PlotLineMeanTorqueOverRevs))
+    #pw.show()
     sys.exit(app.exec_())

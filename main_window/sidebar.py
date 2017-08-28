@@ -102,8 +102,8 @@ class LineSelect(QtWidgets.QDialog):
 
 if __name__ == "__main__":
     import sys
-    from PlotLineModel import PlotLineModel
-    from PlotType_Geo import PlotLineGeoView
+    from main_window.plot_line_bases import PlotLineModel
+    from plot_types.patches import PlotLineGeoView
 
     app = QtWidgets.QApplication(sys.argv)
     sb = SideBar(PlotLineModel(), ('Plot Line Geo', PlotLineGeoView))

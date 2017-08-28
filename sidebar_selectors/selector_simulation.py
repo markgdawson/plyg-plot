@@ -2,24 +2,28 @@ import os
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
-import ui_SimulationSelectionDialog
-from InformFile import InformFile
 from Simulation import Simulation
-from TorqueFile import TorqueFile
+from computation.inform import InformFile
+from computation.torque import TorqueFile
+from sidebar_selectors.base_class_selector import SidebarSelectorBase
+from sidebar_selectors.designer_files import ui_SimulationSelectionDialog
 
 
-class SimulationSelectionWidget(QtWidgets.QPushButton):
+class SimulationSelectionSidebarWidget(SidebarSelectorBase):
+
     sigSimulationLoaded = QtCore.pyqtSignal(Simulation)
     sigSimulationSelected = QtCore.pyqtSignal(Simulation)
     sigTorqueLoaded = QtCore.pyqtSignal(TorqueFile)
 
     def __init__(self, parent=None):
-        super(SimulationSelectionWidget, self).__init__(parent)
+        super(SimulationSelectionSidebarWidget, self).__init__(parent, 'Select Simulation')
 
         self.default_text = "Select Simulation..."
-        self.setText("Select Simulation...")
-        self.setDefault(True)
-        self.clicked.connect(self.__select_simulation)
+        self.button = QtWidgets.QPushButton(self)
+        self.button.setText("< None >")
+        self.button.setDefault(True)
+        self.button.clicked.connect(self.__select_simulation)
+        self.layout().addWidget(self.button)
 
         self.simulation = None
         self.dialog = None
@@ -52,14 +56,14 @@ class SimulationSelectionWidget(QtWidgets.QPushButton):
 
     def update_label(self):
         if self.simulation is None:
-            self.setText(self.default_text)
+            self.button.setText(self.default_text)
         else:
             progress, progress_total = self.simulation.progress()
             text = "Simulation: %s" % self.simulation.label()
             if progress_total - progress != 0:
                 percent = round((progress / progress_total) * 100)
                 text += " (%d %%)" % percent
-            self.setText(text)
+            self.button.setText(text)
 
 
 # maintains a list of simulations, and maintains parent.simulation as the current simulation object
@@ -260,6 +264,6 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    diag = SimulationSelectionDialog()
-    diag.show()
+    widget = SimulationSelectionSidebarWidget()
+    widget.show()
     sys.exit(app.exec_())
