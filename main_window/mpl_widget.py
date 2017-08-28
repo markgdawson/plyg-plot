@@ -121,11 +121,9 @@ class MPLWidget(QtWidgets.QWidget):
         if self.Geometry in options:
             self.ax.set_xlabel('x')
             self.ax.set_ylabel('y')
-            self.ax.figure.tight_layout()
         if self.TimeSteps in options:
             self.ax.set_xlabel('Time Steps')
             self.ax.set_ylabel('Magnitude')
-            self.ax.figure.tight_layout()
 
     def configure_plot(self):
         QtWidgets.QMessageBox.information(self, "No Configuration Options",
@@ -176,8 +174,6 @@ class MPLPlotter:
 
         if self.mpl_widget.axis_equal:
             self.ax.axis('equal')
-
-        self.ax.figure.tight_layout()
 
         self.ax.relim()
         self.ax.autoscale_view(True, True, True)
