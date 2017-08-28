@@ -54,16 +54,14 @@ class TorqueFile:
 
         tot_torque = np.zeros(self.num_time_steps)
 
-        time_steps = list(range(0, self.num_time_steps))
-
-        for iTS in time_steps:
+        for iTS in range(self.num_time_steps):
             for patch_index in patches:
                 tot_torque[iTS] = tot_torque[iTS] + self.torque[iTS, patch_index]
 
         if plot:
-            self._plot_transient_over_range(tot_torque, time_steps, units=units)
+            self._plot_transient_over_range(tot_torque, self.time_steps, units=units)
 
-        return tot_torque, time_steps
+        return tot_torque, self.time_steps
 
     def cp_per_time_step(self, patches=None, plot=False, units=None):
 

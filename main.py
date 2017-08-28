@@ -2,15 +2,18 @@ import sys
 
 from PyQt5 import QtWidgets, QtCore
 
-from main_window.plot_line_bases import PlotLineModel
 from main_window.main_plot_window import PlotWindow
+from main_window.mpl_widget import MPLWidget
+from main_window.plot_line_bases import PlotLineModel
 from plot_types.angular_torque import PlotLineAngularTorqueView
 from plot_types.mean_values import PlotLineMeanTorqueOverRevs, PlotLineMeanCpOverRevs
 from plot_types.patches import PlotLineGeoView
 from plot_types.sliding_window_plots import PlotLineCpSlidingWindowView, PlotLineTorqueSlidingWindowView
-from main_window.mpl_widget import MPLWidget
+from plot_types.transient_values import PlotLineTransientMeanCp, PlotLineTransientMeanTorque, \
+    PlotLineTransientTotalTorque
 
 WindowCount = dict({})
+
 
 def new_plot(last_win_pos=None):
     factory = WindowFactory()
@@ -48,9 +51,12 @@ class WindowFactory(QtWidgets.QDialog):
                               ('Angular Torque', PlotLineAngularTorqueView)]
 
         time_factories = [('Sliding Window Mean Cp', PlotLineCpSlidingWindowView),
+                          ('Transient Mean Cp', PlotLineTransientMeanCp),
+                          ('Mean Cp Over Range', PlotLineMeanCpOverRevs),
                           ('Sliding Window Mean Torque', PlotLineTorqueSlidingWindowView),
-                          ('Mean Torque', PlotLineMeanTorqueOverRevs),
-                          ('Mean Cp', PlotLineMeanCpOverRevs)]
+                          ('Transient Total Torque', PlotLineTransientTotalTorque),
+                          ('Transient Mean Torque', PlotLineTransientMeanTorque),
+                          ('Mean Torque Over Range', PlotLineMeanTorqueOverRevs)]
 
         factories = [('Geometry', (geometry_factories, (MPLWidget.AxisEqual,))),
                      ('Time', (time_factories, ()))]

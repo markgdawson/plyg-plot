@@ -1,28 +1,21 @@
+from PyQt5 import QtWidgets
 import errors
 from main_window.plot_line_bases import PlotLineView
 from sidebar_selectors import interface_build
-from PyQt5 import QtWidgets
 
 
-class PlotLineMeanValuesView(PlotLineView):
+class PlotLineTransientValuesView(PlotLineView):
     def __init__(self, parent, plotter, label):
-        super(PlotLineMeanValuesView, self).__init__(parent, plotter, label)
+        super(PlotLineTransientValuesView, self).__init__(parent, plotter, label)
 
         self.torque = None
         self.patches = []
-        self.start_range = 1.0
-        self.end_range = 2.0
 
         # build interface components
         face_patch = interface_build.face_patch_selector(self, patches_connect=self.set_patches)
 
-        revs = interface_build.revolution_range_selector(self, self.start_range, self.end_range,
-                                                         range_connect=self.set_range)
-
         sim_select = interface_build.simulation_selector(self, torque_connect=(self.set_torque_file,
-                                                                               face_patch.set_torque,
-                                                                               revs.set_max_from_torque_revs))
-
+                                                                               face_patch.set_torque))
         self.mean_value_display = QtWidgets.QLabel(self)
         self.mean_value_display.setText("")
         self.mean_value_display.setMinimumWidth(200)
@@ -30,7 +23,6 @@ class PlotLineMeanValuesView(PlotLineView):
         # add face patch selector
         self.layout().addWidget(sim_select)
         self.layout().addWidget(face_patch)
-        self.layout().addWidget(revs)
         self.layout().addWidget(self.mean_value_display)
 
     def set_mean_value(self, value):
@@ -61,14 +53,24 @@ class PlotLineMeanValuesView(PlotLineView):
                     errors.warning(self, err)
 
 
-class PlotLineMeanTorqueOverRevs(PlotLineMeanValuesView):
+class PlotLineTransientTotalTorque(PlotLineTransientValuesView):
     def compute(self):
-        return self.torque.mean_torque_over_revs(self.start_range, self.end_range, patches=self.patches)
+        total_torque_per_time_step = self.torque.total_torque_per_time_step(patches=self.patches)
+        time_steps = self.torque.time_step()
+        return time_steps, total_torque_per_time_step
 
 
-class PlotLineMeanCpOverRevs(PlotLineMeanValuesView):
+class PlotLineTransientMeanTorque(PlotLineTransientValuesView):
     def compute(self):
-        return self.torque.mean_cp_over_revs(self.start_range, self.end_range, patches=self.patches)
+        total_torque_per_time_step = self.torque.total_torque_per_time_step(patches=self.patches)
+        mean_torque_per_time_step = total_torque_per_time_step / len(self.patches)
+        time_steps = self.torque.time_step()
+        return time_steps, mean_torque_per_time_step
+
+class PlotLineTransientMeanCp(PlotLineTransientValuesView):
+    def compute(self):
+        cp_per_time_step, time_steps = self.torque.cp_per_time_step(patches=self.patches)
+        return time_steps, cp_per_time_step
 
 
 if __name__ == "__main__":
