@@ -22,13 +22,13 @@ class SimulationSelectionSidebarWidget(SidebarSelectorBase):
         self.button = QtWidgets.QPushButton(self)
         self.button.setText("< None >")
         self.button.setDefault(True)
-        self.button.clicked.connect(self.__select_simulation)
+        self.button.clicked.connect(self.select_simulation)
         self.layout().addWidget(self.button)
 
         self.simulation = None
         self.dialog = None
 
-    def __select_simulation(self):
+    def select_simulation(self):
         self.dialog = SimulationSelectionDialog(self)
         self.dialog.setModal(True)
         self.dialog.setWindowModality(QtCore.Qt.WindowModal)
