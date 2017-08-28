@@ -8,7 +8,9 @@ from plot_types.angular_torque import PlotLineAngularTorqueView
 from plot_types.mean_values import PlotLineMeanTorqueOverRevs, PlotLineMeanCpOverRevs
 from plot_types.patches import PlotLineGeoView
 from plot_types.sliding_window_plots import PlotLineCpSlidingWindowView, PlotLineTorqueSlidingWindowView
+from main_window.mpl_widget import MPLWidget
 
+WindowCount = dict({})
 
 def new_plot(last_win_pos=None):
     factory = WindowFactory()
@@ -50,8 +52,8 @@ class WindowFactory(QtWidgets.QDialog):
                           ('Mean Torque', PlotLineMeanTorqueOverRevs),
                           ('Mean Cp', PlotLineMeanCpOverRevs)]
 
-        factories = [('Geometry', geometry_factories),
-                     ('Time', time_factories)]
+        factories = [('Geometry', (geometry_factories, (MPLWidget.AxisEqual,))),
+                     ('Time', (time_factories, ()))]
 
         self.setLayout(QtWidgets.QVBoxLayout())
 
@@ -60,8 +62,8 @@ class WindowFactory(QtWidgets.QDialog):
         self.line_list = QtWidgets.QComboBox(self)
         self.layout().addWidget(self.line_list)
 
-        for name, view in factories:
-            self.line_list.addItem(name, userData=view)
+        for name, view_container in factories:
+            self.line_list.addItem(name, userData=view_container)
 
         # create and connect buttons
         buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
@@ -71,9 +73,17 @@ class WindowFactory(QtWidgets.QDialog):
 
         self.setMinimumWidth(250)
 
+    def title(self):
+        selection_text = self.line_list.currentText()
+        if selection_text not in WindowCount.keys():
+            WindowCount[selection_text] = 0
+        WindowCount[selection_text] += 1
+        return "%s %d" % (selection_text, WindowCount[selection_text])
+
     def accept(self):
-        available_views = self.line_list.currentData(role=QtCore.Qt.UserRole)
-        self.plot = PlotWindow(PlotLineModel(), available_views)
+        view_container = self.line_list.currentData(role=QtCore.Qt.UserRole)
+        available_views, mpl_options = view_container
+        self.plot = PlotWindow(PlotLineModel(), available_views, title=self.title(), options=mpl_options)
 
         # connect new plot signal to factory plot function
         self.plot.sigNewPlot.connect(new_plot)

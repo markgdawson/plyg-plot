@@ -61,6 +61,8 @@ class SideBar(QtWidgets.QWidget):
 
     def new_line(self):
         diag = LineSelect(self.available_views, self)
+        diag.setModal(True)
+        diag.setWindowModality(QtCore.Qt.WindowModal)
         accepted = diag.exec()
         if accepted and diag.view is not None:
             item = self.model.new_line(diag.view, diag.name)

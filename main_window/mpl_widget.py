@@ -89,8 +89,15 @@ class MyNavigationToolbar(NavigationToolbar):
 
 
 class MPLWidget(QtWidgets.QWidget):
-    def __init__(self, line_model, parent=None):
+    AxisEqual = 1
+
+    def __init__(self, line_model, options=None, parent=None):
         super(MPLWidget, self).__init__(parent)
+
+        self.axis_equal = False
+
+        if self.AxisEqual in options:
+            self.axis_equal = True
 
         self.line_model = line_model
 
@@ -158,6 +165,9 @@ class MPLPlotter:
 
         self.ax.relim()
         self.ax.autoscale_view()
+
+        if self.mpl_widget.axis_equal:
+            self.ax.axis('equal')
 
         self.ax.figure.tight_layout()
 

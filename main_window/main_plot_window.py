@@ -7,8 +7,10 @@ from main_window.sidebar import SideBar
 class PlotWindow(QtWidgets.QMainWindow):
     sigNewPlot = QtCore.pyqtSignal(QtCore.QPoint)
 
-    def __init__(self, plot_line_model, available_views, parent=None):
+    def __init__(self, plot_line_model, available_views, options=None, parent=None, title='Plot Window'):
         super(PlotWindow, self).__init__(parent, QtCore.Qt.WindowMaximizeButtonHint)
+
+        self.setWindowTitle(title)
 
         # no interpreter instance yet
         self.interpreter = None
@@ -19,7 +21,7 @@ class PlotWindow(QtWidgets.QMainWindow):
         sidebar = SideBar(plot_line_model, available_views, self)
 
         # create Matplotlib widget
-        self.mpl_widget = MPLWidget(self.plot_line_model, self)
+        self.mpl_widget = MPLWidget(self.plot_line_model, options, self)
 
         # plot line model needs a function to generate plotters
         self.plot_line_model.set_plotter_generator(self.mpl_widget.new_plotter)

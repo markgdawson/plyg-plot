@@ -9,7 +9,7 @@ class UnitsComboBox(QtWidgets.QComboBox):
     def __init__(self, parent):
         super(UnitsComboBox, self).__init__(parent)
 
-        contents = (('revolutions', TorqueFile.UNITS_REVOLUTIONS))
+        contents = (('revolutions', TorqueFile.UNITS_REVOLUTIONS),)
 
         for text, data in contents:
             self.addItem(text, userData=data)
