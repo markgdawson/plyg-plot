@@ -31,15 +31,18 @@ class AngularTorquePlotter:
     def set_torque_file(self, torque_file):
         self.torque = torque_file
         self.theta_bins(force=True)
-        self.plot()
+        self.plot_with_exception_handling()
 
     def set_range(self, rev_start, rev_end):
         self.iRevStart = rev_start
         self.iRevEnd = rev_end
-        self.plot()
+        self.plot_with_exception_handling()
 
     def set_patches(self, patches):
         self.patches = patches
+        self.plot_with_exception_handling()
+
+    def plot_with_exception_handling(self):
         try:
             self.plot()
         except ValueError as err:
@@ -168,16 +171,6 @@ class PlotLineAngularTorqueView(PlotLineView):
         self.layout().addWidget(sim_select)
         self.layout().addWidget(patch_select)
         self.layout().addWidget(revs)
-
-        # self.torque_plotter.plot()
-        #
-        # self.plotter.ax.set_xticks([])
-        # self.plotter.ax.set_yticks([])
-        # self.plotter.set_spine_visible(False)
-        #
-        # self.plotter.ax.set_xlim([-10, 10])
-        # self.plotter.ax.set_ylim([-10, 10])
-
 
 if __name__ == "__main__":
     import sys

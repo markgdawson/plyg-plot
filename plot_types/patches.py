@@ -1,5 +1,6 @@
 from main_window.plot_line_bases import PlotLineView
 from sidebar_selectors import interface_build
+import qt_error_handling
 
 
 class PlotLineGeoView(PlotLineView):
@@ -24,8 +25,11 @@ class PlotLineGeoView(PlotLineView):
         if self.simulation is not None:
             geom = self.simulation.geom()
             if geom is not None:
-                x, y = geom.get_patch_faces(patches)
-                self.plotter.plot(x, y)
+                try:
+                    x, y = geom.get_patch_faces(patches)
+                    self.plotter.plot(x, y)
+                except ValueError as err:
+                    qt_error_handling.python_exception_dialog(err, self)
 
 
 if __name__ == "__main__":

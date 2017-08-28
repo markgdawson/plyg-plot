@@ -1,6 +1,7 @@
 from computation.torque import NoPatchesError
 from main_window.plot_line_bases import PlotLineView
 from sidebar_selectors import interface_build
+import qt_error_handling
 
 
 class PlotLineSlidingWindowView(PlotLineView):
@@ -38,10 +39,13 @@ class PlotLineSlidingWindowView(PlotLineView):
     def plot(self):
         if self.torque is not None and self.patches is not None:
             try:
-                x, y = self.compute_value(self.torque)
-                self.plotter.plot(x, y)
-            except NoPatchesError:
-                self.plotter.plot([], [])
+                try:
+                    x, y = self.compute_value(self.torque)
+                    self.plotter.plot(x, y)
+                except NoPatchesError:
+                    self.plotter.plot([], [])
+            except Exception as error:
+                qt_error_handling.python_exception_dialog(error, parent)
 
     def compute_value(self, torque):
         return [], []
