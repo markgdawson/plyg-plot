@@ -47,8 +47,8 @@ class WindowFactory(QtWidgets.QDialog):
         geometry_factories = [('Patches', PlotLineGeoView),
                               ('Angular Torque', PlotLineAngularTorqueView)]
 
-        time_factories = [('Sliding Window Cp', PlotLineCpSlidingWindowView),
-                          ('Sliding Window Torque', PlotLineTorqueSlidingWindowView),
+        time_factories = [('Sliding Window Mean Cp', PlotLineCpSlidingWindowView),
+                          ('Sliding Window Mean Torque', PlotLineTorqueSlidingWindowView),
                           ('Mean Torque', PlotLineMeanTorqueOverRevs),
                           ('Mean Cp', PlotLineMeanCpOverRevs)]
 
