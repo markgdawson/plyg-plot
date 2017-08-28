@@ -38,9 +38,9 @@ class SimulationSelectionSidebarWidget(SidebarSelectorBase):
 
     def set_simulation(self, simulation):
         self.simulation = simulation
+        self.emit_simulation_selected()
         self.update_label()
         self.sigTorqueLoaded.emit(simulation.torque())
-        self.emit_simulation_selected()
         if simulation.loaded:
             self.emit_simulation_loaded()
         else:

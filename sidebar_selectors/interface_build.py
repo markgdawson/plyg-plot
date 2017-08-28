@@ -25,12 +25,12 @@ def simulation_selector(parent, torque_connect=None, simulation_connect=None):
     connect_signals(sim_select.sigTorqueLoaded, torque_connect)
     connect_signals(sim_select.sigSimulationLoaded, simulation_connect)
 
+    sim_select.sigSimulationSelected.connect(set_last_selected_simulation)
+
     if LastSimulationSelected is not None:
         sim_select.set_simulation(LastSimulationSelected)
     else:
         sim_select.select_simulation()
-
-    sim_select.sigSimulationSelected.connect(set_last_selected_simulation)
 
     return sim_select
 

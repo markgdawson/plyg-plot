@@ -83,12 +83,12 @@ class WindowFactory(QtWidgets.QDialog):
     def accept(self):
         view_container = self.line_list.currentData(role=QtCore.Qt.UserRole)
         available_views, mpl_options = view_container
-        self.plot = PlotWindow(PlotLineModel(), available_views, title=self.title(), options=mpl_options)
-
-        # connect new plot signal to factory plot function
-        self.plot.sigNewPlot.connect(new_plot)
 
         super(WindowFactory, self).accept()
+
+        self.plot = PlotWindow(PlotLineModel(), available_views, title=self.title(), options=mpl_options)
+        # connect new plot signal to factory plot function
+        self.plot.sigNewPlot.connect(new_plot)
 
 
 if __name__ == '__main__':
