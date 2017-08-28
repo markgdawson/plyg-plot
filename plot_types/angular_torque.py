@@ -1,7 +1,7 @@
 import matplotlib.patches as mplpatches
 import numpy as np
 
-import errors
+import qt_error_handling
 from main_window.plot_line_bases import PlotLineView
 from sidebar_selectors import interface_build
 
@@ -41,7 +41,7 @@ class AngularTorquePlotter:
         try:
             self.plot()
         except ValueError as err:
-            errors.warning(self, err)
+            qt_error_handling.python_exception_dialog(err, self)
 
     def theta_bins(self):
         if len(self.bin_index) != 0:

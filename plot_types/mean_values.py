@@ -1,4 +1,4 @@
-import errors
+import qt_error_handling
 from main_window.plot_line_bases import PlotLineView
 from sidebar_selectors import interface_build
 from PyQt5 import QtWidgets
@@ -58,7 +58,7 @@ class PlotLineMeanValuesView(PlotLineView):
                     self.plotter.plot(time_steps, [mean, mean])
                 except Exception as err:
                     self.plotter.plot([], [])
-                    errors.warning(self, err)
+                    qt_error_handling.python_exception_dialog(err, self)
 
 
 class PlotLineMeanTorqueOverRevs(PlotLineMeanValuesView):
@@ -75,7 +75,6 @@ if __name__ == "__main__":
     import sys
     from main_window.mpl_widget import MPLPlotter, MPLWidget
     from main_window.plot_line_bases import PlotLineModel
-    from PyQt5 import QtWidgets
 
     app = QtWidgets.QApplication(sys.argv)
 

@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-import errors
+import qt_error_handling
 from main_window.plot_line_bases import PlotLineView
 from sidebar_selectors import interface_build
 
@@ -43,14 +43,13 @@ class PlotLineTransientValuesView(PlotLineView):
 
     def do_plot(self):
         if self.torque is not None and len(self.patches) > 0:
-            if self.start_range is not None and self.end_range is not None:
-                try:
-                    mean, time_steps = self.compute()
-                    self.set_mean_value(mean)
-                    self.plotter.plot(time_steps, [mean, mean])
-                except Exception as err:
-                    self.plotter.plot([], [])
-                    errors.warning(self, err)
+            try:
+                mean, time_steps = self.compute()
+                self.set_mean_value(mean)
+                self.plotter.plot(time_steps, [mean, mean])
+            except Exception as err:
+                self.plotter.plot([], [])
+                qt_error_handling.python_exception_dialog(err, self)
 
 
 class PlotLineTransientTotalTorque(PlotLineTransientValuesView):
