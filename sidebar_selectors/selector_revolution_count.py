@@ -11,7 +11,7 @@ class RevCountSelector(SidebarSelectorBase):
         super(RevCountSelector, self).__init__(parent, label=label,
                                                layout=SidebarSelectorBase.GRID_LAYOUT)
 
-        self.validator = QtGui.QDoubleValidator(0.0, 10.0, 0, parent)
+        self.validator = QtGui.QDoubleValidator(0.0, 10.0, 1, parent)
 
         self.units = None
         units = UnitsComboBox(self)

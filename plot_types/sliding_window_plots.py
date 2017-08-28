@@ -13,7 +13,8 @@ class PlotLineSlidingWindowView(PlotLineView):
         # build interface components
         patch_select = interface_build.face_patch_selector(self, patches_connect=self.patches_changed)
 
-        sim_select = interface_build.simulation_selector(self, torque_connect=patch_select.set_torque)
+        sim_select = interface_build.simulation_selector(self, torque_connect=(patch_select.set_torque,
+                                                                               self.set_torque))
 
         num_revs = interface_build.revolution_count_selector(self, self.num_revs_window,
                                                              revs_change_connect=self.set_num_revs)
