@@ -90,8 +90,10 @@ class MyNavigationToolbar(NavigationToolbar):
 
 class MPLWidget(QtWidgets.QWidget):
     AxisEqual = 1
+    Geometry = 2
+    TimeSteps = 3
 
-    def __init__(self, line_model, options=None, parent=None):
+    def __init__(self, line_model, options=(), parent=None):
         super(MPLWidget, self).__init__(parent)
 
         self.axis_equal = False
@@ -115,6 +117,15 @@ class MPLWidget(QtWidgets.QWidget):
         # give text a length, to avoid needing to handle resize signals
         self.text.setText("                                                             ")
         self.text.setMargin(10)
+
+        if self.Geometry in options:
+            self.ax.set_xlabel('x')
+            self.ax.set_ylabel('y')
+            self.ax.figure.tight_layout()
+        if self.TimeSteps in options:
+            self.ax.set_xlabel('Time Steps')
+            self.ax.set_ylabel('Magnitude')
+            self.ax.figure.tight_layout()
 
     def configure_plot(self):
         QtWidgets.QMessageBox.information(self, "No Configuration Options",

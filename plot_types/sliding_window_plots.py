@@ -53,7 +53,8 @@ class PlotLineCpSlidingWindowView(PlotLineSlidingWindowView):
         return x, y
 
     def help(self):
-        return 'Computes the mean cp, considering selected patches, averaged over a sliding window in time.'
+        return 'Mean cp, considering selected patches, averaged over a sliding window in time.'
+
 
 class PlotLineTorqueSlidingWindowView(PlotLineSlidingWindowView):
     def compute_value(self, torque):
@@ -61,7 +62,7 @@ class PlotLineTorqueSlidingWindowView(PlotLineSlidingWindowView):
         return x, y
 
     def help(self):
-        return 'Computes the sum of torques over selected patches, averaged over a sliding window in time.'
+        return 'Sum of torques over selected patches, averaged over a sliding window in time.'
 
 
 if __name__ == "__main__":

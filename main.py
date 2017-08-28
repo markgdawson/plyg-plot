@@ -58,8 +58,8 @@ class WindowFactory(QtWidgets.QDialog):
                           ('Transient Mean Torque', PlotLineTransientMeanTorque),
                           ('Mean Torque Over Range', PlotLineMeanTorqueOverRevs)]
 
-        factories = [('Geometry', (geometry_factories, (MPLWidget.AxisEqual,))),
-                     ('Time', (time_factories, ()))]
+        factories = [('Geometry', (geometry_factories, (MPLWidget.AxisEqual,MPLWidget.Geometry))),
+                     ('Time', (time_factories, (MPLWidget.TimeSteps,)))]
 
         self.setLayout(QtWidgets.QVBoxLayout())
 
