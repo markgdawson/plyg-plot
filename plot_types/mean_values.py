@@ -1,3 +1,4 @@
+from PyQt5 import QtWidgets
 import errors
 from main_window.plot_line_bases import PlotLineView
 from sidebar_selectors import interface_build
@@ -22,10 +23,18 @@ class PlotLineMeanValuesView(PlotLineView):
                                                                                face_patch.set_torque,
                                                                                revs.set_max_from_torque_revs))
 
+        self.mean_value_display = QtWidgets.QLabel(self)
+        self.mean_value_display.setText("")
+        self.mean_value_display.setMinimumWidth(200)
+
         # add face patch selector
         self.layout().addWidget(sim_select)
         self.layout().addWidget(face_patch)
         self.layout().addWidget(revs)
+        self.layout().addWidget(self.mean_value_display)
+
+    def set_mean_value(self, value):
+        self.mean_value_display.setText("Mean Value: %3.f" % value)
 
     def set_torque_file(self, torque_file):
         self.torque = torque_file
@@ -45,6 +54,7 @@ class PlotLineMeanValuesView(PlotLineView):
             if self.start_range is not None and self.end_range is not None:
                 try:
                     mean, time_steps = self.compute()
+                    self.set_mean_value(mean)
                     self.plotter.plot(time_steps, [mean, mean])
                 except Exception as err:
                     self.plotter.plot([], [])
