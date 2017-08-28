@@ -19,9 +19,10 @@ class AngularTorquePlotter:
         self.iRevStart = 1.0
         self.iRevEnd = 2.0
 
+        self.radial_handles = [None] * (self.nRadialLines + 1)
+
         self.plotter = plotter
 
-        self.radial_handles = []
         self.circle_handle = None
 
         self.bin_theta = []
@@ -29,6 +30,7 @@ class AngularTorquePlotter:
 
     def set_torque_file(self, torque_file):
         self.torque = torque_file
+        self.theta_bins(force=True)
         self.plot()
 
     def set_range(self, rev_start, rev_end):
@@ -43,8 +45,8 @@ class AngularTorquePlotter:
         except ValueError as err:
             qt_error_handling.python_exception_dialog(err, self)
 
-    def theta_bins(self):
-        if len(self.bin_index) != 0:
+    def theta_bins(self, force=False):
+        if not force and len(self.bin_index) > 0:
             return
 
         # theta value, indexed by time step and patch number
@@ -94,14 +96,13 @@ class AngularTorquePlotter:
         self.plotter.plot(x, y)
 
     def plot_radial_lines(self, bins, mean_torque):
-        if len(self.radial_handles) > 0:
-            return
-
-        self.plotter.clear(self.radial_handles)
-        self.radial_handles = []
+        if self.radial_handles[0] is None:
+            first_time = True
+        else:
+            first_time = False
 
         # plot lines
-        def plot_radial_line(theta_plt, r_min, r_max):
+        def plot_radial_line(theta_plt, r_min, r_max, handle):
             x_rad = np.empty([2, 2])
             x_rad[0, 0] = r_min * np.sin(theta_plt)
             x_rad[1, 0] = r_min * np.cos(theta_plt)
@@ -109,15 +110,16 @@ class AngularTorquePlotter:
             x_rad[0, 1] = r_max * np.sin(theta_plt)
             x_rad[1, 1] = r_max * np.cos(theta_plt)
 
-            h = self.plotter.auxplot(x_rad[0, :], x_rad[1, :])
-            self.radial_handles.append(h)
+            return self.plotter.auxplot(x_rad[0, :], x_rad[1, :], handle=handle)
 
         if self.nSteps > 0:
             line_indexes = [int(i) for i in np.round(np.linspace(0, self.nSteps, self.nRadialLines + 1))]
-            for i in line_indexes:
-                plot_radial_line(bins[i], self.plot_zero, mean_torque[i])
+            for i, bin_index in enumerate(line_indexes):
+                self.radial_handles[i] = plot_radial_line(bins[bin_index], self.plot_zero, mean_torque[bin_index],
+                                                          self.radial_handles[i])
 
-        self.plotter.set_properties(self.radial_handles, color='gray', linestyle=':', linewidth=1)
+        if first_time:
+            self.plotter.set_properties(self.radial_handles, color='gray', linestyle=':', linewidth=1)
 
     def mean_torque(self, start_rev, end_rev):
 
