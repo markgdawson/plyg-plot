@@ -16,17 +16,9 @@ class PlotLineTransientValuesView(PlotLineView):
 
         sim_select = interface_build.simulation_selector(self, torque_connect=(self.set_torque_file,
                                                                                face_patch.set_torque))
-        self.mean_value_display = QtWidgets.QLabel(self)
-        self.mean_value_display.setText("")
-        self.mean_value_display.setMinimumWidth(200)
-
         # add face patch selector
         self.layout().addWidget(sim_select)
         self.layout().addWidget(face_patch)
-        self.layout().addWidget(self.mean_value_display)
-
-    def set_mean_value(self, value):
-        self.mean_value_display.setText("Mean Value: %3.f" % value)
 
     def set_torque_file(self, torque_file):
         self.torque = torque_file
@@ -44,9 +36,8 @@ class PlotLineTransientValuesView(PlotLineView):
     def do_plot(self):
         if self.torque is not None and len(self.patches) > 0:
             try:
-                mean, time_steps = self.compute()
-                self.set_mean_value(mean)
-                self.plotter.plot(time_steps, [mean, mean])
+                time_steps, mean = self.compute()
+                self.plotter.plot(time_steps, mean)
             except Exception as err:
                 self.plotter.plot([], [])
                 qt_error_handling.python_exception_dialog(err, self)
@@ -55,22 +46,29 @@ class PlotLineTransientValuesView(PlotLineView):
 class PlotLineTransientTotalTorque(PlotLineTransientValuesView):
     def compute(self):
         total_torque_per_time_step = self.torque.total_torque_per_time_step(patches=self.patches)
-        time_steps = self.torque.time_step()
-        return time_steps, total_torque_per_time_step
+        return self.torque.time_steps, total_torque_per_time_step
+
+    def help(self):
+        return 'Sum of torque over all specified patches for each time step.'
 
 
 class PlotLineTransientMeanTorque(PlotLineTransientValuesView):
     def compute(self):
         total_torque_per_time_step = self.torque.total_torque_per_time_step(patches=self.patches)
         mean_torque_per_time_step = total_torque_per_time_step / len(self.patches)
-        time_steps = self.torque.time_step()
-        return time_steps, mean_torque_per_time_step
+        return self.torque.time_steps, mean_torque_per_time_step
 
-class PlotLineTransientMeanCp(PlotLineTransientValuesView):
+    def help(self):
+        return 'Mean torque over specified patches for each time step.'
+
+
+class PlotLineTransientCp(PlotLineTransientValuesView):
     def compute(self):
         cp_per_time_step, time_steps = self.torque.cp_per_time_step(patches=self.patches)
         return time_steps, cp_per_time_step
 
+    def help(self):
+        return 'Instantaneous CP over specified patches for each time step.'
 
 if __name__ == "__main__":
     import sys

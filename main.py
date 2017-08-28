@@ -9,7 +9,7 @@ from plot_types.angular_torque import PlotLineAngularTorqueView
 from plot_types.mean_values import PlotLineMeanTorqueOverRevs, PlotLineMeanCpOverRevs
 from plot_types.patches import PlotLineGeoView
 from plot_types.sliding_window_plots import PlotLineCpSlidingWindowView, PlotLineTorqueSlidingWindowView
-from plot_types.transient_values import PlotLineTransientMeanCp, PlotLineTransientMeanTorque, \
+from plot_types.transient_values import PlotLineTransientCp, PlotLineTransientMeanTorque, \
     PlotLineTransientTotalTorque
 
 WindowCount = dict({})
@@ -51,7 +51,7 @@ class WindowFactory(QtWidgets.QDialog):
                               ('Angular Torque', PlotLineAngularTorqueView)]
 
         time_factories = [('Sliding Window Mean Cp', PlotLineCpSlidingWindowView),
-                          ('Transient Mean Cp', PlotLineTransientMeanCp),
+                          ('Transient Cp', PlotLineTransientCp),
                           ('Mean Cp Over Range', PlotLineMeanCpOverRevs),
                           ('Sliding Window Mean Torque', PlotLineTorqueSlidingWindowView),
                           ('Transient Total Torque', PlotLineTransientTotalTorque),

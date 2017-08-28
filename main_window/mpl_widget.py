@@ -163,13 +163,13 @@ class MPLPlotter:
 
         self._process_properties(label, handle)
 
-        self.ax.relim()
-        self.ax.autoscale_view()
-
         if self.mpl_widget.axis_equal:
             self.ax.axis('equal')
 
         self.ax.figure.tight_layout()
+
+        self.ax.relim()
+        self.ax.autoscale_view(True, True, True)
 
         return handle
 

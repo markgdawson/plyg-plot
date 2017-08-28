@@ -34,7 +34,7 @@ class PlotLineMeanValuesView(PlotLineView):
         self.layout().addWidget(self.mean_value_display)
 
     def set_mean_value(self, value):
-        self.mean_value_display.setText("Mean Value: %3.f" % value)
+        self.mean_value_display.setText("Mean Value: %7.f" % value)
 
     def set_torque_file(self, torque_file):
         self.torque = torque_file
@@ -63,12 +63,12 @@ class PlotLineMeanValuesView(PlotLineView):
 
 class PlotLineMeanTorqueOverRevs(PlotLineMeanValuesView):
     def compute(self):
-        return self.torque.mean_torque_over_revs(self.start_range, self.end_range, patches=self.patches)
+        return self.torque.total_torque_mean_over_range(self.start_range, self.end_range, patches=self.patches)
 
 
 class PlotLineMeanCpOverRevs(PlotLineMeanValuesView):
     def compute(self):
-        return self.torque.mean_cp_over_revs(self.start_range, self.end_range, patches=self.patches)
+        return self.torque.cp_mean_over_range(self.start_range, self.end_range, patches=self.patches)
 
 
 if __name__ == "__main__":

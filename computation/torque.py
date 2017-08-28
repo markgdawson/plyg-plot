@@ -20,7 +20,7 @@ class TorqueFile:
     # computes the total torque over all patches, averaged over time over a sliding window
     def total_torque_mean_over_sliding_window(self, n_revs_window=1, patches=None):
 
-        total_torque_per_time_step, time_steps = self.total_torque_per_time_step(patches=patches)
+        total_torque_per_time_step = self.total_torque_per_time_step(patches=patches)
 
         num_steps = int(np.round(n_revs_window * self.params.StepsPerRev))
 
@@ -63,23 +63,23 @@ class TorqueFile:
         if plot:
             self._plot_transient_over_range(tot_torque, self.time_steps, units=units)
 
-        return tot_torque, self.time_steps
+        return tot_torque
 
     def cp_per_time_step(self, patches=None, plot=False, units=None):
 
-        torque, time_steps = self.total_torque_per_time_step(patches=patches)
+        torque = self.total_torque_per_time_step(patches=patches)
 
         cp = self.cp(torque)
 
         if plot:
-            self._plot_transient_over_range(cp, time_steps, units=units, y_label='Cp')
+            self._plot_transient_over_range(cp, self.time_steps, units=units, y_label='Cp')
 
-        return cp, time_steps
+        return cp, self.time_steps
 
     #
     # Mean values over ranges
     #
-    def mean_torque_over_revs(self, start_rev, end_rev, patches=None, plot=False, units=None):
+    def total_torque_mean_over_range(self, start_rev, end_rev, patches=None, plot=False, units=None):
         total_torque_per_time_step = self.total_torque_per_time_step(patches=patches)
 
         start_ts = self.get_rev_time_step(start_rev)
@@ -96,8 +96,8 @@ class TorqueFile:
 
         return mean_torque, time_steps[[0, -1]]
 
-    def mean_cp_over_revs(self, start_rev, end_rev, patches=None, units=None, plot=False):
-        mean_torque, time_steps = self.mean_torque_over_revs(start_rev, end_rev, patches=patches)
+    def cp_mean_over_range(self, start_rev, end_rev, patches=None, units=None, plot=False):
+        mean_torque, time_steps = self.total_torque_mean_over_range(start_rev, end_rev, patches=patches)
         simulated_power = self.simulated_power(mean_torque)
         theoretical_power = self.theoretical_power()
 
@@ -274,7 +274,7 @@ class TorqueFile:
     def get_rev_time_step(self, rev):
         if rev == 0:
             raise ValueError('input revolution value should be larger than 0')
-        time_step = int((rev - 1) * self.params.StepsPerRev)
+        time_step = int(rev * self.params.StepsPerRev)
 
         if time_step > self.num_time_steps or time_step < 0:
             raise ValueError('revolution %d is outside of range' % rev)
