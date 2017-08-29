@@ -9,6 +9,7 @@ from computation.geometry import Geom
 class NoSimulationParamsFile:
     pass
 
+
 class Simulation(QtCore.QObject):
     sigUpdateProgress = QtCore.pyqtSignal()
     sigLoaded = QtCore.pyqtSignal()

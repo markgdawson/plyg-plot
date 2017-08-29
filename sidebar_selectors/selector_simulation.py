@@ -93,6 +93,12 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         if len(filename) == 0:
             return
 
+        torque_file = os.path.join(os.path.dirname(filename), 'TORQUE.csv')
+        if not os.path.isfile(torque_file):
+            msg = "No TORQUE.csv file found in .geo file directory, or TORQUE.csv file is invalid"
+            QtWidgets.QMessageBox.warning(None, 'Warning', msg, QtWidgets.QMessageBox.Ok)
+            return
+
         inform_file = os.path.join(os.path.dirname(filename), 'inform')
 
         if os.path.isfile(inform_file):
@@ -107,9 +113,9 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
                 params = NoSimulationParamsFile()
             else:
                 params = InformFile(inform_file)
-
+                
         simulation = Simulation(self.model, filename, params=params)
-
+        
         label = os.path.basename(os.path.dirname(filename))
 
         self.model.add_simulation(simulation, label=label)
