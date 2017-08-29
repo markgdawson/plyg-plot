@@ -8,7 +8,7 @@ class PlotWindow(QtWidgets.QMainWindow):
     sigNewPlot = QtCore.pyqtSignal(QtCore.QPoint)
 
     def __init__(self, plot_line_model, available_views, options=None, parent=None, title='Plot Window'):
-        super(PlotWindow, self).__init__(parent, QtCore.Qt.WindowMaximizeButtonHint)
+        super(PlotWindow, self).__init__(parent, QtCore.Qt.WindowMaximizeButtonHint | QtCore.Qt.WindowMinimizeButtonHint | QtCore.Qt.WindowCloseButtonHint)
 
         self.setWindowTitle(title)
 

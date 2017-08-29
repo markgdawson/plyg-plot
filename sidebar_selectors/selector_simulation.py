@@ -98,8 +98,8 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         if os.path.isfile(inform_file):
             params = InformFile(inform_file)
         else:
-            QtWidgets.QMessageBox.information(self, "Warning", "Inform file not found automatically,\
-                                                        please select inform file", QtWidgets.QMessageBox.Ok)
+            msg = "Inform file not found automatically, please select inform file."
+            QtWidgets.QMessageBox.information(self, "Warning", msg, QtWidgets.QMessageBox.Ok)
 
             inform_file, file_filter = QtWidgets.QFileDialog.getOpenFileName(self, 'Select Inform File', 'C:/',
                                                                              'Any File (*)')
@@ -119,7 +119,6 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
             self.tableView.edit(index)
 
         self.tableView.selectRow(0)
-
 
     def delete_selected(self):
         indexes = self.tableView.selectedIndexes()
@@ -174,9 +173,6 @@ class SimulationTableDelegate(QtWidgets.QStyledItemDelegate):
                 progress_bar_option.minimum = 0
                 progress_bar_option.maximum = progress_total
                 progress_bar_option.progress = progress
-                progress_bar_option.text = "%d %%" % progress
-                progress_bar_option.textVisible = True
-                progress_bar_option.textAlignment = QtCore.Qt.AlignLeft
 
                 QtWidgets.QApplication.style().drawControl(QtWidgets.QStyle.CE_ProgressBar, progress_bar_option,
                                                            painter)
