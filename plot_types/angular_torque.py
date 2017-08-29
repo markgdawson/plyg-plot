@@ -51,6 +51,8 @@ class AngularTorquePlotter:
     def theta_bins(self, force=False):
         if not force and len(self.bin_index) > 0:
             return
+        if self.torque is None:
+            return
 
         # theta value, indexed by time step and patch number
         theta_step = np.arctan2(self.torque.X[:, :, 0], self.torque.X[:, :, 1])

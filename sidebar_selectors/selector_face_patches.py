@@ -14,8 +14,8 @@ class FacePatchSelector(ValueCheckboxSelector):
 
     def set_torque(self, torque):
         # populate face_patch_selector
-        face_patches = torque.patches
-        self.set_values(face_patches)
+        if torque is not None:
+            self.set_values(torque.face_patches)
 
     def set_values(self, indexes, counts=None, limit=10000):
         super(FacePatchSelector, self).set_values(indexes)

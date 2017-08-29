@@ -76,3 +76,8 @@ class PlotWindow(QtWidgets.QMainWindow):
             self.interpreter.push_variable('update', self.mpl_widget.redraw)
 
         self.interpreter.show()
+
+    def showEvent(self, event: QtGui.QShowEvent):
+        super(PlotWindow, self).showEvent(event)
+        if not event.spontaneous():
+            self.toolbar.sigNewLine.emit()

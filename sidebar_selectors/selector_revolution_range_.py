@@ -38,8 +38,9 @@ class RevolutionRangeSelector(SidebarSelectorBase):
         self.units = units
 
     def set_max_from_torque_revs(self, torque):
-        self.validator = QtGui.QDoubleValidator(0.0, torque.num_revs(), 1)
-        self.check_state()
+        if torque is not None:
+            self.validator = QtGui.QDoubleValidator(0.0, torque.num_revs(), 1)
+            self.check_state()
 
     def add_row(self, string, value, row):
         label = QtWidgets.QLabel(self)
