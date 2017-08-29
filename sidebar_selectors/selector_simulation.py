@@ -2,7 +2,7 @@ import os
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
-from Simulation import Simulation
+from Simulation import Simulation, NoSimulationParamsFile
 from computation.inform import InformFile
 from computation.torque import TorqueFile
 from sidebar_selectors.base_class_selector import SidebarSelectorBase
@@ -104,7 +104,7 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
             inform_file, file_filter = QtWidgets.QFileDialog.getOpenFileName(self, 'Select Inform File', 'C:/',
                                                                              'Any File (*)')
             if len(inform_file) == 0:
-                params = None
+                params = NoSimulationParamsFile()
             else:
                 params = InformFile(inform_file)
 
