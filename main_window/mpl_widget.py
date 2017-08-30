@@ -37,9 +37,9 @@ class MyNavigationToolbar(NavigationToolbar):
             ('Save', 'Save the figure', 'filesave', 'save_figure'),
             (None, None, None, None),
             ('Edit Parameters', 'Edit Plot Visuals', 'qt4_editor_options', 'do_edit_parameters'),
-            ('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
-            (None, None, None, None),
-            ('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
+            #('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
+            #(None, None, None, None),
+            #('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
         )
 
         super(MyNavigationToolbar, self).__init__(figure_canvas, parent=parent, coordinates=coordinates)

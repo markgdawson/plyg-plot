@@ -44,6 +44,7 @@ class PlotWindow(QtWidgets.QMainWindow):
 
         # connect stale legend signals to update slot
         self.toolbar.sigStaleLegend.connect(self.mpl_widget.redraw)
+        self.toolbar.sigStaleLegend.connect(self.plot_line_model.sync_labels)
 
         # connect toolbar signals
         self.toolbar.sigNewLine.connect(sidebar.new_line)

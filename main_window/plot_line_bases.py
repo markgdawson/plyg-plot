@@ -102,6 +102,13 @@ class PlotLineModel(QtGui.QStandardItemModel):
         else:
             return item.data(QtCore.Qt.UserRole)
 
+    def sync_labels(self):
+        for row in range(self.rowCount()):
+            item = self.item(row)
+            label = item.text()
+            sim = item.data(role=QtCore.Qt.UserRole)
+            sim.set_label(label)
+
     def on_stditem_changed(self, item):
         # sync label to handle for changed item
         plot_line = item.data(QtCore.Qt.UserRole)
