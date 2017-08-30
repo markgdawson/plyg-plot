@@ -35,6 +35,7 @@ class PlotLineSlidingWindowView(PlotLineView):
 
     def set_torque(self, torque):
         self.torque = torque
+        self.plotter.set_convert(torque.delta_t(), torque.params.StepsPerRev)
 
     def plot(self):
         if self.torque is not None and self.patches is not None:

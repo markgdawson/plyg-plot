@@ -2,7 +2,7 @@ import collections
 
 import matplotlib.pyplot as plt
 import qtawesome as qta
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
@@ -37,9 +37,9 @@ class MyNavigationToolbar(NavigationToolbar):
             ('Save', 'Save the figure', 'filesave', 'save_figure'),
             (None, None, None, None),
             ('Edit Parameters', 'Edit Plot Visuals', 'qt4_editor_options', 'do_edit_parameters'),
-            #('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
-            #(None, None, None, None),
-            #('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
+            # ('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
+            # (None, None, None, None),
+            # ('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
         )
 
         super(MyNavigationToolbar, self).__init__(figure_canvas, parent=parent, coordinates=coordinates)
@@ -90,8 +90,19 @@ class MyNavigationToolbar(NavigationToolbar):
 
 class MPLWidget(QtWidgets.QWidget):
     AxisEqual = 1
-    Geometry = 2
-    TimeSteps = 3
+    GeometryPlot = 2
+    TimePlot = 3
+
+    UNITS_TIME_STEPS = 1
+    UNITS_SECONDS = 2
+    UNITS_REVOLUTIONS = 3
+    UNITS_NONE = 0
+
+    unit_choices = [('Time', UNITS_SECONDS),
+                    ('Time Steps', UNITS_TIME_STEPS),
+                    ('Revolutions', UNITS_REVOLUTIONS)]
+
+    sigUnitsChanged = QtCore.pyqtSignal(int)
 
     def __init__(self, line_model, options=(), parent=None):
         super(MPLWidget, self).__init__(parent)
@@ -109,6 +120,25 @@ class MPLWidget(QtWidgets.QWidget):
 
         # Create canvas on which self.figure is plotted
         self.figure, self.ax = plt.subplots()
+
+        if self.GeometryPlot in options:
+            self.ax.set_position([0.0, 0.0, 1.0, 1.0])
+            self.units = self.UNITS_NONE
+
+            for spine in self.ax.spines.values():
+                spine.set_visible(False)
+
+            self.ax.set_xticks([])
+            self.ax.set_yticks([])
+
+        if self.TimePlot in options:
+            self.ax.set_ylabel('Magnitude')
+            self.set_time_units(self.UNITS_SECONDS)
+            self.unit_selector = QtWidgets.QComboBox(self)
+            for name, unit in self.unit_choices:
+                self.unit_selector.addItem(name, userData=unit)
+            self.unit_selector.currentIndexChanged.connect(self.select_units)
+
         self.canvas = FigureCanvas(self.figure)
 
         self.layout().addWidget(self.canvas)
@@ -118,12 +148,19 @@ class MPLWidget(QtWidgets.QWidget):
         self.text.setText("                                                             ")
         self.text.setMargin(10)
 
-        if self.Geometry in options:
-            self.ax.set_xlabel('x')
-            self.ax.set_ylabel('y')
-        if self.TimeSteps in options:
-            self.ax.set_xlabel('Time Steps')
-            self.ax.set_ylabel('Magnitude')
+    def select_units(self):
+        self.set_time_units(self.unit_selector.currentData())
+
+    def set_time_units(self, units):
+        self.units = units
+        if units == self.UNITS_TIME_STEPS:
+            self.ax.set_xlabel('Number of Time Steps')
+        elif units == self.UNITS_SECONDS:
+            self.ax.set_xlabel('Time (seconds)')
+        elif units == self.UNITS_REVOLUTIONS:
+            self.ax.set_xlabel('Time (revolutions)')
+        self.sigUnitsChanged.emit(self.units)
+        self.canvas.draw()
 
     def configure_plot(self):
         QtWidgets.QMessageBox.information(self, "No Configuration Options",
@@ -158,6 +195,23 @@ class MPLPlotter:
         self._plotted = {}
         self._master = None
 
+        # handle changes of units
+        self.convert = dict({MPLWidget.UNITS_NONE: 1})
+        self.mpl_widget.sigUnitsChanged.connect(self.units_changed)
+        self.units = self.mpl_widget.units
+
+    def units_changed(self, units):
+        self.units = units
+        for handle in self._plotted:
+            x, y = handle.mydata
+            label = handle.mylabelflag
+            self.auxplot(x, y, handle, label)
+
+    def set_convert(self, time_step_length, steps_per_rev):
+        self.convert[MPLWidget.UNITS_SECONDS] = time_step_length
+        self.convert[MPLWidget.UNITS_REVOLUTIONS] = 1 / steps_per_rev
+        self.convert[MPLWidget.UNITS_TIME_STEPS] = 1
+
     # this plot will automatically be labelled and managed internally
     def plot(self, x, y):
         self._master = self.auxplot(x, y, handle=self._master, label=True)
@@ -165,10 +219,14 @@ class MPLPlotter:
 
     # auxiliary/additional plotted lines, which must be handled by caller
     def auxplot(self, x, y, handle=None, label=False):
+        x_plot = self.convert[self.units] * x
         if handle is None:
-            handle, = self.ax.plot(x, y)
+            handle, = self.ax.plot(x_plot, y)
         else:
-            handle.set_data(x, y)
+            handle.set_data(x_plot, y)
+
+        handle.mydata = (x, y)
+        handle.mylabelflag = label
 
         self._process_properties(label, handle)
 

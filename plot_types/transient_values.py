@@ -22,6 +22,7 @@ class PlotLineTransientValuesView(PlotLineView):
 
     def set_torque_file(self, torque_file):
         self.torque = torque_file
+        self.plotter.set_convert(torque_file.delta_t(), torque_file.params.StepsPerRev)
         self.do_plot()
 
     def set_range(self, start, end):

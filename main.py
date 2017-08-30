@@ -1,8 +1,6 @@
 import sys, os
-os.environ['MPLBACKEND']='qt5agg'
-
+os.environ['MPLBACKEND'] = 'qt5agg'
 from PyQt5 import QtWidgets, QtCore
-
 from main_window.main_plot_window import PlotWindow
 from main_window.mpl_widget import MPLWidget
 from main_window.plot_line_bases import PlotLineModel
@@ -23,10 +21,12 @@ def new_plot(last_win_pos=None):
     if accepted:
         plot = factory.plot
 
+        available = QtWidgets.QApplication.desktop().availableGeometry(plot)
+        plot.resize(available.size() * 0.7)
+
         # setup window position
         if last_win_pos is not None:
             position = last_win_pos + QtCore.QPoint(40, 40)
-            available = QtWidgets.QApplication.desktop().availableGeometry(plot)
             frame = plot.frameGeometry()
 
             if position.x() + frame.width() > available.right():
@@ -59,13 +59,13 @@ class WindowFactory(QtWidgets.QDialog):
                           ('Transient Mean Torque', PlotLineTransientMeanTorque),
                           ('Mean Torque Over Range', PlotLineMeanTorqueOverRevs)]
 
-        factories = [('Geometry', (geometry_factories, (MPLWidget.AxisEqual,MPLWidget.Geometry))),
-                     ('Time', (time_factories, (MPLWidget.TimeSteps,)))]
+        factories = [('Spatial Analysis', (geometry_factories, (MPLWidget.AxisEqual, MPLWidget.GeometryPlot))),
+                     ('Temporal Analysis', (time_factories, (MPLWidget.TimePlot,)))]
 
         self.setLayout(QtWidgets.QVBoxLayout())
 
         # add combo box
-        self.layout().addWidget(QtWidgets.QLabel("Plot Type:"))
+        self.layout().addWidget(QtWidgets.QLabel("What would you like to plot?"))
         self.line_list = QtWidgets.QComboBox(self)
         self.layout().addWidget(self.line_list)
 
@@ -106,6 +106,7 @@ def main():
     if ok:
         # only start event loop if the dialog box was not closed
         sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()
