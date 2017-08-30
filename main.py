@@ -1,4 +1,5 @@
-import sys
+import sys, os
+os.environ['MPLBACKEND']='qt5agg'
 
 from PyQt5 import QtWidgets, QtCore
 
@@ -97,7 +98,7 @@ class WindowFactory(QtWidgets.QDialog):
         self.plot.sigNewPlot.connect(new_plot)
 
 
-if __name__ == '__main__':
+def main():
     app = QtWidgets.QApplication(sys.argv)
 
     ok = new_plot()
@@ -105,3 +106,6 @@ if __name__ == '__main__':
     if ok:
         # only start event loop if the dialog box was not closed
         sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
