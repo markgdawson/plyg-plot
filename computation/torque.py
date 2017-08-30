@@ -154,6 +154,7 @@ class TorqueFile:
         self.X = None
         self.area = None
 
+    def read(self):
         try:
             self.read_file()
             self._after_file_read_hook()

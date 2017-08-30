@@ -118,6 +118,9 @@ class SimulationSelectionDialog(QtWidgets.QDialog, ui_SimulationSelectionDialog.
         
         label = os.path.basename(os.path.dirname(filename))
 
+        if len(label) == 0 and len(filename) > 0:
+            label = filename
+
         self.model.add_simulation(simulation, label=label)
 
         index = self.model.index(0, 0, QtCore.QModelIndex())

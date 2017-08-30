@@ -1,9 +1,10 @@
 import os
 
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtWidgets
 
-from computation.torque import TorqueFile
+from computation.torque import TorqueFile, IncompleteFile
 from computation.geometry import Geom
+from qt_error_handling import python_exception_dialog
 
 
 class NoSimulationParamsFile:
@@ -36,6 +37,14 @@ class Simulation(QtCore.QObject):
         torque_file = os.path.join(os.path.dirname(geo_file), 'TORQUE.csv')
         if os.path.isfile(torque_file):
             self._torque = TorqueFile(torque_file, params=params)
+            try:
+                self._torque.read()
+            except IncompleteFile:
+                QtWidgets.QMessageBox.information(None, "Warning",
+                                                  "Incomplete torque file. Only available data will be considered.",
+                                                  QtWidgets.QMessageBox.Ok)
+            except Exception as err:
+                python_exception_dialog(err, parent)
         else:
             self._torque = None
 

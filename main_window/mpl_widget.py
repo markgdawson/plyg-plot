@@ -37,9 +37,9 @@ class MyNavigationToolbar(NavigationToolbar):
             ('Save', 'Save the figure', 'filesave', 'save_figure'),
             (None, None, None, None),
             ('Edit Parameters', 'Edit Plot Visuals', 'qt4_editor_options', 'do_edit_parameters'),
-            # ('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
-            # (None, None, None, None),
-            # ('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
+            #('Configuration', 'Configure plot', 'subplots', 'configure_plot'),
+            (None, None, None, None),
+            ('Python Interpreter', 'Start a python interpreter', 'fa.terminal', 'do_start_interpreter')
         )
 
         super(MyNavigationToolbar, self).__init__(figure_canvas, parent=parent, coordinates=coordinates)
@@ -120,6 +120,7 @@ class MPLWidget(QtWidgets.QWidget):
 
         # Create canvas on which self.figure is plotted
         self.figure, self.ax = plt.subplots()
+        self.canvas = FigureCanvas(self.figure)
 
         if self.GeometryPlot in options:
             self.ax.set_position([0.0, 0.0, 1.0, 1.0])
@@ -138,8 +139,6 @@ class MPLWidget(QtWidgets.QWidget):
             for name, unit in self.unit_choices:
                 self.unit_selector.addItem(name, userData=unit)
             self.unit_selector.currentIndexChanged.connect(self.select_units)
-
-        self.canvas = FigureCanvas(self.figure)
 
         self.layout().addWidget(self.canvas)
 
@@ -238,8 +237,14 @@ class MPLPlotter:
 
         return handle
 
-    def _process_properties(self, label, handle):
+    @staticmethod
+    def _handle_set_label(label, handle):
+        if label is None or not label:
+            label = '_nolegend_'
 
+        handle.set_label(label)
+
+    def _process_properties(self, label, handle):
         if label:
             label = self._label
             self._labelled[handle] = True
@@ -248,7 +253,7 @@ class MPLPlotter:
             if handle in self._labelled.keys() and self._labelled[handle]:
                 self._labelled[handle] = False
 
-        handle.set_label(label)
+        self._handle_set_label(label, handle)
 
         # set visibility
         handle.set_visible(self.visible)
@@ -275,10 +280,12 @@ class MPLPlotter:
             pass
 
     def add_artist(self, artist, handle=None, label=False):
+        if label is None:
+            label = False
         self._remove_handle(handle)
 
         handle = self.ax.add_artist(artist)
-        handle.set_label(label)
+        self._handle_set_label(label, handle)
 
         self._process_properties(label, handle)
 
@@ -303,7 +310,7 @@ class MPLPlotter:
         self._label = label
         for line in self._labelled.keys():
             if self._labelled[line]:
-                line.set_label(label)
+                self._handle_set_label(label, line)
 
         self.redraw()
 
